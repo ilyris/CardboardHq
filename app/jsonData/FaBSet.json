@@ -1,0 +1,323 @@
+[
+    {
+        "unique_id": "QpnqjpTwQfwKpmdtd8H6N",
+        "id": "1HP",
+        "name": "History Pack 1",
+        "formatted_name": "history-pack-1",
+        "printings": [
+            {
+                "unique_id": "rW8hnzQk9DFq89t6Gm9cH",
+                "edition": "N",
+                "start_card_id": "1HP001",
+                "end_card_id": "1HP427",
+                "initial_release_date": "2022-05-06T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/products/booster-set/history-pack-1-en/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/history-pack-1/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/history-pack-1-en-booster/"
+            }
+        ]
+    },
+    {
+        "unique_id": "F7brMw6wh6mW98Ln9Hh6f",
+        "id": "ARC",
+        "name": "Arcane Rising",
+        "formatted_name": "arcane-rising",
+        "printings": [
+            {
+                "unique_id": "fJhkbkJH6WPtr8ztNTcp9",
+                "edition": "F",
+                "start_card_id": "ARC000",
+                "end_card_id": "ARC218",
+                "initial_release_date": "2020-03-27T00:00:00.000Z",
+                "out_of_print_date": "2020-03-27T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/arcane-rising/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/arcane-rising/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/arcane-rising/"
+            },
+            {
+                "unique_id": "CwPrBwgWTjRL9kPchD6G7",
+                "edition": "U",
+                "start_card_id": "ARC000",
+                "end_card_id": "ARC218",
+                "initial_release_date": "2020-11-20T00:00:00.000Z",
+                "out_of_print_date": "2021-11-11T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/arcane-rising-unlimited/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/arcane-rising/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/arcane-rising-unlimited-booster/"
+            }
+        ]
+    },
+    {
+        "unique_id": "K8MGfzFdqWGwrcJgpDqRR",
+        "id": "CRU",
+        "name": "Crucible of War",
+        "formatted_name": "crucible-war",
+        "printings": [
+            {
+                "unique_id": "ntpBR6gq8FMwbrc7nD8Nz",
+                "edition": "F",
+                "start_card_id": "CRU000",
+                "end_card_id": "CRU197",
+                "initial_release_date": "2020-08-28T00:00:00.000Z",
+                "out_of_print_date": "2020-08-28T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/crucible-war/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/crucible-of-war/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/crucible-war-booster/"
+            },
+            {
+                "unique_id": "7bHMKdmh9wJkpqH6Hk7rM",
+                "edition": "U",
+                "start_card_id": "CRU000",
+                "end_card_id": "CRU197",
+                "initial_release_date": "2021-06-30T00:00:00.000Z",
+                "out_of_print_date": "2021-10-13T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/crucible-war-unlimited/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/crucible-of-war/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/crucible-war-unlimited/"
+            }
+        ]
+    },
+    {
+        "unique_id": "bJBqr7QFQcKcdNMbw9JMB",
+        "id": "DTD",
+        "name": "Dusk till Dawn",
+        "formatted_name": "dusk-till-dawn",
+        "printings": [
+            {
+                "unique_id": "TtNrjrtMbCbMW8JqLNNzt",
+                "edition": "N",
+                "start_card_id": "DTD000",
+                "end_card_id": "DTD235",
+                "initial_release_date": "2023-07-23T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": null,
+                "collectors_center": "https://fabtcg.com/collectors-centre/dusk-till-dawn/",
+                "card_gallery": null
+            }
+        ]
+    },
+    {
+        "unique_id": "HWKQRtfbPPRGqh6dMdQFK",
+        "id": "DYN",
+        "name": "Dynasty",
+        "formatted_name": "dynasty",
+        "printings": [
+            {
+                "unique_id": "9Crgw7PnFN69zb9DKzFTb",
+                "edition": "N",
+                "start_card_id": "DYN000",
+                "end_card_id": "DYN246",
+                "initial_release_date": "2022-11-11T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/products/booster-set/dynasty/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/dynasty/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/dynasty/"
+            }
+        ]
+    },
+    {
+        "unique_id": "TWQdqjJfGzCjjCRJzM6PG",
+        "id": "ELE",
+        "name": "Tales of Aria",
+        "formatted_name": "tales-aria",
+        "printings": [
+            {
+                "unique_id": "NhgmFkNBHjCqB6rBzFp8W",
+                "edition": "F",
+                "start_card_id": "ELE000",
+                "end_card_id": "ELE237",
+                "initial_release_date": "2021-09-24T00:00:00.000Z",
+                "out_of_print_date": "2021-09-24T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/tales-first-ed/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/tales-of-aria/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/tales-aria-booster/"
+            },
+            {
+                "unique_id": "LdhWCQdJmzHn9gChmWRPG",
+                "edition": "U",
+                "start_card_id": "ELE000",
+                "end_card_id": "ELE237",
+                "initial_release_date": "2021-11-12T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/products/booster-set/tales-aria-unlimited/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/tales-of-aria/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/tales-aria-unlimited/"
+            }
+        ]
+    },
+    {
+        "unique_id": "L8K8FRNNHFL9HJdLbJPdr",
+        "id": "EVO",
+        "name": "Bright Lights",
+        "formatted_name": "bright-lights",
+        "printings": [
+            {
+                "unique_id": "FrDDbdr69bML776RTLjTW",
+                "edition": "N",
+                "start_card_id": "EVO000",
+                "end_card_id": "EVO250",
+                "initial_release_date": "2023-10-06T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/articles/evo/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/bright-lights/",
+                "card_gallery": null
+            }
+        ]
+    },
+    {
+        "unique_id": "pfLLLbcmBpfkqrR9fKGtj",
+        "id": "EVR",
+        "name": "Everfest",
+        "formatted_name": "everfest",
+        "printings": [
+            {
+                "unique_id": "KQGqrFhCnDmkNFcbLBNhp",
+                "edition": "F",
+                "start_card_id": "EVR000",
+                "end_card_id": "EVR197",
+                "initial_release_date": "2022-02-04T00:00:00.000Z",
+                "out_of_print_date": "2022-02-04T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/everfest/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/everfest/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/everfest-booster/"
+            }
+        ]
+    },
+    {
+        "unique_id": "9GGpwPrfzfDL7Pg9wdbFQ",
+        "id": "HVY",
+        "name": "Heavy Hitters",
+        "formatted_name": "heavy-hitters",
+        "printings": [
+            {
+                "unique_id": "n8gpKL7pTMQ7zcTdj8fL6",
+                "edition": "N",
+                "start_card_id": "HVY000",
+                "end_card_id": "HVY254",
+                "initial_release_date": "2024-02-02T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/products/booster-set/heavy-hitters/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/heavy-hitters/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/heavy-hitters/"
+            }
+        ]
+    },
+    {
+        "unique_id": "RqqtdMH8fDBPCnjDcLNdT",
+        "id": "MON",
+        "name": "Monarch",
+        "formatted_name": "monarch",
+        "printings": [
+            {
+                "unique_id": "dbdr7LtkJqHKPRthwCfhq",
+                "edition": "F",
+                "start_card_id": "MON000",
+                "end_card_id": "MON306",
+                "initial_release_date": "2021-05-07T00:00:00.000Z",
+                "out_of_print_date": "2021-05-07T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/monarch/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/monarch/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/monarch-booster/"
+            },
+            {
+                "unique_id": "GbmNLthWjCHfML9thPbbt",
+                "edition": "U",
+                "start_card_id": "MON000",
+                "end_card_id": "MON306",
+                "initial_release_date": "2021-06-04T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/products/booster-set/monarch-unlimited/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/monarch/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/monarch-booster-unlimited/"
+            }
+        ]
+    },
+    {
+        "unique_id": "CcM86B8czTkgchQFnGmkQ",
+        "id": "MST",
+        "name": "Part the Mistveil",
+        "formatted_name": "part-the-mistveil",
+        "printings": [
+            {
+                "unique_id": "pzpfGzzTRdLfqkQk9zRNw",
+                "edition": "N",
+                "start_card_id": "MST000",
+                "end_card_id": "MST238",
+                "initial_release_date": "2024-05-31T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": null,
+                "collectors_center": null,
+                "card_gallery": null
+            }
+        ]
+    },
+    {
+        "unique_id": "rqprmGL98FMqcPzPBpKmQ",
+        "id": "OUT",
+        "name": "Outsiders",
+        "formatted_name": "outsiders",
+        "printings": [
+            {
+                "unique_id": "zd6wBL7zcQR7zrJhwCjrh",
+                "edition": "N",
+                "start_card_id": "OUT000",
+                "end_card_id": "OUT238",
+                "initial_release_date": "2023-03-24T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": null,
+                "collectors_center": "https://fabtcg.com/collectors-centre/outsiders/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/outsiders/"
+            }
+        ]
+    },
+    {
+        "unique_id": "dBgRbDmcFzW9kGnPFrqQ8",
+        "id": "UPR",
+        "name": "Uprising",
+        "formatted_name": "uprising",
+        "printings": [
+            {
+                "unique_id": "RFJzQMnLBzFNqjL7BdJgj",
+                "edition": "N",
+                "start_card_id": "UPR000",
+                "end_card_id": "UPR225",
+                "initial_release_date": "2022-06-24T00:00:00.000Z",
+                "out_of_print_date": null,
+                "product_page": "https://fabtcg.com/products/booster-set/uprising/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/uprising/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/uprising/"
+            }
+        ]
+    },
+    {
+        "unique_id": "z76hC7kM6jcNzPgqkTwqf",
+        "id": "WTR",
+        "name": "Welcome to Rathe",
+        "formatted_name": "welcome-rathe",
+        "printings": [
+            {
+                "unique_id": "C9dGnhCMDWQdD7rC7QbHj",
+                "edition": "A",
+                "start_card_id": "WTR000",
+                "end_card_id": "WTR225",
+                "initial_release_date": "2019-10-11T00:00:00.000Z",
+                "out_of_print_date": "2019-10-11T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/welcome-rathe/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/welcome-rathe/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/welcome-rathe-booster/"
+            },
+            {
+                "unique_id": "6CntKbGMhcBqqnHmgGM99",
+                "edition": "U",
+                "start_card_id": "WTR000",
+                "end_card_id": "WTR225",
+                "initial_release_date": "2020-11-06T00:00:00.000Z",
+                "out_of_print_date": "2021-12-01T00:00:00.000Z",
+                "product_page": "https://fabtcg.com/products/booster-set/welcome-rathe-unlimited/",
+                "collectors_center": "https://fabtcg.com/collectors-centre/welcome-rathe/",
+                "card_gallery": "https://fabtcg.com/resources/card-galleries/welcome-rathe-unlimited-booster/"
+            }
+        ]
+    }
+]
