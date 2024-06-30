@@ -35,7 +35,7 @@ const Navigation = () => {
           href="/login"
           component="button"
           variant="body2"
-          primary
+          primary={true}
           sx={{ mr: 1 }}
         >
           Login

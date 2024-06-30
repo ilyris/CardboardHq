@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Container, Typography } from "@mui/material";
 import TcgCard from "@/app/components/TcgCard";
 import { Card } from "@/typings/FaBCard";
@@ -18,13 +18,70 @@ const SlugPage = () => {
 
   const [logo, setLogo] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useState<string | null>(null);
-  const [cardData, setCardData] = useState<Card[] | null>(null);
+  const [cardData, setCardData] = useState<Card[]>([]);
   const [cardSet, setCardSet] = useState<CardSet | null>(null);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const fetchMoreData = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      const response = await getFaBCardData({ slug, page, pageSize: 12 });
+      const newData = response.data.result;
+      setCardData((prevData) => [...prevData, ...newData]);
+
+      if (newData.length < 10) {
+        setHasMore(false);
+      }
+
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, loading, hasMore]);
 
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
     setLogo(importedLogo);
   };
+
+  const handleCardSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchParams(e.target.value);
+
+    const cardDataResults = await getFaBCardData({
+      slug,
+      searchQuery: e.target.value,
+    });
+    const cardData = cardDataResults.data.result;
+
+    setCardData(cardData);
+  };
+
+  const lastElementRef = useCallback(
+    (node: HTMLAnchorElement) => {
+      if (loading || searchParams) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          fetchMoreData();
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore, fetchMoreData]
+  );
+
+  useEffect(() => {
+    fetchMoreData();
+  }, []);
 
   useEffect(() => {
     if (slug) {
@@ -33,23 +90,24 @@ const SlugPage = () => {
         const cardSet = await getCardSet(slug);
         setCardSet(cardSet);
       })();
-
-      (async () => {
-        const cardDataResults = await getFaBCardData(slug);
-        const cardData = cardDataResults.data.result;
-        setCardData(cardData);
-      })();
     }
   }, [slug]);
 
-  const handleCardSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchParams(e.target.value);
+  useEffect(() => {
+    if (searchParams) return;
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight &&
+        hasMore
+      ) {
+        fetchMoreData();
+      }
+    };
 
-    const cardDataResults = await getFaBCardData(slug, e.target.value);
-    const cardData = cardDataResults.data.result;
-
-    setCardData(cardData);
-  };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [fetchMoreData, hasMore, searchParams]);
 
   return (
     <Container maxWidth="lg">
@@ -73,15 +131,15 @@ const SlugPage = () => {
       >
         {cardData &&
           cardSet &&
-          cardData?.map((card) => {
+          cardData?.map((card, i) => {
             const cardImageUrl = getPrintingImageUrl(card, cardSet);
             const cardId = card.printings.find(
               (cardPrinting) => cardPrinting.set_id === cardSet?.id
             )?.id;
-
             return (
               <TcgCard
-                key={card.name}
+                ref={cardData.length === i + 1 ? lastElementRef : null}
+                key={card.unique_id + i}
                 image={cardImageUrl}
                 title={card.name}
                 slug={slug}
