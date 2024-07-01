@@ -39,7 +39,7 @@ const CardPage = () => {
     if (cardId) {
       loadLogo();
       (async () => {
-        const cardDataResults = await getFaBCardData(slug, "", cardId);
+        const cardDataResults = await getFaBCardData({ slug, cardId });
         const cardData = cardDataResults.data.result;
         const card = cardData?.printings.find((card) => card.id === cardId);
 

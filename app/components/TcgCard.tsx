@@ -1,3 +1,5 @@
+import loadCardPriceData from "@/helpers/getFaBCardPriceData";
+import { Card as CardType, Printing } from "@/typings/FaBCard";
 import {
   Box,
   Card,
@@ -6,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 interface TcgCardProps {
@@ -14,11 +16,24 @@ interface TcgCardProps {
   title: string;
   slug: string;
   cardId: string;
+  cardData: Printing;
 }
 
 const TcgCard = forwardRef<HTMLAnchorElement, TcgCardProps>(
-  ({ image, title, slug, cardId }, ref) => {
+  ({ image, title, slug, cardId, cardData }, ref) => {
     const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
+    const [cardPrice, setCardPrice] = useState<number | null>(null);
+
+    useEffect(() => {
+      if (cardId && cardData) {
+        (async () => {
+          const cardPricing = await loadCardPriceData(cardData);
+          console.log({ cardPricing });
+          if (cardPricing?.lowPrice) setCardPrice(cardPricing.lowPrice);
+        })();
+      }
+    }, [cardId, cardData]);
+
     return (
       <Link href={`/sets/${slug}/${cardId}`} passHref>
         <Card
@@ -55,7 +70,7 @@ const TcgCard = forwardRef<HTMLAnchorElement, TcgCardProps>(
                     Raw
                   </Typography>
                   <Typography gutterBottom variant="body1">
-                    {"9.99"}
+                    {cardPrice}
                   </Typography>
                 </Box>
               </CardContent>

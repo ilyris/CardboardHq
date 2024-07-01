@@ -20,6 +20,12 @@ interface ProductPriceData {
   subTypeName: string;
 }
 
+const convertFoilingLabel = (foiling: "S" | "C" | "R") => {
+  if (foiling === "S") return "Normal";
+  if (foiling === "R") return "Rainbow Foil";
+  if (foiling === "C") return "Cold Foil";
+};
+
 const loadCardPriceData = async (card: any) => {
   const FaBSetGroupData = await axios.get("https://tcgcsv.com/62/groups");
   const specificGroupId = FaBSetGroupData.data.results.find(
@@ -28,10 +34,14 @@ const loadCardPriceData = async (card: any) => {
   const FabCardPriceResults = await axios.get(
     `https://tcgcsv.com/62/${specificGroupId.groupId}/prices`
   );
+  const foilingType = convertFoilingLabel(card.foiling);
+  console.log({ foilingType });
+
   const FabCardPriceData: ProductPriceData[] = FabCardPriceResults.data.results;
   const FabPriceData = FabCardPriceData.find(
     (product: ProductPriceData) =>
-      String(product.productId) === card?.tcgplayer_product_id
+      String(product.productId) === card?.tcgplayer_product_id &&
+      foilingType === product.subTypeName
   );
   return FabPriceData;
 };

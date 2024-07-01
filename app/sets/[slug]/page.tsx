@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Container, Typography } from "@mui/material";
 import TcgCard from "@/app/components/TcgCard";
-import { Card } from "@/typings/FaBCard";
+import { Card, Printing } from "@/typings/FaBCard";
 import { CardSet } from "@/typings/FaBSet";
 import importLogo from "@/helpers/importLogo";
 import Header from "@/app/components/Header";
@@ -20,6 +20,7 @@ const SlugPage = () => {
   const [searchParams, setSearchParams] = useState<string | null>(null);
   const [cardData, setCardData] = useState<Card[]>([]);
   const [cardSet, setCardSet] = useState<CardSet | null>(null);
+  const [cardSetTotal, setCardSetTotal] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -32,6 +33,8 @@ const SlugPage = () => {
     try {
       const response = await getFaBCardData({ slug, page, pageSize: 12 });
       const newData = response.data.result;
+      const totalCards = response.data.total;
+      setCardSetTotal(totalCards);
       setCardData((prevData) => [...prevData, ...newData]);
 
       if (newData.length < 10) {
@@ -59,7 +62,8 @@ const SlugPage = () => {
       searchQuery: e.target.value,
     });
     const cardData = cardDataResults.data.result;
-
+    const totalCards = cardDataResults.data.total;
+    setCardSetTotal(totalCards);
     setCardData(cardData);
   };
 
@@ -114,7 +118,7 @@ const SlugPage = () => {
       <Header logo={logo} />
       <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
         <Typography variant="body2" mr={2}>
-          Cards: {cardData?.length}
+          Cards: {cardSetTotal}
         </Typography>
         <SearchBar
           value={searchParams ?? ""}
@@ -131,21 +135,26 @@ const SlugPage = () => {
       >
         {cardData &&
           cardSet &&
+          cardSet?.id &&
           cardData?.map((card, i) => {
             const cardImageUrl = getPrintingImageUrl(card, cardSet);
-            const cardId = card.printings.find(
-              (cardPrinting) => cardPrinting.set_id === cardSet?.id
-            )?.id;
-            return (
-              <TcgCard
-                ref={cardData.length === i + 1 ? lastElementRef : null}
-                key={card.unique_id + i}
-                image={cardImageUrl}
-                title={card.name}
-                slug={slug}
-                cardId={cardId || ""}
-              />
+            const data: Printing | undefined = card.printings.find(
+              (cardPrinting) => cardPrinting.set_id === cardSet.id
             );
+            if (data?.id) {
+              const cardId = data.id;
+              return (
+                <TcgCard
+                  ref={cardData.length === i + 1 ? lastElementRef : null}
+                  key={card.unique_id + i}
+                  image={cardImageUrl}
+                  title={card.name}
+                  slug={slug}
+                  cardId={cardId || ""}
+                  cardData={data}
+                />
+              );
+            }
           })}
       </Box>
     </Container>

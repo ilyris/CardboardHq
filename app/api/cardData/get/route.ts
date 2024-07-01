@@ -40,10 +40,13 @@ export async function GET(req: NextRequest) {
       const searchedCards = cardsBySetId.filter((card: Card) =>
         card.name.toUpperCase().includes(searchQuery.toUpperCase())
       );
-      return new Response(JSON.stringify({ result: searchedCards }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ result: searchedCards, total: searchedCards.length }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     if (!!cardId?.length) {
@@ -52,17 +55,26 @@ export async function GET(req: NextRequest) {
       );
 
       if (searchedCards)
-        return new Response(JSON.stringify({ result: searchedCards }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({
+            result: searchedCards,
+            total: searchedCards.length,
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
     }
 
     // Return JSON response
-    return new Response(JSON.stringify({ result: paginatedData }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ result: paginatedData, total: cardsBySetId.length }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
