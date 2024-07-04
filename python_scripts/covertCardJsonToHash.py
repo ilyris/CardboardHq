@@ -60,26 +60,51 @@ def convertCardDataToHashMap(cards: List[Dict]) -> Dict:
             set_id = printing.set_id
             if set_id not in hashMap:
                 hashMap[set_id] = []
-            hashMap[set_id].append({
-                'unique_id': card.unique_id,
-                'name': card.name,
-                'printings': [
-                    {
-                        'unique_id': printing.unique_id,
-                        'set_printing_unique_id': printing.set_printing_unique_id,
-                        'id': printing.id,
-                        'set_id': printing.set_id,
-                        'edition': printing.edition,
-                        'foiling': printing.foiling,
-                        'rarity': printing.rarity,
-                        'artist': printing.artist,
-                        'art_variation': printing.art_variation,
-                        'image_url': printing.image_url,
-                        'tcgplayer_product_id': printing.tcgplayer_product_id,
-                        'tcgplayer_url': printing.tcgplayer_url
-                    }
-                ]
-            })
+
+            # Check if card already exists in hashMap
+            card_found = False
+            for existing_card in hashMap[set_id]:
+                if existing_card['unique_id'] == card.unique_id:
+                    existing_card['printings'].extend([
+                        {
+                            'unique_id': printing.unique_id,
+                            'set_printing_unique_id': printing.set_printing_unique_id,
+                            'id': printing.id,
+                            'set_id': printing.set_id,
+                            'edition': printing.edition,
+                            'foiling': printing.foiling,
+                            'rarity': printing.rarity,
+                            'artist': printing.artist,
+                            'art_variation': printing.art_variation,
+                            'image_url': printing.image_url,
+                            'tcgplayer_product_id': printing.tcgplayer_product_id,
+                            'tcgplayer_url': printing.tcgplayer_url
+                        }
+                    ])
+                    card_found = True
+                    break
+
+            if not card_found:
+                hashMap[set_id].append({
+                    'unique_id': card.unique_id,
+                    'name': card.name,
+                    'printings': [
+                        {
+                            'unique_id': printing.unique_id,
+                            'set_printing_unique_id': printing.set_printing_unique_id,
+                            'id': printing.id,
+                            'set_id': printing.set_id,
+                            'edition': printing.edition,
+                            'foiling': printing.foiling,
+                            'rarity': printing.rarity,
+                            'artist': printing.artist,
+                            'art_variation': printing.art_variation,
+                            'image_url': printing.image_url,
+                            'tcgplayer_product_id': printing.tcgplayer_product_id,
+                            'tcgplayer_url': printing.tcgplayer_url
+                        }
+                    ]
+                })
 
     return hashMap
 

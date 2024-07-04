@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Typography, Skeleton } from "@mui/material";
 import TcgCard from "@/app/components/TcgCard";
 import { Card, Printing } from "@/typings/FaBCard";
 import { CardSet } from "@/typings/FaBSet";
@@ -149,32 +149,28 @@ const SlugPage = () => {
       >
         {!!cardData.length &&
           cardSet?.id &&
-          cardData?.map((card, i) => {
-            const cardImageUrl = getPrintingImageUrl(card, cardSet);
-            const data: Printing | undefined = card.printings.find(
-              (cardPrinting) => cardPrinting.set_id === cardSet.id
-            );
-
-            if (data?.id && !!cardsPriceData.length) {
-              const foilingType = convertFoilingLabel(
-                data.foiling as "S" | "R" | "C"
-              );
-              const cardPrice = loadCardPriceData(data, cardsPriceData);
-
-              return (
-                <TcgCard
-                  ref={cardData.length === i + 1 ? lastElementRef : null}
-                  key={card.unique_id + i}
-                  image={cardImageUrl}
-                  title={card.name}
-                  slug={slug}
-                  foiling={foilingType}
-                  cardPrice={cardPrice?.lowPrice}
-                  cardId={data.id || ""}
-                />
-              );
-            }
-          })}
+          cardData?.map((card, i) =>
+            card.printings.map((printing) => {
+              if (printing?.id && !!cardsPriceData.length) {
+                const foilingType = convertFoilingLabel(
+                  printing.foiling as "S" | "R" | "C"
+                );
+                const cardPrice = loadCardPriceData(printing, cardsPriceData);
+                return (
+                  <TcgCard
+                    ref={cardData.length === i + 1 ? lastElementRef : null}
+                    key={card.unique_id + i}
+                    image={printing.image_url}
+                    title={card.name}
+                    slug={slug}
+                    foiling={foilingType}
+                    cardPrice={cardPrice?.lowPrice}
+                    cardId={printing.id || ""}
+                  />
+                );
+              }
+            })
+          )}
       </Box>
     </Container>
   );

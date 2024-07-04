@@ -9,6 +9,7 @@ import Link from "next/link";
 import React, { forwardRef, useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import CardFoilingChip from "./CardFoilingChip";
+import FoilOverlay from "./FoilOverlay";
 
 interface TcgCardProps {
   image: string | undefined;
@@ -22,10 +23,15 @@ interface TcgCardProps {
 const TcgCard = forwardRef<HTMLAnchorElement, TcgCardProps>(
   ({ image, title, slug, cardId, cardPrice, foiling }, ref) => {
     const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
-
+    const isFoiled = foiling !== "Normal";
     return (
       <Link
-        href={`/sets/${slug}/${cardId}`}
+        href={{
+          pathname: `/sets/${slug}/${cardId}`,
+          query: {
+            foiling,
+          },
+        }}
         passHref
         style={{ flex: "1 0 auto", maxWidth: "20%" }}
       >
@@ -39,13 +45,17 @@ const TcgCard = forwardRef<HTMLAnchorElement, TcgCardProps>(
           }}
         >
           <CardActionArea>
-            <LazyLoadImage
-              alt={title}
-              height={"auto"}
-              src={image ?? ""}
-              width={"100%"}
-              onLoad={() => setHasImageLoaded(true)}
-            />
+            <Box sx={{ position: "relative" }}>
+              <LazyLoadImage
+                alt={title}
+                height={"auto"}
+                src={image ?? ""}
+                width={"100%"}
+                onLoad={() => setHasImageLoaded(true)}
+              />
+              {isFoiled && <FoilOverlay />}
+            </Box>
+
             {hasImageLoaded && (
               <CardContent sx={{ padding: 0, paddingTop: 1 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>

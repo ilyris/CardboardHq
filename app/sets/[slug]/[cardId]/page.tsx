@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -10,25 +10,36 @@ import {
   Button,
 } from "@mui/material";
 import importLogo from "@/helpers/importLogo";
-import { Card } from "@/typings/FaBCard";
+import { Card, Printing } from "@/typings/FaBCard";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import getPrintingImageUrl from "@/helpers/getCardPrintingImageUrl";
 import Image from "next/image";
 import TCGLineChart from "@/app/components/TCGLineChart";
 import data from "@/helpers/mockChartData";
 import LinkButton from "@/app/components/LinkButton";
-import { loadCardPriceData } from "@/helpers/getFaBCardPriceData";
 import getFaBCardData from "@/helpers/getFaBCardData";
-import getCardSet from "@/helpers/getSetData";
+import {
+  ProductPriceData,
+  fetchCardPriceData,
+  getGroupDataBySet,
+  loadCardPriceData,
+} from "@/helpers/getFaBCardPriceData";
+import invertFoiling from "@/helpers/invertFoiling";
+import FoilOverlay from "@/app/components/FoilOverlay";
 
 const CardPage = () => {
   const params = useParams<{ slug: string; cardId: string }>();
   const { slug, cardId } = params;
+  const searchParams = useSearchParams();
+  const foiling = searchParams.get("foiling");
+  const isFoiled = foiling !== "Normal";
 
   const [logo, setLogo] = useState<string | null>(null);
   const [cardData, setCardData] = useState<Card | null>(null);
-  const [CardPriceData, setCardPriceData] = useState<any | null>(null);
   const [cardImageUrl, setCardImageUrl] = useState<string>("");
+  const [cardPriceData, setCardPriceData] = useState<ProductPriceData | null>(
+    null
+  );
 
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
@@ -40,15 +51,24 @@ const CardPage = () => {
       loadLogo();
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId });
-        const cardData = cardDataResults.data.result;
-        const card = cardData?.printings.find((card) => card.id === cardId);
+        const cardData: Card = cardDataResults.data.result;
+        const card: Printing = cardData?.printings.find(
+          (card) =>
+            card.id === cardId && card.foiling === invertFoiling(foiling)
+        );
 
-        const cardPricing = await loadCardPriceData(card);
-        const cardSet = await getCardSet(slug);
+        const groupId = await getGroupDataBySet(card.set_id);
+        const allCardPriceData = await fetchCardPriceData(groupId);
+        const cardPricing = await loadCardPriceData(card, allCardPriceData);
+        if (cardPricing) setCardPriceData(cardPricing);
 
         setCardData(cardData);
-        setCardPriceData(cardPricing);
-        const imageUrl = getPrintingImageUrl(cardData, cardSet);
+
+        const imageUrl = getPrintingImageUrl(
+          cardData.printings,
+          cardId,
+          foiling
+        );
         setCardImageUrl(imageUrl ?? "");
       })();
     }
@@ -94,7 +114,7 @@ const CardPage = () => {
                 text={"TCGPlayer"}
               />
               <Typography variant="body2">
-                ${CardPriceData?.lowPrice}
+                ${cardPriceData?.lowPrice}
               </Typography>
             </Box>
 
@@ -116,6 +136,7 @@ const CardPage = () => {
                 src={cardImageUrl ?? ""}
                 width={400}
               />
+              {isFoiled && <FoilOverlay />}
             </CardActionArea>
           )}
         </Box>
