@@ -1,10 +1,27 @@
 import axios from "axios";
 
-const getFaBCardData = async (slug: string, cardId: string = "") => {
+interface FabDataProps {
+  slug: string;
+  searchQuery?: string;
+  cardId?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+const getFaBCardData = async ({
+  slug,
+  searchQuery,
+  cardId,
+  page,
+  pageSize,
+}: FabDataProps) => {
   const cardsData = await axios.get("/api/cardData/get", {
     params: {
       setName: slug,
-      cardId,
+      searchQuery: searchQuery || "",
+      cardId: cardId || "",
+      page: page || undefined,
+      pageSize: pageSize || undefined,
     },
   });
   return cardsData;

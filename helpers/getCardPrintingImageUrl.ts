@@ -1,15 +1,18 @@
-import { Card } from "@/typings/FaBCard";
-import { CardSet } from "@/typings/FaBSet";
+import { Printing } from "@/typings/FaBCard";
+import invertFoiling from "./invertFoiling";
 
 const getPrintingImageUrl = (
-  card: Card | null,
-  fabSetData: CardSet
+  printings: Printing[] | null,
+  cardId: string,
+  foiling: string | null
 ): string | undefined => {
-  const setId = fabSetData.id;
-
-  if (!card) return;
-  const printing = card.printings.find((printing) => printing.set_id === setId);
-  return printing ? printing.image_url : undefined;
+  if (!printings || !foiling) return;
+  return (
+    printings.find(
+      (printing) =>
+        printing.id === cardId && printing.foiling === invertFoiling(foiling)
+    )?.image_url || undefined
+  );
 };
 
 export default getPrintingImageUrl;
