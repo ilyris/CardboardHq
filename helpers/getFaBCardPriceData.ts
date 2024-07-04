@@ -1,4 +1,6 @@
 import axios from "axios";
+import convertFoilingLabel from "./convertFoilingLabel";
+import { Printing } from "@/typings/FaBCard";
 
 interface TCGCSVGroup {
   groupId: number;
@@ -10,7 +12,7 @@ interface TCGCSVGroup {
   categoryId: number;
 }
 
-interface ProductPriceData {
+export interface ProductPriceData {
   productId: string;
   lowPrice: number;
   midPrice: number;
@@ -20,29 +22,36 @@ interface ProductPriceData {
   subTypeName: string;
 }
 
-const convertFoilingLabel = (foiling: "S" | "C" | "R") => {
-  if (foiling === "S") return "Normal";
-  if (foiling === "R") return "Rainbow Foil";
-  if (foiling === "C") return "Cold Foil";
+// fetch set data, then store it in a db table?
+
+const getGroupDataBySet = async (setId: string) => {
+  // need to map [setSlug] to set_id
+  const FaBSetGroupData = await axios.get("https://tcgcsv.com/62/groups");
+  const groupId = FaBSetGroupData.data.results.find(
+    (group: TCGCSVGroup) => group.abbreviation === setId
+  ).groupId;
+  return groupId;
 };
 
-const loadCardPriceData = async (card: any) => {
-  const FaBSetGroupData = await axios.get("https://tcgcsv.com/62/groups");
-  const specificGroupId = FaBSetGroupData.data.results.find(
-    (group: TCGCSVGroup) => group.abbreviation === card?.set_id
-  );
+const fetchCardPriceData = async (groupId: number) => {
+  // fetches ALL prices & products for groupId
   const FabCardPriceResults = await axios.get(
-    `https://tcgcsv.com/62/${specificGroupId.groupId}/prices`
+    `https://tcgcsv.com/62/${groupId}/prices`
   );
-  const foilingType = convertFoilingLabel(card.foiling);
-  console.log({ foilingType });
+  return FabCardPriceResults.data.results;
+};
 
-  const FabCardPriceData: ProductPriceData[] = FabCardPriceResults.data.results;
-  const FabPriceData = FabCardPriceData.find(
+const loadCardPriceData = (
+  card: Printing,
+  cardsPriceData: ProductPriceData[]
+) => {
+  const foilingType = convertFoilingLabel(card.foiling as "S" | "R" | "C");
+
+  const FabPriceData = cardsPriceData.find(
     (product: ProductPriceData) =>
       String(product.productId) === card?.tcgplayer_product_id &&
       foilingType === product.subTypeName
   );
   return FabPriceData;
 };
-export default loadCardPriceData;
+export { loadCardPriceData, fetchCardPriceData, getGroupDataBySet };

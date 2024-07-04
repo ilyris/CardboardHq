@@ -11,6 +11,13 @@ import SearchBar from "@/app/components/SearchBar";
 import getPrintingImageUrl from "@/helpers/getCardPrintingImageUrl";
 import getFaBCardData from "@/helpers/getFaBCardData";
 import getCardSet from "@/helpers/getSetData";
+import convertFoilingLabel from "@/helpers/convertFoilingLabel";
+import {
+  ProductPriceData,
+  fetchCardPriceData,
+  getGroupDataBySet,
+  loadCardPriceData,
+} from "@/helpers/getFaBCardPriceData";
 
 const SlugPage = () => {
   const params = useParams<{ slug: string }>();
@@ -25,6 +32,7 @@ const SlugPage = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
+  const [cardsPriceData, setCardsPriceData] = useState<ProductPriceData[]>([]);
 
   const fetchMoreData = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -93,6 +101,11 @@ const SlugPage = () => {
       (async () => {
         const cardSet = await getCardSet(slug);
         setCardSet(cardSet);
+        if (cardSet?.id) {
+          const groupId = await getGroupDataBySet(cardSet.id);
+          const cardPriceData = await fetchCardPriceData(groupId);
+          setCardsPriceData(cardPriceData);
+        }
       })();
     }
   }, [slug]);
@@ -130,19 +143,24 @@ const SlugPage = () => {
         sx={{
           display: "flex",
           flexFlow: "row wrap",
-          justifyContent: "space-between",
+          marginLeft: "-40px",
+          marginTop: "40px",
         }}
       >
-        {cardData &&
-          cardSet &&
+        {!!cardData.length &&
           cardSet?.id &&
           cardData?.map((card, i) => {
             const cardImageUrl = getPrintingImageUrl(card, cardSet);
             const data: Printing | undefined = card.printings.find(
               (cardPrinting) => cardPrinting.set_id === cardSet.id
             );
-            if (data?.id) {
-              const cardId = data.id;
+
+            if (data?.id && !!cardsPriceData.length) {
+              const foilingType = convertFoilingLabel(
+                data.foiling as "S" | "R" | "C"
+              );
+              const cardPrice = loadCardPriceData(data, cardsPriceData);
+
               return (
                 <TcgCard
                   ref={cardData.length === i + 1 ? lastElementRef : null}
@@ -150,8 +168,9 @@ const SlugPage = () => {
                   image={cardImageUrl}
                   title={card.name}
                   slug={slug}
-                  cardId={cardId || ""}
-                  cardData={data}
+                  foiling={foilingType}
+                  cardPrice={cardPrice?.lowPrice}
+                  cardId={data.id || ""}
                 />
               );
             }

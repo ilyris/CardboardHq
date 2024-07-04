@@ -1,5 +1,3 @@
-import loadCardPriceData from "@/helpers/getFaBCardPriceData";
-import { Card as CardType, Printing } from "@/typings/FaBCard";
 import {
   Box,
   Card,
@@ -8,42 +6,36 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React, { forwardRef, useState, useEffect } from "react";
+import React, { forwardRef, useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import CardFoilingChip from "./CardFoilingChip";
 
 interface TcgCardProps {
   image: string | undefined;
   title: string;
   slug: string;
   cardId: string;
-  cardData: Printing;
+  cardPrice?: number;
+  foiling?: string;
 }
 
 const TcgCard = forwardRef<HTMLAnchorElement, TcgCardProps>(
-  ({ image, title, slug, cardId, cardData }, ref) => {
+  ({ image, title, slug, cardId, cardPrice, foiling }, ref) => {
     const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
-    const [cardPrice, setCardPrice] = useState<number | null>(null);
-
-    useEffect(() => {
-      if (cardId && cardData) {
-        (async () => {
-          const cardPricing = await loadCardPriceData(cardData);
-          console.log({ cardPricing });
-          if (cardPricing?.lowPrice) setCardPrice(cardPricing.lowPrice);
-        })();
-      }
-    }, [cardId, cardData]);
 
     return (
-      <Link href={`/sets/${slug}/${cardId}`} passHref>
+      <Link
+        href={`/sets/${slug}/${cardId}`}
+        passHref
+        style={{ flex: "1 0 auto", maxWidth: "20%" }}
+      >
         <Card
+          component="div"
           ref={ref}
           sx={{
-            width: 200,
-            minHeight: 340,
-            m: 2,
             backgroundColor: "transparent",
             boxShadow: "unset",
+            paddingLeft: 5,
           }}
         >
           <CardActionArea>
@@ -51,27 +43,34 @@ const TcgCard = forwardRef<HTMLAnchorElement, TcgCardProps>(
               alt={title}
               height={"auto"}
               src={image ?? ""}
-              width={200}
+              width={"100%"}
               onLoad={() => setHasImageLoaded(true)}
             />
             {hasImageLoaded && (
               <CardContent sx={{ padding: 0, paddingTop: 1 }}>
-                <Typography gutterBottom variant="h6">
-                  {title}
-                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography gutterBottom variant="body1">
+                    {title}
+                  </Typography>
+                  {foiling && <CardFoilingChip foiling={foiling} />}
+                </Box>
+
                 <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     borderTop: "1px solid #b1afaf",
+                    marginTop: 1,
                   }}
                 >
                   <Typography gutterBottom variant="body1">
                     Raw
                   </Typography>
-                  <Typography gutterBottom variant="body1">
-                    {cardPrice}
-                  </Typography>
+                  {cardPrice ?? (
+                    <Typography gutterBottom variant="body1">
+                      {cardPrice}
+                    </Typography>
+                  )}
                 </Box>
               </CardContent>
             )}

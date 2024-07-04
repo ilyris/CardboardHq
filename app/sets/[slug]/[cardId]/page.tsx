@@ -17,7 +17,7 @@ import Image from "next/image";
 import TCGLineChart from "@/app/components/TCGLineChart";
 import data from "@/helpers/mockChartData";
 import LinkButton from "@/app/components/LinkButton";
-import loadCardPriceData from "@/helpers/getFaBCardPriceData";
+import { loadCardPriceData } from "@/helpers/getFaBCardPriceData";
 import getFaBCardData from "@/helpers/getFaBCardData";
 import getCardSet from "@/helpers/getSetData";
 
