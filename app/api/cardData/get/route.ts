@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const searchQuery = req.nextUrl.searchParams.get("searchQuery");
     const cardId = req.nextUrl.searchParams.get("cardId");
     const sort = req.nextUrl.searchParams.get("sort");
+    const edition = req.nextUrl.searchParams.get("edition");
 
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to fit Set Name" }), {
@@ -23,12 +24,13 @@ export async function GET(req: NextRequest) {
     const setId = FaBSetDataJson.find(
       (set) => set.formatted_name.toUpperCase() === setName?.toUpperCase()
     )?.id;
+
     if (setId) {
       const cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .selectAll()
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
-        .where("printing_with_card_and_latest_pricing.edition", "=", "U");
+        .where("printing_with_card_and_latest_pricing.edition", "=", edition);
 
       // searched cards
       if (!!searchQuery?.length) {

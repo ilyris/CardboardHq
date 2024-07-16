@@ -32,6 +32,18 @@ export interface CardPrintingPriceView {
   market_price: number | null;
 }
 
+export interface CardPriceData {
+  product_id: number;
+  date: string;
+  sub_type_name: string;
+  low_price: string;
+  mid_price: string;
+  high_price: string;
+  market_price: string;
+  direct_low_price: string | null;
+}
+
 export interface Database {
   printing_with_card_and_latest_pricing: CardPrintingPriceView;
+  product_prices: CardPriceData;
 }

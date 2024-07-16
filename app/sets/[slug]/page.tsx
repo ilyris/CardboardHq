@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Box, Container, Typography, Skeleton } from "@mui/material";
 import TcgCard from "@/app/components/TcgCard";
@@ -16,10 +16,16 @@ import { CardPrintingPriceView } from "@/app/lib/db";
 
 const SlugPage = () => {
   const params = useParams<{ slug: string }>();
+  const searchParams = useSearchParams();
+
+  const edition = searchParams.get("edition") as string;
+  console.log({ edition });
   const slug = params.slug;
 
   const [logo, setLogo] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useState<string | null>(null);
+  const [searchQueryParams, setSearchQueryParams] = useState<string | null>(
+    null
+  );
   const [cardData, setCardData] = useState<CardPrintingPriceView[]>([]);
   const [cardSet, setCardSet] = useState<CardSet | null>(null);
   const [cardSetTotal, setCardSetTotal] = useState<number | null>(null);
@@ -32,11 +38,12 @@ const SlugPage = () => {
   };
 
   const handleCardSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchParams(e.target.value);
+    setSearchQueryParams(e.target.value);
 
     const cardDataResults = await getFaBCardData({
       slug,
       searchQuery: e.target.value,
+      edition,
     });
     const cardData = cardDataResults.data.result;
     const totalCards = cardDataResults.data.total;
@@ -47,7 +54,11 @@ const SlugPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await getFaBCardData({ slug, sort: activeSort });
+        const response = await getFaBCardData({
+          slug,
+          sort: activeSort,
+          edition,
+        });
         const newData = response.data.result;
         const totalCards = response.data.total;
 
@@ -79,7 +90,7 @@ const SlugPage = () => {
           Cards: {cardSetTotal}
         </Typography>
         <SearchBar
-          value={searchParams ?? ""}
+          value={searchQueryParams ?? ""}
           placeholder={"Search a card"}
           onChange={(e) => handleCardSearch(e)}
         />

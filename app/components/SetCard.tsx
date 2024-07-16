@@ -3,42 +3,63 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { CardActionArea, Link, Skeleton } from "@mui/material";
+import { Box, CardActionArea, Link, Skeleton } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 interface SetCardProps {
   assetFilePath: string;
   logo: string;
   title: string;
+  edition: string;
 }
 
-const SetCard: React.FC<SetCardProps> = ({ assetFilePath, logo, title }) => {
+const SetCard: React.FC<SetCardProps> = ({
+  assetFilePath,
+  logo,
+  title,
+  edition,
+}) => {
   const [hasImageLoaded, setHasImageLoaded] = React.useState<boolean>(false);
 
+  console.log({ edition });
+
   return (
-    <Link underline="none" href={`/sets/${title.replace(/\s+/g, "-")}`}>
+    <Link
+      underline="none"
+      href={`/sets/${title.replace(/\s+/g, "-")}?edition=${edition}`}
+      sx={{ margin: 0 }}
+    >
       <Card
         sx={{
-          width: 300,
+          width: 405,
+          height: 300,
           m: 2,
           backgroundColor: "transparent",
           boxShadow: "unset",
         }}
       >
-        <CardActionArea>
+        <CardActionArea sx={{ position: "relative" }}>
+          <Box
+            sx={{
+              backgroundColor: "#e7f0fe",
+              position: "absolute",
+              width: "100px",
+              zIndex: 100,
+              top: 0,
+              left: 0,
+              fontSize: "20px",
+              textAlign: "center",
+              fontWeight: "bold",
+              padding: "5px",
+            }}
+          >
+            {edition === "F" || edition === "A" ? "1st Ed" : "Unlimited"}
+          </Box>
           <div style={{ position: "relative" }}>
-            {/* {!hasImageLoaded && <Skeleton height={300} width={"100%"} />} */}
-            {/* <LazyLoadImage
-              alt={title}
-              height={"auto"}
-              src={assetFilePath ?? ""}
-              width={"100%"}
-              onLoad={() => setHasImageLoaded(true)}
-            /> */}
             <CardMedia
               component="img"
               image={assetFilePath}
-              sx={{ borderRadius: "15px", height: "150px" }}
+              sx={{ borderRadius: "15px", maxHeight: 225 }}
             />
             <div
               style={{
@@ -46,7 +67,7 @@ const SetCard: React.FC<SetCardProps> = ({ assetFilePath, logo, title }) => {
                 position: "absolute",
                 top: "50%",
                 left: "50%",
-                transform: "translate(-50%, -50%)",
+                transform: "translate(-36%, -50%)",
                 width: "75%",
               }}
             >
@@ -62,7 +83,10 @@ const SetCard: React.FC<SetCardProps> = ({ assetFilePath, logo, title }) => {
               <CardMedia
                 component="img"
                 image={logo}
-                sx={{ filter: "drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5))" }}
+                sx={{
+                  filter: "drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5))",
+                  width: "75%",
+                }}
               />
             </div>
           </div>
