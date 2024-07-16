@@ -18,7 +18,7 @@ const Header = ({ logo }) => {
 
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-
+  console.log(slug.toLocaleLowerCase().replace(/-to-|-of-/gi, "-"));
   return (
     <Box component="header" sx={{ ...headerStyles }}>
       <Box>
@@ -44,7 +44,9 @@ const Header = ({ logo }) => {
           <Typography variant="body2" pl={1}>
             {formatDate(
               FaBSetDataJson.find(
-                (set) => set.formatted_name === slug.toLocaleLowerCase()
+                (set) =>
+                  set.formatted_name ===
+                  slug.toLocaleLowerCase().replace(/-to-|-of-/gi, "-")
               ).printings[0].initial_release_date
             )}
           </Typography>

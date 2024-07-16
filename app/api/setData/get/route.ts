@@ -15,7 +15,9 @@ export async function GET(req: NextRequest) {
   }
 
   const filteredFabSet = FaBSetDataJson.find(
-    (set) => set.formatted_name.toUpperCase() === setName.toUpperCase()
+    (set) =>
+      set.formatted_name.toUpperCase() ===
+      setName.toUpperCase().replace(/-to-|-of-/gi, "-")
   );
 
   if (filteredFabSet) {

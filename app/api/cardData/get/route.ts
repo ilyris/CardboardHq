@@ -22,7 +22,9 @@ export async function GET(req: NextRequest) {
       });
 
     const setId = FaBSetDataJson.find(
-      (set) => set.formatted_name.toUpperCase() === setName?.toUpperCase()
+      (set) =>
+        set.formatted_name.toUpperCase() ===
+        setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
     )?.id;
 
     if (setId) {
@@ -89,7 +91,6 @@ export async function GET(req: NextRequest) {
           orderQuery = cardsBySetIdQuery.orderBy(sql`low_price ASC NULLS LAST`);
         }
         const allCardsBySetId = await orderQuery.execute();
-
         // Return JSON response
         return new Response(
           JSON.stringify({

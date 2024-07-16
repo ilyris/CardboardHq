@@ -19,6 +19,7 @@ import getFaBCardData from "@/helpers/getFaBCardData";
 import FoilOverlay from "@/app/components/FoilOverlay";
 import { CardPrintingPriceView } from "@/app/lib/db";
 import { fetchCardPriceData } from "@/helpers/getFaBCardPriceData";
+import convertFoilingLabel from "@/helpers/convertFoilingLabel";
 
 type Month =
   | "01"
@@ -89,13 +90,16 @@ const CardPage = () => {
     const importedLogo = await importLogo(slug);
     setLogo(importedLogo);
   };
-
   useEffect(() => {
     if (cardId) {
       loadLogo();
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId, edition });
-        const cardData: CardPrintingPriceView = cardDataResults.data.result[0];
+        const cardData: CardPrintingPriceView =
+          cardDataResults.data.result.find(
+            (card) =>
+              foiling?.replace(/\+/g, " ") === convertFoilingLabel(card.foiling)
+          );
         setCardData(cardData);
 
         if (foiling) {
