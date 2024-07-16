@@ -16,13 +16,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   return (
     <TextField
-      sx={{ marginRight: "20px" }}
+      sx={{
+        marginRight: "20px",
+        backgroundColor: "#fff",
+        "& .MuiInputBase-input": {
+          fontSize: "1.2rem",
+          height: "20px",
+        },
+      }}
       variant="outlined"
       size="small"
       placeholder={placeholder || "Search..."}
       value={value}
       onChange={onChange}
-      InputProps={{
+      inputProps={{
         startAdornment: (
           <InputAdornment position="start" onClick={() => console.log(value)}>
             <SearchIcon />

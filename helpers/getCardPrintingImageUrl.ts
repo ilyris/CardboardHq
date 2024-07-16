@@ -2,11 +2,11 @@ import { Printing } from "@/typings/FaBCard";
 import invertFoiling from "./invertFoiling";
 
 const getPrintingImageUrl = (
-  printings: Printing[] | null,
+  image_url: string,
   cardId: string,
   foiling: string | null
 ): string | undefined => {
-  if (!printings || !foiling) return;
+  if (!image_url || !foiling) return;
   return (
     printings.find(
       (printing) =>

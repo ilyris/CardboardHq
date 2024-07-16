@@ -6,6 +6,7 @@ interface FabDataProps {
   cardId?: string;
   page?: number;
   pageSize?: number;
+  sort?: string;
 }
 
 const getFaBCardData = async ({
@@ -14,6 +15,7 @@ const getFaBCardData = async ({
   cardId,
   page,
   pageSize,
+  sort,
 }: FabDataProps) => {
   const cardsData = await axios.get("/api/cardData/get", {
     params: {
@@ -22,6 +24,7 @@ const getFaBCardData = async ({
       cardId: cardId || "",
       page: page || undefined,
       pageSize: pageSize || undefined,
+      sort: sort || "high to low",
     },
   });
   return cardsData;

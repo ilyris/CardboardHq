@@ -10,22 +10,14 @@ import {
   Button,
 } from "@mui/material";
 import importLogo from "@/helpers/importLogo";
-import { Card, Printing } from "@/typings/FaBCard";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import getPrintingImageUrl from "@/helpers/getCardPrintingImageUrl";
 import Image from "next/image";
 import TCGLineChart from "@/app/components/TCGLineChart";
-import data from "@/helpers/mockChartData";
+import data from "@/helpers/mockChartData"; // We need to now pull in the market data.
 import LinkButton from "@/app/components/LinkButton";
 import getFaBCardData from "@/helpers/getFaBCardData";
-import {
-  ProductPriceData,
-  fetchCardPriceData,
-  getGroupDataBySet,
-  loadCardPriceData,
-} from "@/helpers/getFaBCardPriceData";
-import invertFoiling from "@/helpers/invertFoiling";
 import FoilOverlay from "@/app/components/FoilOverlay";
+import { CardPrintingPriceView } from "@/app/lib/db";
 
 const CardPage = () => {
   const params = useParams<{ slug: string; cardId: string }>();
@@ -35,11 +27,7 @@ const CardPage = () => {
   const isFoiled = foiling !== "Normal";
 
   const [logo, setLogo] = useState<string | null>(null);
-  const [cardData, setCardData] = useState<Card | null>(null);
-  const [cardImageUrl, setCardImageUrl] = useState<string>("");
-  const [cardPriceData, setCardPriceData] = useState<ProductPriceData | null>(
-    null
-  );
+  const [cardData, setCardData] = useState<CardPrintingPriceView | null>(null);
 
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
@@ -51,25 +39,8 @@ const CardPage = () => {
       loadLogo();
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId });
-        const cardData: Card = cardDataResults.data.result;
-        const card: Printing = cardData?.printings.find(
-          (card) =>
-            card.id === cardId && card.foiling === invertFoiling(foiling)
-        );
-
-        const groupId = await getGroupDataBySet(card.set_id);
-        const allCardPriceData = await fetchCardPriceData(groupId);
-        const cardPricing = await loadCardPriceData(card, allCardPriceData);
-        if (cardPricing) setCardPriceData(cardPricing);
-
+        const cardData: CardPrintingPriceView = cardDataResults.data.result[0];
         setCardData(cardData);
-
-        const imageUrl = getPrintingImageUrl(
-          cardData.printings,
-          cardId,
-          foiling
-        );
-        setCardImageUrl(imageUrl ?? "");
       })();
     }
   }, [cardId, slug]);
@@ -97,7 +68,7 @@ const CardPage = () => {
               {cardId}
             </Typography>
           </Box>
-          <Typography variant="h2">{cardData?.name}</Typography>
+          <Typography variant="h2">{cardData?.card_name}</Typography>
           <Box
             mt={3}
             sx={{
@@ -107,15 +78,14 @@ const CardPage = () => {
           >
             <Box mr={3}>
               <LinkButton
-                hrefUrl={
-                  cardData?.printings.find((card) => card.id === cardId)
-                    ?.tcgplayer_url
-                }
+                hrefUrl={cardData?.tcgplayer_url}
                 text={"TCGPlayer"}
               />
-              <Typography variant="body2">
-                ${cardPriceData?.lowPrice}
-              </Typography>
+              {cardData?.low_price && (
+                <Typography variant="body2">
+                  ${cardData.low_price ?? "Price Not Found"}
+                </Typography>
+              )}
             </Box>
 
             <Box mr={3}>
@@ -131,12 +101,12 @@ const CardPage = () => {
           {!!cardData && (
             <CardActionArea>
               <LazyLoadImage
-                alt={cardData.name}
+                alt={cardData.card_name}
                 height={"auto"}
-                src={cardImageUrl ?? ""}
+                src={cardData.image_url ?? ""}
                 width={400}
               />
-              {isFoiled && <FoilOverlay />}
+              {isFoiled && <FoilOverlay foiling={foiling ?? undefined} />}
             </CardActionArea>
           )}
         </Box>

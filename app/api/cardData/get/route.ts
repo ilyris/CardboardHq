@@ -1,62 +1,47 @@
 import fabSetData from "@/app/jsonData/FaBSet.json";
-import FaBCardData from "@/app/jsonData/FaBCardData.json";
-import { Card } from "@/typings/FaBCard";
 import { CardSet } from "@/typings/FaBSet";
 import { NextRequest } from "next/server";
+import { db } from "../../../lib/db";
+import { sql } from "kysely";
 
 // Named export for the POST method
 export async function GET(req: NextRequest) {
+  const FaBSetDataJson: CardSet[] = fabSetData as CardSet[];
+
   try {
-    const page = req.nextUrl.searchParams.get("page");
-    const pageNumber = parseInt(page) || 1;
-    const pageSize = parseInt(req.nextUrl.searchParams.get("pageSize")) || 10;
-
-    const FaBCardDataJson: Card[] = FaBCardData as Card[];
-    const FaBSetDataJson: CardSet[] = fabSetData as CardSet[];
-
     const setName = req.nextUrl.searchParams.get("setName");
     const searchQuery = req.nextUrl.searchParams.get("searchQuery");
     const cardId = req.nextUrl.searchParams.get("cardId");
+    const sort = req.nextUrl.searchParams.get("sort");
 
-    const setId = FaBSetDataJson.find(
-      (set) => set.formatted_name.toUpperCase() === setName?.toUpperCase()
-    )?.id;
-
-    if (!setName) {
+    if (!setName)
       return new Response(JSON.stringify({ error: "Failed to fit Set Name" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
-    }
 
-    // our individual card data
-    const cardsBySetId = FaBCardDataJson[setId];
-    const paginatedData = cardsBySetId.slice(
-      (pageNumber - 1) * pageSize,
-      pageNumber * pageSize
-    );
+    const setId = FaBSetDataJson.find(
+      (set) => set.formatted_name.toUpperCase() === setName?.toUpperCase()
+    )?.id;
+    if (setId) {
+      const cardsBySetIdQuery = db
+        .selectFrom("printing_with_card_and_latest_pricing")
+        .selectAll()
+        .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
+        .where("printing_with_card_and_latest_pricing.edition", "=", "U");
 
-    // searched cards
-    if (!!searchQuery?.length) {
-      const searchedCards = cardsBySetId.filter((card: Card) =>
-        card.name.toUpperCase().includes(searchQuery.toUpperCase())
-      );
-      return new Response(
-        JSON.stringify({ result: searchedCards, total: searchedCards.length }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+      // searched cards
+      if (!!searchQuery?.length) {
+        const searchedCardQuery = searchQuery
+          ? cardsBySetIdQuery.where(
+              "printing_with_card_and_latest_pricing.card_name",
+              "ilike",
+              `%${searchQuery}%`
+            )
+          : cardsBySetIdQuery;
 
-    // initial set page render
-    if (!!cardId?.length) {
-      const searchedCards = paginatedData.find((card: Card) =>
-        card.printings.some((j) => j.id === cardId)
-      );
+        const searchedCards = await searchedCardQuery.execute();
 
-      if (searchedCards)
         return new Response(
           JSON.stringify({
             result: searchedCards,
@@ -67,16 +52,55 @@ export async function GET(req: NextRequest) {
             headers: { "Content-Type": "application/json" },
           }
         );
-    }
-
-    // Return JSON response
-    return new Response(
-      JSON.stringify({ result: paginatedData, total: cardsBySetId.length }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
       }
-    );
+
+      if (!!cardId?.length) {
+        const specificCardIdQuery = cardId.length
+          ? cardsBySetIdQuery.where(
+              "printing_with_card_and_latest_pricing.printing_id",
+              "ilike",
+              `%${cardId}%`
+            )
+          : cardsBySetIdQuery;
+
+        const specificCardByCardId = await specificCardIdQuery.execute();
+
+        if (specificCardByCardId)
+          return new Response(
+            JSON.stringify({
+              result: specificCardByCardId,
+              total: specificCardByCardId.length,
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+      }
+
+      if (!!sort?.length) {
+        let orderQuery = cardsBySetIdQuery.orderBy(
+          sql`low_price DESC NULLS LAST`
+        );
+
+        if (sort === "low to high") {
+          orderQuery = cardsBySetIdQuery.orderBy(sql`low_price ASC NULLS LAST`);
+        }
+        const allCardsBySetId = await orderQuery.execute();
+
+        // Return JSON response
+        return new Response(
+          JSON.stringify({
+            result: allCardsBySetId,
+            total: allCardsBySetId.length,
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
