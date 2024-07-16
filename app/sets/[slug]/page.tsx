@@ -19,7 +19,6 @@ const SlugPage = () => {
   const searchParams = useSearchParams();
 
   const edition = searchParams.get("edition") as string;
-  console.log({ edition });
   const slug = params.slug;
 
   const [logo, setLogo] = useState<string | null>(null);

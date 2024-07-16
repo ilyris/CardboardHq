@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
     const foiling = req.nextUrl.searchParams.get("foiling");
     const productId = req.nextUrl.searchParams.get("productId");
     const edition = req.nextUrl.searchParams.get("edition");
-    console.log({ foiling });
 
     let editionString = "";
     switch (edition) {
