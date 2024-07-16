@@ -18,6 +18,7 @@ interface TcgCardProps {
   cardId: string;
   cardPrice: number | null;
   foiling?: string;
+  edition: string;
 }
 
 const TcgCard: React.FC<TcgCardProps> = ({
@@ -27,6 +28,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
   cardId,
   cardPrice,
   foiling,
+  edition,
 }) => {
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
   const isFoiled = foiling !== "Normal";
@@ -36,6 +38,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
         pathname: `/sets/${slug}/${cardId}`,
         query: {
           foiling,
+          edition,
         },
       }}
       passHref

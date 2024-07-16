@@ -2,17 +2,38 @@ import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
 
 export async function GET(req: NextRequest) {
-  // ARC159?foiling=Normal
-
   try {
     const foiling = req.nextUrl.searchParams.get("foiling");
     const productId = req.nextUrl.searchParams.get("productId");
+    const edition = req.nextUrl.searchParams.get("edition");
+    console.log({ foiling });
+
+    let editionString = "";
+    switch (edition) {
+      case "F":
+        editionString = "1st Edition";
+        break;
+      case "A":
+        editionString = "1st Edition";
+        break;
+      case "U":
+        editionString = "Unlimited Edition";
+      case "N":
+        editionString = "Unlimited Edition";
+        break;
+      default:
+        break;
+    }
 
     const cardPriceQuery = await db
       .selectFrom("product_prices")
       .selectAll()
       .where("product_prices.product_id", "=", Number(productId))
-      .where("product_prices.sub_type_name", "=", "Unlimited Edition Normal")
+      .where(
+        "product_prices.sub_type_name",
+        "ilike",
+        `%${editionString} ${foiling}%`
+      )
       .execute();
 
     // need to massage the data to the object structure we need.

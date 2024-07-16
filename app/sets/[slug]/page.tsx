@@ -125,6 +125,7 @@ const SlugPage = () => {
                 foiling={foilingType}
                 cardPrice={card.low_price}
                 cardId={card.printing_id || ""}
+                edition={card.edition}
               />
             );
           })}

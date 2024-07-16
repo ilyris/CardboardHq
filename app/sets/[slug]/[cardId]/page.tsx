@@ -72,6 +72,7 @@ const CardPage = () => {
   const { slug, cardId } = params;
   const searchParams = useSearchParams();
   const foiling = searchParams.get("foiling");
+  const edition = searchParams.get("edition") as string;
   const isFoiled = foiling !== "Normal";
 
   const [logo, setLogo] = useState<string | null>(null);
@@ -93,7 +94,7 @@ const CardPage = () => {
     if (cardId) {
       loadLogo();
       (async () => {
-        const cardDataResults = await getFaBCardData({ slug, cardId });
+        const cardDataResults = await getFaBCardData({ slug, cardId, edition });
         const cardData: CardPrintingPriceView = cardDataResults.data.result[0];
         setCardData(cardData);
 
