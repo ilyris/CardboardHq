@@ -3,6 +3,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  styled,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import React, { useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import CardFoilingChip from "./CardFoilingChip";
 import FoilOverlay from "./FoilOverlay";
+import convertFoilingLabel from "@/helpers/convertFoilingLabel";
 
 interface TcgCardProps {
   image: string | undefined;
@@ -17,8 +19,9 @@ interface TcgCardProps {
   slug: string;
   cardId: string;
   cardPrice: number | null;
-  foiling?: string;
+  foiling: "S" | "C" | "R";
   edition: string;
+  featured?: boolean;
 }
 
 const TcgCard: React.FC<TcgCardProps> = ({
@@ -29,9 +32,12 @@ const TcgCard: React.FC<TcgCardProps> = ({
   cardPrice,
   foiling,
   edition,
+  featured,
 }) => {
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
-  const isFoiled = foiling !== "Normal";
+  const formattedFoiling = convertFoilingLabel(foiling);
+  const isFoiled = formattedFoiling !== "Normal";
+
   return (
     <Link
       href={{
@@ -42,14 +48,17 @@ const TcgCard: React.FC<TcgCardProps> = ({
         },
       }}
       passHref
-      style={{ flex: "1 0 auto", maxWidth: "20%" }}
+      style={{
+        flex: "1 0 auto",
+        maxWidth: "20%",
+        marginBottom: featured ? 0 : 20,
+      }}
     >
       <Card
-        component="div"
         sx={{
           backgroundColor: "transparent",
           boxShadow: "unset",
-          paddingLeft: 5,
+          paddingLeft: featured ? 0 : 5,
         }}
       >
         <CardActionArea>
@@ -58,10 +67,10 @@ const TcgCard: React.FC<TcgCardProps> = ({
               alt={title}
               height={"auto"}
               src={image ?? ""}
-              width={"100%"}
+              width={featured ? 230 : "100%"}
               onLoad={() => setHasImageLoaded(true)}
             />
-            {isFoiled && <FoilOverlay foiling={foiling} />}
+            {isFoiled && <FoilOverlay foiling={formattedFoiling} />}
           </Box>
 
           {hasImageLoaded && (
@@ -70,7 +79,9 @@ const TcgCard: React.FC<TcgCardProps> = ({
                 <Typography gutterBottom variant="body1">
                   {title}
                 </Typography>
-                {foiling && <CardFoilingChip foiling={foiling} />}
+                {formattedFoiling && (
+                  <CardFoilingChip foiling={formattedFoiling} />
+                )}
               </Box>
 
               <Box

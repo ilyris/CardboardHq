@@ -1,28 +1,33 @@
 import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
+import convertFoilingLabel from "@/helpers/convertFoilingLabel";
+
+const convertEditionFoilString = (edition: string, foiling: string) => {
+  if (edition === "N") {
+    if (foiling === "S") return "Normal";
+    if (foiling === "C") return "Cold Foil";
+    if (foiling === "R") return "Rainbow Foil";
+  }
+
+  if (edition === "F" || edition === "A") {
+    if (foiling === "S") return "1st Edition Normal";
+    if (foiling === "C") return "1st Edition Cold Foil";
+    if (foiling === "R") return "1st Edition Rainbow Foil";
+  }
+
+  if (edition === "U") {
+    if (foiling === "S") return "Unlimited Edition Normal";
+    if (foiling === "C") return "Unlimited Edition Cold Foil";
+    if (foiling === "R") return "Unlimited Edition Rainbow Foil";
+  }
+  return "Normal";
+};
 
 export async function GET(req: NextRequest) {
   try {
     const foiling = req.nextUrl.searchParams.get("foiling");
     const productId = req.nextUrl.searchParams.get("productId");
     const edition = req.nextUrl.searchParams.get("edition");
-
-    let editionString = "";
-    switch (edition) {
-      case "F":
-        editionString = "1st Edition";
-        break;
-      case "A":
-        editionString = "1st Edition";
-        break;
-      case "U":
-        editionString = "Unlimited Edition";
-      case "N":
-        editionString = "Unlimited Edition";
-        break;
-      default:
-        break;
-    }
 
     const cardPriceQuery = await db
       .selectFrom("product_prices")
@@ -31,10 +36,10 @@ export async function GET(req: NextRequest) {
       .where(
         "product_prices.sub_type_name",
         "ilike",
-        `%${editionString} ${foiling}%`
+        `%${convertEditionFoilString(edition as string, foiling as string)}%`
       )
       .execute();
-
+    console.log(convertEditionFoilString(edition as string, foiling as string));
     // need to massage the data to the object structure we need.
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
       const UTCDate = new Date(priceObj.date);

@@ -10,11 +10,16 @@ export interface ProductPriceData {
   subTypeName: string;
 }
 
-const fetchCardPriceData = async (productId: string, foiling: string) => {
+const fetchCardPriceData = async (
+  productId: string,
+  foiling: string,
+  edition: string
+) => {
   const FabCardPriceResults = await axios.get("/api/cardPriceData/get", {
     params: {
       productId: productId || "",
       foiling,
+      edition,
     },
   });
   return FabCardPriceResults.data.results;

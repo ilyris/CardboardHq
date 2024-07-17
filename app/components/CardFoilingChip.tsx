@@ -1,5 +1,6 @@
 import Chip from "@mui/material/Chip";
 import React from "react";
+import theme from "../theme";
 
 interface CardFoilingChipProps {
   foiling: string;
@@ -16,9 +17,10 @@ const foilingChipStyles = (foilingLabel: string | undefined) => {
     case "Cold Foil":
       return {
         backgroundColor: "#ffea65",
+        color: theme.palette.background.default,
       };
     default:
-      return {};
+      return { backgroundColor: theme.palette.primary.main };
   }
 };
 

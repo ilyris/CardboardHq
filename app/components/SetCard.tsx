@@ -5,6 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Box, CardActionArea, Link, Skeleton } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import theme from "../theme";
 
 interface SetCardProps {
   assetFilePath: string;
@@ -20,9 +21,6 @@ const SetCard: React.FC<SetCardProps> = ({
   edition,
 }) => {
   const [hasImageLoaded, setHasImageLoaded] = React.useState<boolean>(false);
-
-  console.log({ edition });
-
   return (
     <Link
       underline="none"
@@ -41,16 +39,18 @@ const SetCard: React.FC<SetCardProps> = ({
         <CardActionArea sx={{ position: "relative" }}>
           <Box
             sx={{
-              backgroundColor: "#e7f0fe",
+              backgroundColor: theme.palette.background.default,
               position: "absolute",
               width: "100px",
-              zIndex: 100,
               top: 0,
-              left: 0,
               fontSize: "20px",
               textAlign: "center",
               fontWeight: "bold",
-              padding: "5px",
+              right: 0,
+              zIndex: 10,
+              padding: 1,
+              display: "flex",
+              borderBottomLeftRadius: "10px",
             }}
           >
             {edition === "F" || edition === "A" ? "1st Ed" : "Unlimited"}

@@ -2,6 +2,7 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import theme from "../theme";
 
 interface SearchBarProps {
   value: string;
@@ -22,6 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         "& .MuiInputBase-input": {
           fontSize: "1.2rem",
           height: "20px",
+          color: theme.palette.background.default,
         },
       }}
       variant="outlined"

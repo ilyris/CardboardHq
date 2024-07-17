@@ -95,17 +95,18 @@ const CardPage = () => {
       loadLogo();
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId, edition });
+
         const cardData: CardPrintingPriceView =
           cardDataResults.data.result.find(
-            (card) =>
-              foiling?.replace(/\+/g, " ") === convertFoilingLabel(card.foiling)
+            (card) => foiling?.replace(/\+/g, " ") === card.foiling
           );
         setCardData(cardData);
 
         if (foiling) {
           const cardPriceData = await fetchCardPriceData(
             cardData.tcgplayer_product_id,
-            foiling
+            foiling,
+            edition
           );
           setCardPriceHistoryData(cardPriceData);
         }
@@ -150,7 +151,7 @@ const CardPage = () => {
                 text={"TCGPlayer"}
               />
               {cardData?.low_price && (
-                <Typography variant="body2">
+                <Typography variant="h6" color={"#34e334"}>
                   ${cardData.low_price ?? "Price Not Found"}
                 </Typography>
               )}
@@ -158,7 +159,9 @@ const CardPage = () => {
 
             <Box mr={3}>
               <Button variant="contained">Ebay</Button>
-              <Typography variant="body2">Placeholder Price</Typography>
+              <Typography variant="h6" color={"#34e334"}>
+                Placeholder Price
+              </Typography>
             </Box>
           </Box>
           <Box mt={3}>

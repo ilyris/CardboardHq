@@ -43,7 +43,26 @@ export interface CardPriceData {
   direct_low_price: string | null;
 }
 
+export interface AllCardPrintingView {
+  printing_unique_id: string;
+  set_printing_unique_id: string;
+  printing_id: string;
+  set_id: string;
+  edition: string;
+  foiling: string;
+  artist: string;
+  image_url: string;
+  tcgplayer_product_id: string;
+  tcgplayer_url: string;
+  card_unique_id: string;
+  card_name: string;
+  low_price: number | null;
+  market_price: number | null;
+  price_date: string;
+}
+
 export interface Database {
   printing_with_card_and_latest_pricing: CardPrintingPriceView;
   product_prices: CardPriceData;
+  all_printings_with_card_prices_weekly: AllCardPrintingView;
 }

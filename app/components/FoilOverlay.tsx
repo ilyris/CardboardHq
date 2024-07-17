@@ -19,7 +19,7 @@ const FoilOverlay: React.FC<FoilOverlayProps> = ({ foiling }) => {
       : { backgroundColor: "none" }),
 
     opacity: 0.4,
-    borderRadius: "20px",
+    borderRadius: "10px",
   };
 
   return <Box sx={styleObject}></Box>;

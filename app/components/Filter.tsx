@@ -1,6 +1,7 @@
 import React, { useState, FC } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem } from "@mui/material";
+import theme from "../theme";
 
 interface FilterProps {
   options: { text: string; option: string }[];
@@ -20,6 +21,7 @@ const Filter: FC<FilterProps> = ({ options, onCallback }) => {
       sx={{
         backgroundColor: "#fff",
         "& .MuiSelect-select": {
+          color: theme.palette.background.default,
           paddingRight: 4,
           paddingLeft: 2,
           paddingTop: 1,
@@ -34,7 +36,7 @@ const Filter: FC<FilterProps> = ({ options, onCallback }) => {
     >
       {options.map((option) => (
         <MenuItem
-          sx={{ padding: 1 }}
+          sx={{ padding: 1, color: theme.palette.background.default }}
           key={option.option}
           data-value={option.option}
           value={option.option}

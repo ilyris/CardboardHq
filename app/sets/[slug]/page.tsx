@@ -112,16 +112,13 @@ const SlugPage = () => {
         {!!cardData.length &&
           cardSet?.id &&
           cardData?.map((card) => {
-            const foilingType = convertFoilingLabel(
-              card.foiling as "S" | "R" | "C"
-            );
             return (
               <TcgCard
                 key={card.printing_unique_id}
                 image={card.image_url}
                 title={card.card_name}
                 slug={slug}
-                foiling={foilingType}
+                foiling={card.foiling as "S" | "C" | "R"}
                 cardPrice={card.low_price}
                 cardId={card.printing_id || ""}
                 edition={card.edition}

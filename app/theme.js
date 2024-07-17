@@ -4,18 +4,18 @@ import { createTheme } from "@mui/material/styles";
 export const theme = createTheme({
   palette: {
     primary: {
-      main: "#0D47A1",
+      main: "#B9B4C7",
     },
     secondary: {
-      main: "#5472D3",
+      main: "#5C5470",
     },
     background: {
-      default: "#E3F2FD",
+      default: "#352F44",
       paper: "#FFFFFF",
     },
     text: {
-      primary: "#001F3F",
-      secondary: "#B0BEC5",
+      primary: "#FFFFFF",
+      secondary: "#B9B4C7",
     },
   },
   breakpoints: {
@@ -31,9 +31,9 @@ export const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
-          color: "#0D47A1",
+          color: "#B9B4C7",
           "&:hover": {
-            color: "#5472D3",
+            color: "#FAF0E6",
           },
           textDecoration: "none",
           margin: ".8rem",

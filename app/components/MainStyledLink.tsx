@@ -14,11 +14,11 @@ const MainStyledLink = styled(NextLink)<CustomLinkProps>(
     backgroundColor: primary
       ? theme.palette.secondary.main
       : theme.palette.secondary.dark,
-    color: "white",
+    color: theme.palette.text.primary,
+    fontWeight: "bold",
     padding: "8px 16px",
     textDecoration: "none",
     "&:hover": {
-      color: "white",
       backgroundColor: theme.palette.secondary.dark,
     },
   })
