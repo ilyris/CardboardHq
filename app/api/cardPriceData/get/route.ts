@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
-import convertFoilingLabel from "@/helpers/convertFoilingLabel";
 
 const convertEditionFoilString = (edition: string, foiling: string) => {
   if (edition === "N") {
@@ -39,7 +38,7 @@ export async function GET(req: NextRequest) {
         `%${convertEditionFoilString(edition as string, foiling as string)}%`
       )
       .execute();
-    console.log(convertEditionFoilString(edition as string, foiling as string));
+
     // need to massage the data to the object structure we need.
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
       const UTCDate = new Date(priceObj.date);

@@ -49,6 +49,7 @@ const FeaturedCards: React.FC = () => {
           flexWrap: "row wrap",
           alignItems: "center",
           height: 400,
+          mt: 5,
         }}
       >
         {!isLoading &&
@@ -84,11 +85,11 @@ const FeaturedCards: React.FC = () => {
                 >
                   <Typography
                     variant="body1"
-                    color={"#34e334"}
+                    color={"#98ff65"}
                     mr={1}
                     fontWeight={"900"}
                   >{`${Math.round(card.percentage_change)}%`}</Typography>
-                  <TrendingUpIcon sx={{ color: "#34e334" }} />
+                  <TrendingUpIcon sx={{ color: "#98ff65" }} />
                 </Box>
               </BoxFirstNoPadding>
             );

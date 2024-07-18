@@ -36,7 +36,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
 }) => {
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
   const formattedFoiling = convertFoilingLabel(foiling);
-  const isFoiled = formattedFoiling !== "Normal";
+  const isFoiled = foiling !== "S";
 
   return (
     <Link
@@ -70,13 +70,17 @@ const TcgCard: React.FC<TcgCardProps> = ({
               width={featured ? 230 : "100%"}
               onLoad={() => setHasImageLoaded(true)}
             />
-            {isFoiled && <FoilOverlay foiling={formattedFoiling} />}
+            {isFoiled && <FoilOverlay foiling={foiling} />}
           </Box>
 
           {hasImageLoaded && (
             <CardContent sx={{ padding: 0, paddingTop: 1 }}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography gutterBottom variant="body1">
+                <Typography
+                  gutterBottom
+                  variant="body1"
+                  maxWidth={featured ? 100 : "unset"}
+                >
                   {title}
                 </Typography>
                 {formattedFoiling && (

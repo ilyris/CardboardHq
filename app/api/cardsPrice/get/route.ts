@@ -1,7 +1,5 @@
 import { NextRequest } from "next/server";
 import { AllCardPrintingView, db } from "../../../lib/db";
-import { sql } from "kysely";
-import { format } from "date-fns";
 
 interface AllCardPrintingViewWithPricePercentage extends AllCardPrintingView {
   prices: { date: string; price: number }[];
@@ -13,6 +11,7 @@ const fetchProductPrices = async () => {
     const data = await db
       .selectFrom("all_printings_with_card_prices_weekly")
       .selectAll()
+      .where("low_price", ">", 1.5)
       .execute();
 
     // Process data to calculate percentage changes
@@ -21,7 +20,7 @@ const fetchProductPrices = async () => {
     } = {};
 
     data.forEach((item) => {
-      if (item.low_price === null) return; // Skip if low_price is null
+      if (item.low_price === null) return;
 
       const key = `${item.tcgplayer_product_id}-${item.foiling}-${item.edition}`;
       if (!movements[key]) {

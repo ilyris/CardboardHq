@@ -31,7 +31,7 @@ const TCGLineChart = ({ data }) => {
         data={data || []}
         margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
       >
-        <Line type="monotone" dataKey="low_price" stroke={"#34e334"} />
+        <Line type="monotone" dataKey="low_price" stroke={"#98ff65"} />
         <CartesianGrid
           stroke="#FFF"
           strokeDasharray="5 5"

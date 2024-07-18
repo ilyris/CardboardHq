@@ -4,3 +4,11 @@ a {
 text {
     fill: #fff
 }
+
+.recharts-default-tooltip {
+    background-color: #B9B4C7 !important;
+}
+
+.recharts-default-tooltip p, .recharts-default-tooltip text{
+    color: #352F44 !important;
+}

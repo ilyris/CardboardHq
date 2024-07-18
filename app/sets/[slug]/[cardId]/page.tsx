@@ -13,60 +13,15 @@ import importLogo from "@/helpers/importLogo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Image from "next/image";
 import TCGLineChart from "@/app/components/TCGLineChart";
-import data from "@/helpers/mockChartData"; // We need to now pull in the market data.
 import LinkButton from "@/app/components/LinkButton";
 import getFaBCardData from "@/helpers/getFaBCardData";
 import FoilOverlay from "@/app/components/FoilOverlay";
-import { CardPrintingPriceView } from "@/app/lib/db";
 import { fetchCardPriceData } from "@/helpers/getFaBCardPriceData";
-import convertFoilingLabel from "@/helpers/convertFoilingLabel";
-
-type Month =
-  | "01"
-  | "02"
-  | "03"
-  | "04"
-  | "05"
-  | "06"
-  | "07"
-  | "08"
-  | "09"
-  | "10"
-  | "11"
-  | "12";
-type Day =
-  | "01"
-  | "02"
-  | "03"
-  | "04"
-  | "05"
-  | "06"
-  | "07"
-  | "08"
-  | "09"
-  | "10"
-  | "11"
-  | "12"
-  | "13"
-  | "14"
-  | "15"
-  | "16"
-  | "17"
-  | "18"
-  | "19"
-  | "20"
-  | "21"
-  | "22"
-  | "23"
-  | "24"
-  | "25"
-  | "26"
-  | "27"
-  | "28"
-  | "29"
-  | "30"
-  | "31";
-type DateString = `${Month}/${Day}`;
+import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import isNegativePriceChange from "@/helpers/isNegativePriceChange";
+import { DateString } from "@/typings/Dates";
 
 const CardPage = () => {
   const params = useParams<{ slug: string; cardId: string }>();
@@ -74,10 +29,11 @@ const CardPage = () => {
   const searchParams = useSearchParams();
   const foiling = searchParams.get("foiling");
   const edition = searchParams.get("edition") as string;
-  const isFoiled = foiling !== "Normal";
+  const isFoiled = foiling !== "S";
 
   const [logo, setLogo] = useState<string | null>(null);
-  const [cardData, setCardData] = useState<CardPrintingPriceView | null>(null);
+  const [cardData, setCardData] =
+    useState<CardPrintingPriceViewWithPercentage | null>(null);
   const [cardPriceHistoryData, setCardPriceHistoryData] = useState<
     | {
         date: DateString;
@@ -96,9 +52,10 @@ const CardPage = () => {
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId, edition });
 
-        const cardData: CardPrintingPriceView =
+        const cardData: CardPrintingPriceViewWithPercentage =
           cardDataResults.data.result.find(
-            (card) => foiling?.replace(/\+/g, " ") === card.foiling
+            (card: CardPrintingPriceViewWithPercentage) =>
+              foiling?.replace(/\+/g, " ") === card.foiling
           );
         setCardData(cardData);
 
@@ -151,15 +108,17 @@ const CardPage = () => {
                 text={"TCGPlayer"}
               />
               {cardData?.low_price && (
-                <Typography variant="h6" color={"#34e334"}>
-                  ${cardData.low_price ?? "Price Not Found"}
+                <Typography variant="h6" color={"#98ff65"}>
+                  $
+                  {cardData.prices[cardData.prices.length - 1].price ??
+                    "Price Not Found"}
                 </Typography>
               )}
             </Box>
 
             <Box mr={3}>
               <Button variant="contained">Ebay</Button>
-              <Typography variant="h6" color={"#34e334"}>
+              <Typography variant="h6" color={"#98ff65"}>
                 Placeholder Price
               </Typography>
             </Box>
@@ -170,15 +129,53 @@ const CardPage = () => {
         </Box>
         <Box sx={{ width: "auto" }}>
           {!!cardData && (
-            <CardActionArea>
-              <LazyLoadImage
-                alt={cardData.card_name}
-                height={"auto"}
-                src={cardData.image_url ?? ""}
-                width={400}
-              />
-              {isFoiled && <FoilOverlay foiling={foiling ?? undefined} />}
-            </CardActionArea>
+            <>
+              <CardActionArea>
+                <LazyLoadImage
+                  alt={cardData.card_name}
+                  height={"auto"}
+                  src={cardData.image_url ?? ""}
+                  width={400}
+                />
+                {isFoiled && <FoilOverlay foiling={foiling ?? undefined} />}
+              </CardActionArea>
+              <Box
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+              >
+                <Typography variant="h4">Weekly:</Typography>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: !isNegativePriceChange(
+                      Math.round(
+                        (cardData.percentage_change + Number.EPSILON) * 100
+                      ) / 100
+                    )
+                      ? "#98ff65"
+                      : "red",
+                    marginLeft: 10,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {Math.round(
+                    (cardData.percentage_change + Number.EPSILON) * 100
+                  ) / 100}
+                  %
+                  {!isNegativePriceChange(
+                    Math.round(
+                      (cardData.percentage_change + Number.EPSILON) * 100
+                    ) / 100
+                  ) ? (
+                    <TrendingUpIcon fontSize="large" />
+                  ) : (
+                    <TrendingDownIcon fontSize="large" />
+                  )}
+                </Typography>
+              </Box>
+            </>
           )}
         </Box>
       </Box>
