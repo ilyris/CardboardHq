@@ -18,6 +18,7 @@ export default function Home() {
               const { formatted_name, printings } = set;
               return printings.map((printing) => (
                 <SetCard
+                  key={printing.unique_id}
                   edition={printing.edition}
                   assetFilePath={
                     !formatted_name.includes("crucible")
