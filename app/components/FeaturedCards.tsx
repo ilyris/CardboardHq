@@ -5,6 +5,7 @@ import fabSetData from "@/app/jsonData/FaBSet.json";
 import { Box, Skeleton, styled, Typography } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import theme from "../theme";
+import { CardPrintingPriceViewWithPercentage } from "../api/cardData/get/route";
 
 const BoxFirstNoPadding = styled(Box)(`
     padding-left: 40px;
@@ -28,7 +29,6 @@ const FeaturedCards: React.FC = () => {
       setIsLoading(true);
       try {
         const response = await axios.get("api/cardsPrice/get");
-        console.log({ response });
         setCardPercentagePriceData(response.data.results);
       } catch (error) {
         console.error("Error fetching price movements:", error);
@@ -54,49 +54,53 @@ const FeaturedCards: React.FC = () => {
       >
         {!isLoading &&
           !!cardPercentagePriceData.length &&
-          cardPercentagePriceData.map((card) => {
-            const setName = fabSetData.find(
-              (set) => set.id === card.set_id
-            )?.formatted_name;
-            return (
-              <BoxFirstNoPadding position={"relative"}>
-                <TcgCard
-                  image={card.image_url}
-                  title={card.card_name}
-                  slug={setName}
-                  cardId={card.printing_id}
-                  cardPrice={card.low_price}
-                  edition={card.edition}
-                  foiling={card.foiling}
-                  featured
-                />
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    zIndex: 10,
-                    backgroundColor: theme.palette.background.default,
-                    padding: 1,
-                    paddingLeft: "10px",
-                    display: "flex",
-                    borderBottomLeftRadius: "10px",
-                  }}
+          cardPercentagePriceData.map(
+            (card: CardPrintingPriceViewWithPercentage) => {
+              const setName = fabSetData.find((set) => set.id === card.set_id)
+                ?.formatted_name as string;
+              return (
+                <BoxFirstNoPadding
+                  position={"relative"}
+                  key={card.card_unique_id + card.printing_unique_id}
                 >
-                  <Typography
-                    variant="body1"
-                    color={"#98ff65"}
-                    mr={1}
-                    fontWeight={"900"}
-                  >{`${Math.round(card.percentage_change)}%`}</Typography>
-                  <TrendingUpIcon sx={{ color: "#98ff65" }} />
-                </Box>
-              </BoxFirstNoPadding>
-            );
-          })}
+                  <TcgCard
+                    image={card.image_url}
+                    title={card.card_name}
+                    slug={setName}
+                    cardId={card.printing_id}
+                    cardPrice={card.low_price}
+                    edition={card.edition}
+                    foiling={card.foiling as "S" | "C" | "R"}
+                    featured
+                  />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      zIndex: 10,
+                      backgroundColor: theme.palette.background.default,
+                      padding: 1,
+                      paddingLeft: "10px",
+                      display: "flex",
+                      borderBottomLeftRadius: "10px",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      color={"#98ff65"}
+                      mr={1}
+                      fontWeight={"900"}
+                    >{`${Math.round(card.percentage_change)}%`}</Typography>
+                    <TrendingUpIcon sx={{ color: "#98ff65" }} />
+                  </Box>
+                </BoxFirstNoPadding>
+              );
+            }
+          )}
         {isLoading &&
-          [1, 2, 3, 4, 5].map(() => (
-            <SkeletonFirstNoMargin width={230} height={400} />
+          [1, 2, 3, 4, 5].map((num) => (
+            <SkeletonFirstNoMargin key={num} width={230} height={400} />
           ))}
       </Box>
     </Box>

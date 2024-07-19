@@ -6,7 +6,6 @@ import { successResponse } from "@/helpers/successResponse";
 export async function GET(req: NextRequest) {
   try {
     const searchQuery = req.nextUrl.searchParams.get("searchQuery");
-    console.log({ searchQuery });
     if (searchQuery) {
       const searchedDbQuery = await db
         .selectFrom("printing_with_card_and_latest_pricing")
