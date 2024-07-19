@@ -1,3 +1,4 @@
+export const dynamicParams = true;
 import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
 
@@ -23,11 +24,10 @@ const convertEditionFoilString = (edition: string, foiling: string) => {
 };
 
 export async function GET(req: NextRequest) {
+  const foiling = req.nextUrl.searchParams.get("foiling");
+  const productId = req.nextUrl.searchParams.get("productId");
+  const edition = req.nextUrl.searchParams.get("edition");
   try {
-    const foiling = req.nextUrl.searchParams.get("foiling");
-    const productId = req.nextUrl.searchParams.get("productId");
-    const edition = req.nextUrl.searchParams.get("edition");
-
     const cardPriceQuery = await db
       .selectFrom("product_prices")
       .selectAll()
@@ -72,5 +72,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-export const dynamicParams = true;

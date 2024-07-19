@@ -1,3 +1,5 @@
+export const dynamicParams = true;
+
 import { NextRequest } from "next/server";
 import { AllCardPrintingView, db } from "../../../lib/db";
 
@@ -89,5 +91,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-export const dynamicParams = true;
