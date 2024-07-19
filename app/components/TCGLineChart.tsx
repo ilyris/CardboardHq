@@ -9,8 +9,17 @@ import {
 } from "recharts";
 import theme from "../theme";
 import { Box } from "@mui/material";
+import { DateString } from "@/typings/Dates";
 
-const TCGLineChart = ({ data }) => {
+interface TCGLineChartData {
+  data:
+    | {
+        date: DateString;
+        low_price: number;
+      }[]
+    | null;
+}
+const TCGLineChart: React.FC<TCGLineChartData> = ({ data }) => {
   let maxPrice = 0;
   let minPrice = 0;
   let lowerBound = 0;

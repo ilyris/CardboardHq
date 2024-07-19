@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
-import { ThemeProvider as MuiThemeProvider, CssBaseline } from "@mui/material";
+import { ReactNode, useEffect } from "react";
+import {
+  ThemeProvider as MuiThemeProvider,
+  CssBaseline,
+  Theme,
+} from "@mui/material";
 
-const ThemeProvider = ({ theme, children }) => {
+interface ThemeProviderProps {
+  theme: Theme;
+  children: ReactNode;
+}
+
+const ThemeProvider: React.FC<ThemeProviderProps> = ({ theme, children }) => {
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--primary-color",
