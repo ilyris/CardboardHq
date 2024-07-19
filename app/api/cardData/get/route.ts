@@ -154,3 +154,9 @@ export async function GET(req: NextRequest) {
     });
   }
 }
+export const config = {
+  api: {
+    bodyParser: false, // Adjust this according to your needs
+    externalResolver: true,
+  },
+};
