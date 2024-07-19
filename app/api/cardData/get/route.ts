@@ -1,9 +1,10 @@
+export const dynamicParams = true;
+
 import fabSetData from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
 import { NextRequest } from "next/server";
 import { AllCardPrintingView, db } from "../../../lib/db";
 import { sql } from "kysely";
-import { NextApiRequest, NextApiResponse } from "next";
 
 export interface CardPrintingPriceViewWithPercentage
   extends AllCardPrintingView {
@@ -11,24 +12,15 @@ export interface CardPrintingPriceViewWithPercentage
   prices: { date: string; price: number }[];
 }
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
   const FaBSetDataJson: CardSet[] = fabSetData as CardSet[];
+  const setName = req.nextUrl.searchParams.get("setName");
+  const searchQuery = req.nextUrl.searchParams.get("searchQuery");
+  const cardId = req.nextUrl.searchParams.get("cardId");
+  const sort = req.nextUrl.searchParams.get("sort");
+  const edition = req.nextUrl.searchParams.get("edition");
 
   try {
-    const { setName, searchQuery, cardId, sort, edition } = req.query;
-
-    // Ensure the query parameters are of the correct type
-    if (
-      Array.isArray(setName) ||
-      Array.isArray(searchQuery) ||
-      Array.isArray(cardId) ||
-      Array.isArray(sort) ||
-      Array.isArray(edition)
-    ) {
-      res.status(400).json({ error: "Query parameters must be single values" });
-      return;
-    }
-
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
         status: 500,
@@ -163,4 +155,3 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 }
-export const dynamicParams = true;
