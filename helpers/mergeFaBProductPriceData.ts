@@ -20,7 +20,6 @@ export const mergeData = (
   pricingData.forEach((price) => {
     pricingMap.set(price.productId, price);
   });
-  console.log(pricingMap);
   return productData.map((product) => {
     const pricing = pricingMap.get(parseInt(product.tcgplayer_product_id, 10));
     return { ...product, ...pricing };

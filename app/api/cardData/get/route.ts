@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
         set.formatted_name.toUpperCase() ===
         setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
     )?.id;
-
+    console.log({ setId });
     if (setId) {
       const cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
       }
 
       if (cardId) {
+        console.log({ cardId });
         const specificCardIdQuery = db
           .selectFrom("all_printings_with_card_prices_weekly")
           .selectAll()
@@ -148,6 +149,7 @@ export async function GET(req: NextRequest) {
       }
     }
   } catch (error) {
+    console.log({ error });
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

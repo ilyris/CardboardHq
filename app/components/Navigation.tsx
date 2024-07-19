@@ -5,8 +5,25 @@ import MainStyledLink from "./MainStyledLink";
 import SearchBar from "./SearchBar";
 import Image from "next/image";
 import logo from "@/public/Logo.svg";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Navigation = () => {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearchChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setSearchQuery(e.currentTarget.value);
+  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      router.push(`/search/all/${searchQuery}`);
+    } catch (error) {
+      console.error("Error fetching card data:", error);
+    }
+  };
+
   return (
     <Box
       component="nav"
@@ -34,10 +51,13 @@ const Navigation = () => {
         </NextLink>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <SearchBar
-          value={"Nuu, Alluring Desire"}
-          onChange={() => console.log("reee")}
-        />
+        <Box component="form" onSubmit={handleSubmit}>
+          <SearchBar
+            value={searchQuery}
+            placeholder={"Nuu, Alluring Desire"}
+            onChange={(e) => handleSearchChange(e)}
+          />
+        </Box>
         <MainStyledLink
           href="/login"
           component="button"
