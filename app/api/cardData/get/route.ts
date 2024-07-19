@@ -16,11 +16,13 @@ export async function GET(req: NextRequest) {
   const FaBSetDataJson: CardSet[] = fabSetData as CardSet[];
 
   try {
-    const setName = req.nextUrl.searchParams.get("setName");
-    const searchQuery = req.nextUrl.searchParams.get("searchQuery");
-    const cardId = req.nextUrl.searchParams.get("cardId");
-    const sort = req.nextUrl.searchParams.get("sort");
-    const edition = req.nextUrl.searchParams.get("edition");
+    const { searchParams } = new URL(req.url);
+
+    const setName = searchParams.get("setName");
+    const searchQuery = searchParams.get("searchQuery");
+    const cardId = searchParams.get("cardId");
+    const sort = searchParams.get("sort");
+    const edition = searchParams.get("edition");
 
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
