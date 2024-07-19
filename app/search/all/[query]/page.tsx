@@ -41,6 +41,7 @@ const SearchPage = () => {
             if (formattedSetName)
               return (
                 <TcgCard
+                  key={card.printing_unique_id}
                   image={card.image_url}
                   title={card.card_name}
                   slug={formattedSetName} // this needs to be like heavy-hitters
