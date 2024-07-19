@@ -1,5 +1,3 @@
-export const dynamicParams = true;
-
 import fabSetData from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
 import { NextRequest } from "next/server";
@@ -156,3 +154,5 @@ export async function GET(req: NextRequest) {
     });
   }
 }
+
+export const dynamicParams = true;
