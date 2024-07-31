@@ -1,7 +1,13 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { Box, Container, Typography, Skeleton } from "@mui/material";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import {
+  Box,
+  Container,
+  Typography,
+  Skeleton,
+  Pagination,
+} from "@mui/material";
 import TcgCard from "@/app/components/TcgCard";
 import { CardSet } from "@/typings/FaBSet";
 import importLogo from "@/helpers/importLogo";
@@ -30,6 +36,7 @@ const SlugPage = () => {
   const [cardSetTotal, setCardSetTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeSort, setActiveSort] = useState<string>("");
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
@@ -43,11 +50,16 @@ const SlugPage = () => {
       slug,
       searchQuery: e.target.value,
       edition,
+      page: pageNumber,
     });
     const cardData = cardDataResults.data.result;
     const totalCards = cardDataResults.data.total;
     setCardSetTotal(totalCards);
     setCardData(cardData);
+  };
+
+  const handlePaginationChange = (_: ChangeEvent<unknown>, page: number) => {
+    setPageNumber(page);
   };
 
   useEffect(() => {
@@ -57,6 +69,7 @@ const SlugPage = () => {
           slug,
           sort: activeSort,
           edition,
+          page: pageNumber,
         });
         const newData = response.data.result;
         const totalCards = response.data.total;
@@ -69,7 +82,7 @@ const SlugPage = () => {
         setLoading(false);
       }
     })();
-  }, [activeSort]);
+  }, [activeSort, pageNumber]);
 
   useEffect(() => {
     if (slug) {
@@ -130,6 +143,15 @@ const SlugPage = () => {
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <Skeleton variant="rectangular" width={210} height={118} />
         </Box>
+      )}
+      {cardSetTotal && cardData && (
+        <Pagination
+          sx={{ marginTop: 5, marginBottom: 10 }}
+          count={Math.ceil(cardSetTotal / 25)}
+          page={pageNumber}
+          color="primary"
+          onChange={handlePaginationChange}
+        />
       )}
     </Container>
   );

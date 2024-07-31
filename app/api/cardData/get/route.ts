@@ -19,6 +19,9 @@ export async function GET(req: NextRequest) {
   const cardId = req.nextUrl.searchParams.get("cardId");
   const sort = req.nextUrl.searchParams.get("sort");
   const edition = req.nextUrl.searchParams.get("edition");
+  const page = req.nextUrl.searchParams.get("page");
+  const pageSize = 25;
+  const startIndex = (page - 1) * pageSize;
 
   try {
     if (!setName)
@@ -33,9 +36,18 @@ export async function GET(req: NextRequest) {
         setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
     )?.id;
     if (setId) {
+      const totalCount = await db
+        .selectFrom("printing_with_card_and_latest_pricing")
+        .select(db.fn.count("printing_unique_id").as("count")) // 'id' should be a primary key or another column
+        .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
+        .where("printing_with_card_and_latest_pricing.edition", "=", edition)
+        .execute();
+
       const cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .selectAll()
+        .limit(pageSize)
+        .offset(startIndex)
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition);
 
@@ -137,7 +149,7 @@ export async function GET(req: NextRequest) {
         return new Response(
           JSON.stringify({
             result: allCardsBySetId,
-            total: allCardsBySetId.length,
+            total: totalCount[0].count,
           }),
           {
             status: 200,
