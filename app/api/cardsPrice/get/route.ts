@@ -11,7 +11,7 @@ const fetchProductPrices = async () => {
   try {
     // Fetch data from the view
     const data = await db
-      .selectFrom("all_printings_with_card_prices_weekly")
+      .selectFrom("all_high_rarity_printings_with_card_prices_weekly")
       .selectAll()
       .where("low_price", ">", 1.5)
       .execute();

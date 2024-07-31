@@ -29,11 +29,15 @@ export async function GET(req: NextRequest) {
   const edition = req.nextUrl.searchParams.get("edition");
   try {
     const cardPriceQuery = await db
-      .selectFrom("product_prices")
+      .selectFrom("all_printings_with_card_prices_weekly")
       .selectAll()
-      .where("product_prices.product_id", "=", Number(productId))
       .where(
-        "product_prices.sub_type_name",
+        "all_printings_with_card_prices_weekly.tcgplayer_product_id",
+        "=",
+        productId
+      )
+      .where(
+        "all_printings_with_card_prices_weekly.sub_type_name",
         "ilike",
         `%${convertEditionFoilString(edition as string, foiling as string)}%`
       )
@@ -41,10 +45,12 @@ export async function GET(req: NextRequest) {
 
     // need to massage the data to the object structure we need.
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
-      const UTCDate = new Date(priceObj.date);
-      const month = UTCDate.getMonth() + 1;
-      const day = UTCDate.getDate();
-      const formattedDate = `${month}/${day}`;
+      const UTCDate = new Date(priceObj.price_date);
+      const options: Intl.DateTimeFormatOptions = {
+        month: "2-digit",
+        day: "2-digit",
+      };
+      const formattedDate = UTCDate.toLocaleDateString("en-US", options);
       return {
         date: formattedDate,
         low_price: priceObj.low_price,

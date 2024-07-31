@@ -31,7 +31,6 @@ const TCGLineChart: React.FC<TCGLineChartData> = ({ data }) => {
     lowerBound = Math.max(0, minPrice - 5);
     upperBound = Math.round(maxPrice + 20);
   }
-
   return (
     <Box sx={{ color: theme.palette.text.primary }}>
       <LineChart

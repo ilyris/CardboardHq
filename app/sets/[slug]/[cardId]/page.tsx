@@ -22,6 +22,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import isNegativePriceChange from "@/helpers/isNegativePriceChange";
 import { DateString } from "@/typings/Dates";
+import CardLegalityContainer from "@/app/components/CardLegalityContainer";
 
 const CardPage = () => {
   const params = useParams<{ slug: string; cardId: string }>();
@@ -51,7 +52,6 @@ const CardPage = () => {
       loadLogo();
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId, edition });
-
         const cardData: CardPrintingPriceViewWithPercentage =
           cardDataResults.data.result.find(
             (card: CardPrintingPriceViewWithPercentage) =>
@@ -115,13 +115,6 @@ const CardPage = () => {
                 </Typography>
               )}
             </Box>
-
-            <Box mr={3}>
-              <Button variant="contained">Ebay</Button>
-              <Typography variant="h6" color={"#98ff65"}>
-                Placeholder Price
-              </Typography>
-            </Box>
           </Box>
           <Box mt={3}>
             <TCGLineChart data={cardPriceHistoryData} />
@@ -179,8 +172,17 @@ const CardPage = () => {
           )}
         </Box>
       </Box>
-      <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
-        <Skeleton width="100%" height="1100px" />
+      <Box
+        sx={{
+          display: "flex",
+          flexFlow: "row wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        {!!cardData && (
+          <CardLegalityContainer cardUniqueId={cardData.card_unique_id} />
+        )}
+        <Skeleton width="45%" height="1100px" />
       </Box>
     </Container>
   );

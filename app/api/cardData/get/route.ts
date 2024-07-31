@@ -72,7 +72,6 @@ export async function GET(req: NextRequest) {
           );
 
         const specificCardByCardId = await specificCardIdQuery.execute();
-
         const movements: {
           [key: string]: CardPrintingPriceViewWithPercentage;
         } = {};

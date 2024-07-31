@@ -15,6 +15,34 @@ export const db = new Kysely<Database>({
   }),
 });
 
+export interface CardInformation {
+  unique_id: string;
+  name: string;
+  pitch?: string | null;
+  cost?: string | null;
+  power?: string | null;
+  defense?: string | null;
+  health?: string | null;
+  intelligence?: string | null;
+  functional_text?: string | null;
+  functional_text_plain?: string | null;
+  type_text?: string | null;
+  played_horizontally?: boolean;
+  blitz_legal?: boolean;
+  cc_legal?: boolean;
+  commoner_legal?: boolean;
+  blitz_living_legend?: boolean;
+  cc_living_legend?: boolean;
+  blitz_banned?: boolean;
+  cc_banned?: boolean;
+  commoner_banned?: boolean;
+  upf_banned?: boolean;
+  blitz_suspended?: boolean;
+  cc_suspended?: boolean;
+  commoner_suspended?: boolean;
+  ll_restricted?: boolean;
+}
+
 export interface CardPrintingPriceView {
   printing_unique_id: string;
   set_printing_unique_id: string;
@@ -59,10 +87,13 @@ export interface AllCardPrintingView {
   low_price: number | null;
   market_price: number | null;
   price_date: string;
+  sub_type_name: string;
 }
 
 export interface Database {
   printing_with_card_and_latest_pricing: CardPrintingPriceView;
   product_prices: CardPriceData;
+  all_high_rarity_printings_with_card_prices_weekly: AllCardPrintingView;
   all_printings_with_card_prices_weekly: AllCardPrintingView;
+  card: CardInformation;
 }

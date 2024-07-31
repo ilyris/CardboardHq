@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 const Navigation = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
-
+  const [hasToggledFilter, sethasToggledFiltered] = useState<boolean>(false);
   const handleSearchChange = (e: React.FormEvent<HTMLInputElement>) => {
     setSearchQuery(e.currentTarget.value);
   };
@@ -51,6 +51,9 @@ const Navigation = () => {
         </NextLink>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* {hasToggledFilter && (
+
+        )} */}
         <Box component="form" onSubmit={handleSubmit}>
           <SearchBar
             value={searchQuery}
