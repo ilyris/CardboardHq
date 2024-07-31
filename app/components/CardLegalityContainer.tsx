@@ -60,7 +60,7 @@ const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
                     color="success"
                     variant="filled"
                     size="small"
-                    label={isLegal(cardInfo.blitz_legal)}
+                    label={isLegal(!!cardInfo.blitz_legal)}
                   />
                 </Box>
                 <Box display="flex">
@@ -71,7 +71,7 @@ const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
                     color="success"
                     variant="filled"
                     size="small"
-                    label={isLegal(cardInfo.cc_legal)}
+                    label={isLegal(!!cardInfo.cc_legal)}
                   />
                 </Box>
               </Box>
@@ -85,7 +85,7 @@ const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
                     color="success"
                     variant="filled"
                     size="small"
-                    label={isLegal(cardInfo.commoner_legal)}
+                    label={isLegal(!!cardInfo.commoner_legal)}
                   />
                 </Box>
               </Box>
