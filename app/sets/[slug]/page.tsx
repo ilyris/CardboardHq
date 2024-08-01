@@ -108,8 +108,8 @@ const SlugPage = () => {
         />
         <Filter
           options={[
-            { option: "high to low", text: "high to low" },
-            { option: "low to high", text: "low to high" },
+            { option: "High To Low", text: "High To Low" },
+            { option: "Low To High", text: "Low To High" },
           ]}
           onCallback={(value: string) => setActiveSort(value)}
         />
@@ -144,14 +144,17 @@ const SlugPage = () => {
           <Skeleton variant="rectangular" width={210} height={118} />
         </Box>
       )}
+
       {cardSetTotal && cardData && (
-        <Pagination
-          sx={{ marginTop: 5, marginBottom: 10 }}
-          count={Math.ceil(cardSetTotal / 25)}
-          page={pageNumber}
-          color="primary"
-          onChange={handlePaginationChange}
-        />
+        <Box display={"flex"} justifyContent={"center"}>
+          <Pagination
+            sx={{ marginTop: 5, marginBottom: 10 }}
+            count={Math.ceil(cardSetTotal / 25)}
+            page={pageNumber}
+            color="primary"
+            onChange={handlePaginationChange}
+          />
+        </Box>
       )}
     </Container>
   );

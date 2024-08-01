@@ -3,7 +3,6 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  styled,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
@@ -72,7 +71,6 @@ const TcgCard: React.FC<TcgCardProps> = ({
             />
             {isFoiled && <FoilOverlay foiling={foiling} />}
           </Box>
-
           {hasImageLoaded && (
             <CardContent sx={{ padding: 0, paddingTop: 1 }}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>

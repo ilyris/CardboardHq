@@ -94,9 +94,12 @@ const CardPage = () => {
               {cardId}
             </Typography>
           </Box>
-          <Typography variant="h2">{cardData?.card_name}</Typography>
+          <Typography variant="h2" mt={3} mb={3}>
+            {cardData?.card_name}
+          </Typography>
           <Box
             mt={3}
+            mb={3}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -178,11 +181,12 @@ const CardPage = () => {
           flexFlow: "row wrap",
           justifyContent: "space-between",
         }}
+        mt={3}
+        mb={5}
       >
         {!!cardData && (
           <CardLegalityContainer cardUniqueId={cardData.card_unique_id} />
         )}
-        <Skeleton width="45%" height="1100px" />
       </Box>
     </Container>
   );

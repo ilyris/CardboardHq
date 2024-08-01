@@ -140,7 +140,7 @@ export async function GET(req: NextRequest) {
           sql`low_price DESC NULLS LAST`
         );
 
-        if (sort === "low to high") {
+        if (sort === "Low To High") {
           orderQuery = cardsBySetIdQuery.orderBy(sql`low_price ASC NULLS LAST`);
         }
 

@@ -1,5 +1,11 @@
 "use client";
 import { createTheme } from "@mui/material/styles";
+import "@fontsource/montserrat"; // Defaults to weight 400 with all styles included.
+
+const headingFontStyle = {
+  fontFamily: "Montserrat, Arial, sans-serif",
+  fontWeight: 700,
+};
 
 export const theme = createTheme({
   palette: {
@@ -69,6 +75,19 @@ export const theme = createTheme({
         },
       },
     },
+  },
+  typography: {
+    fontFamily: "Montserrat, Arial, sans-serif",
+    fontWeightLight: 400,
+    fontWeightRegular: 400,
+    fontWeightMedium: 500,
+    fontWeightBold: 700,
+    h1: { ...headingFontStyle },
+    h2: { ...headingFontStyle },
+    h3: { ...headingFontStyle },
+    h4: { ...headingFontStyle },
+    h5: { ...headingFontStyle },
+    h6: { ...headingFontStyle },
   },
 });
 

@@ -26,7 +26,7 @@ const getFaBCardData = async ({
       cardId: cardId || "",
       page: page || undefined,
       pageSize: pageSize || undefined,
-      sort: sort || "high to low",
+      sort: sort || "High To Low",
       edition,
     },
   });

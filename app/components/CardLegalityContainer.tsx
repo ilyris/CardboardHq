@@ -8,8 +8,19 @@ interface CardLegalityContainerProps {
   cardUniqueId: string | null;
 }
 
-const isLegal = (legal: boolean) => (legal ? "LEGAL" : "NOT LEGAL");
+const isLegal = (banned: boolean) => (banned ? "NOT LEGAL" : "LEGAL");
 
+const LegalChip: React.FC<{ banned: boolean }> = ({ banned }) => {
+  const legality = isLegal(banned);
+  return (
+    <Chip
+      color={legality === "LEGAL" ? "success" : "primary"}
+      variant="filled"
+      size="small"
+      label={legality}
+    />
+  );
+};
 const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
   cardUniqueId,
 }) => {
@@ -47,8 +58,8 @@ const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
       </Box>
       <Box mt={3}>
         <Typography variant="h6">Legalities</Typography>
-        {cardInfo.hasOwnProperty("blitz_legal") &&
-          cardInfo.hasOwnProperty("cc_legal") &&
+        {cardInfo.hasOwnProperty("blitz_banned") &&
+          cardInfo.hasOwnProperty("cc_banned") &&
           cardInfo.hasOwnProperty("commoner_legal") && (
             <>
               <Box p={1} display="flex" justifyContent={"space-between"}>
@@ -56,23 +67,13 @@ const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
                   <Typography mr={2} variant="body2">
                     Blitz
                   </Typography>
-                  <Chip
-                    color="success"
-                    variant="filled"
-                    size="small"
-                    label={isLegal(!!cardInfo.blitz_legal)}
-                  />
+                  <LegalChip banned={!!cardInfo?.blitz_banned} />
                 </Box>
                 <Box display="flex">
                   <Typography mr={2} variant="body2">
                     Classic Constructed
                   </Typography>
-                  <Chip
-                    color="success"
-                    variant="filled"
-                    size="small"
-                    label={isLegal(!!cardInfo.cc_legal)}
-                  />
+                  <LegalChip banned={!!cardInfo.cc_banned} />
                 </Box>
               </Box>
 
@@ -81,12 +82,7 @@ const CardLegalityContainer: React.FC<CardLegalityContainerProps> = ({
                   <Typography mr={2} variant="body2">
                     Commoner
                   </Typography>
-                  <Chip
-                    color="success"
-                    variant="filled"
-                    size="small"
-                    label={isLegal(!!cardInfo.commoner_legal)}
-                  />
+                  <LegalChip banned={!!cardInfo.commoner_legal} />
                 </Box>
               </Box>
             </>
