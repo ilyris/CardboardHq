@@ -7,11 +7,16 @@ import Image from "next/image";
 import logo from "@/public/Logo.svg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
-const Navigation = () => {
+interface NavigationProps {
+  isUserLoggedIn: boolean;
+}
+const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
+  console.log({ isUserLoggedIn });
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [hasToggledFilter, sethasToggledFiltered] = useState<boolean>(false);
+
   const handleSearchChange = (e: React.FormEvent<HTMLInputElement>) => {
     setSearchQuery(e.currentTarget.value);
   };
@@ -51,9 +56,6 @@ const Navigation = () => {
         </NextLink>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        {/* {hasToggledFilter && (
-
-        )} */}
         <Box component="form" onSubmit={handleSubmit}>
           <SearchBar
             value={searchQuery}
@@ -61,18 +63,46 @@ const Navigation = () => {
             onChange={(e) => handleSearchChange(e)}
           />
         </Box>
-        <MainStyledLink
-          href="/login"
-          component="button"
-          variant="body2"
-          primary={true}
-          sx={{ mr: 1 }}
-        >
-          Login
-        </MainStyledLink>
-        <MainStyledLink href="/" component="button" variant="body2">
-          Sign up
-        </MainStyledLink>
+        <Box>
+          {isUserLoggedIn ? (
+            <>
+              <MainStyledLink
+                href="/"
+                component="button"
+                variant="body2"
+                sx={{ mr: 1 }}
+              >
+                Collection
+              </MainStyledLink>
+              <MainStyledLink
+                href="/"
+                component="button"
+                variant="body2"
+                onClick={() => {
+                  signOut();
+                  router.push("/");
+                }}
+              >
+                Sign Out
+              </MainStyledLink>
+            </>
+          ) : (
+            <>
+              <MainStyledLink
+                href="/login"
+                component="button"
+                variant="body2"
+                primary={true}
+                sx={{ mr: 1 }}
+              >
+                Login
+              </MainStyledLink>
+              <MainStyledLink href="/" component="button" variant="body2">
+                Sign up
+              </MainStyledLink>
+            </>
+          )}
+        </Box>
       </Box>
     </Box>
   );
