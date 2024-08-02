@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Button, TextField, Container, Typography, Box } from "@mui/material";
 import {
@@ -9,30 +10,19 @@ import {
 } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers/index";
 import { FaGoogle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 interface LoginProps {}
 
 const LoginForm: React.FC<LoginProps> = ({}) => {
   const { data: session } = useSession();
-  console.log({ session });
-  //   const [username, setUsername] = useState<string>("");
-  //   const [password, setPassword] = useState<string>("");
+  const router = useRouter();
   const [providers, setProviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
   > | null>(null);
 
-  //   const handleSubmit = (
-  //     event: React.FormEvent<HTMLFormElement>,
-  //     username: string,
-  //     password: string
-  //   ) => {
-  //     event.preventDefault();
-  //     onLogin(username, password);
-  //   };
-
   const handleLogin = async (provider: string) => {
-    // Perform OAuth login with the selected provider
     if (provider === "google") await signIn(providers?.google.id);
   };
 
@@ -41,6 +31,8 @@ const LoginForm: React.FC<LoginProps> = ({}) => {
       const setUpTheProviders = await getProviders();
       setProviders(setUpTheProviders);
     };
+    if (session?.user) router.push("/");
+
     setTheProviders();
   }, [session?.user?.name]);
 
@@ -57,7 +49,7 @@ const LoginForm: React.FC<LoginProps> = ({}) => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box>
+        <Box mt={5}>
           <Button variant="contained" onClick={() => handleLogin("google")}>
             <FaGoogle style={{ fontSize: "30px", marginRight: "10px" }} />
             Continue with Google

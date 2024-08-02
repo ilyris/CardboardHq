@@ -29,20 +29,20 @@ export async function GET(req: NextRequest) {
   const edition = req.nextUrl.searchParams.get("edition");
   try {
     const cardPriceQuery = await db
-      .selectFrom("all_printings_with_card_prices_weekly")
+      .selectFrom("all_printings_with_card_prices_weekly_new")
       .selectAll()
       .where(
-        "all_printings_with_card_prices_weekly.tcgplayer_product_id",
+        "all_printings_with_card_prices_weekly_new.tcgplayer_product_id",
         "=",
         productId
       )
       .where(
-        "all_printings_with_card_prices_weekly.sub_type_name",
+        "all_printings_with_card_prices_weekly_new.sub_type_name",
         "ilike",
         `%${convertEditionFoilString(edition as string, foiling as string)}%`
       )
       .execute();
-
+    console.log({ cardPriceQuery });
     // need to massage the data to the object structure we need.
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
       const UTCDate = new Date(priceObj.price_date);
@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
       }
     );
   } catch (error) {
+    console.log({ error });
     return new Response(
       JSON.stringify({
         result: { message: "Failed to fetch card pricing data" },

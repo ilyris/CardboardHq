@@ -95,5 +95,6 @@ export interface Database {
   product_prices: CardPriceData;
   all_high_rarity_printings_with_card_prices_weekly: AllCardPrintingView;
   all_printings_with_card_prices_weekly: AllCardPrintingView;
+  all_printings_with_card_prices_weekly_new: AllCardPrintingView;
   card: CardInformation;
 }
