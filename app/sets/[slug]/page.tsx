@@ -15,10 +15,9 @@ import Header from "@/app/components/Header";
 import SearchBar from "@/app/components/SearchBar";
 import getFaBCardData from "@/helpers/getFaBCardData";
 import getCardSet from "@/helpers/getSetData";
-import convertFoilingLabel from "@/helpers/convertFoilingLabel";
-
 import Filter from "@/app/components/Filter";
 import { CardPrintingPriceView } from "@/app/lib/db";
+import AddToPortfolioModal from "@/app/components/AddToPortfolioModal";
 
 const SlugPage = () => {
   const params = useParams<{ slug: string }>();
@@ -37,6 +36,10 @@ const SlugPage = () => {
   const [loading, setLoading] = useState(false);
   const [activeSort, setActiveSort] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
+
+  // modals
+  const [isAddToPortfolioModalOpen, setIsAddToPortfolioModalOpen] =
+    useState<boolean>(false);
 
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
@@ -60,6 +63,14 @@ const SlugPage = () => {
 
   const handlePaginationChange = (_: ChangeEvent<unknown>, page: number) => {
     setPageNumber(page);
+  };
+
+  const toggleAddToPortfolioIsOpen = () => {
+    console.log("firing");
+    setIsAddToPortfolioModalOpen(!isAddToPortfolioModalOpen);
+  };
+  const closeAddToPortfolioModal = () => {
+    setIsAddToPortfolioModalOpen(false);
   };
 
   useEffect(() => {
@@ -135,6 +146,7 @@ const SlugPage = () => {
                 cardPrice={card.low_price}
                 cardId={card.printing_id || ""}
                 edition={card.edition}
+                toggleAddToPortfolioModalCb={toggleAddToPortfolioIsOpen}
               />
             );
           })}
@@ -156,6 +168,10 @@ const SlugPage = () => {
           />
         </Box>
       )}
+      <AddToPortfolioModal
+        isOpen={isAddToPortfolioModalOpen}
+        onCloseCb={closeAddToPortfolioModal}
+      />
     </Container>
   );
 };

@@ -9,6 +9,7 @@ import { CardPrintingPriceViewWithPercentage } from "../api/cardData/get/route";
 
 const BoxFirstNoPadding = styled(Box)(`
     padding-left: 40px;
+    min-height: 450px;
     &:first-child {
       padding-left: 0;
     }
@@ -48,7 +49,6 @@ const FeaturedCards: React.FC = () => {
           display: "flex",
           flexWrap: "row wrap",
           alignItems: "center",
-          height: 400,
           mt: 5,
         }}
       >

@@ -75,6 +75,20 @@ export const theme = createTheme({
         },
       },
     },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          color: "#352F44",
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: "#352F44",
+        },
+      },
+    },
   },
   typography: {
     fontFamily: "Montserrat, Arial, sans-serif",

@@ -6,9 +6,9 @@ interface FoilOverlayProps {
 const FoilOverlay: React.FC<FoilOverlayProps> = ({ foiling }) => {
   const styleObject = {
     width: "100%",
-    height: "99.5%",
+    height: "99%",
     position: "absolute",
-    top: "-1px",
+    top: 0,
     ...(foiling === "C"
       ? { backgroundColor: "silver" }
       : foiling === "R"

@@ -11,6 +11,8 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import CardFoilingChip from "./CardFoilingChip";
 import FoilOverlay from "./FoilOverlay";
 import convertFoilingLabel from "@/helpers/convertFoilingLabel";
+import AddIcon from "@mui/icons-material/Add";
+import theme from "../theme";
 
 interface TcgCardProps {
   image: string | undefined;
@@ -21,6 +23,7 @@ interface TcgCardProps {
   foiling: "S" | "C" | "R";
   edition: string;
   featured?: boolean;
+  toggleAddToPortfolioModalCb?: () => void;
 }
 
 const TcgCard: React.FC<TcgCardProps> = ({
@@ -32,6 +35,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
   foiling,
   edition,
   featured,
+  toggleAddToPortfolioModalCb,
 }) => {
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
   const formattedFoiling = convertFoilingLabel(foiling);
@@ -51,6 +55,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
         flex: "1 0 auto",
         maxWidth: "20%",
         marginBottom: featured ? 0 : 20,
+        position: "relative",
       }}
     >
       <Card
@@ -58,6 +63,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
           backgroundColor: "transparent",
           boxShadow: "unset",
           paddingLeft: featured ? 0 : 5,
+          overflow: "visible",
         }}
       >
         <CardActionArea>
@@ -73,6 +79,36 @@ const TcgCard: React.FC<TcgCardProps> = ({
           </Box>
           {hasImageLoaded && (
             <CardContent sx={{ padding: 0, paddingTop: 1 }}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: -20,
+                  left: -15,
+                }}
+              >
+                <Box
+                  sx={{
+                    padding: "3px",
+                    boxSizing: "content-box",
+                    borderRadius: "50%",
+                    backgroundColor: theme.palette.success.main,
+                    zIndex: 1,
+                    position: "relative",
+                    width: "25px",
+                    height: "25px",
+                    boxShadow: "0px 1px 4px 0px #0000008c",
+                  }}
+                  onClick={(e) => {
+                    console.log("trying to fire");
+                    console.log({ toggleAddToPortfolioModalCb });
+                    e.preventDefault();
+                    toggleAddToPortfolioModalCb &&
+                      toggleAddToPortfolioModalCb();
+                  }}
+                >
+                  <AddIcon color="primary" />
+                </Box>
+              </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
                   gutterBottom
