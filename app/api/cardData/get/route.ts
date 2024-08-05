@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const edition = req.nextUrl.searchParams.get("edition");
   const page = req.nextUrl.searchParams.get("page");
   const pageSize = 25;
-  const startIndex = (page - 1) * pageSize;
+  const startIndex = (Number(page) - 1) * pageSize;
 
   try {
     if (!setName)
