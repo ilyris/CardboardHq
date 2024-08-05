@@ -7,6 +7,7 @@ import { theme } from "./theme";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
 import { auth } from "@/helpers/auth";
+import StoreProvider from "./StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,16 +30,18 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <SessionProviderWrapper>
-          <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-              <Navigation isUserLoggedIn={!!session} />
-              {children}
-            </ThemeProvider>
-          </AppRouterCacheProvider>
-        </SessionProviderWrapper>
-      </body>
+      <StoreProvider>
+        <body className={inter.className}>
+          <SessionProviderWrapper>
+            <AppRouterCacheProvider>
+              <ThemeProvider theme={theme}>
+                <Navigation isUserLoggedIn={!!session} />
+                {children}
+              </ThemeProvider>
+            </AppRouterCacheProvider>
+          </SessionProviderWrapper>
+        </body>
+      </StoreProvider>
     </html>
   );
 }

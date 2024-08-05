@@ -37,10 +37,6 @@ const SlugPage = () => {
   const [activeSort, setActiveSort] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
 
-  // modals
-  const [isAddToPortfolioModalOpen, setIsAddToPortfolioModalOpen] =
-    useState<boolean>(false);
-
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
     setLogo(importedLogo);
@@ -63,14 +59,6 @@ const SlugPage = () => {
 
   const handlePaginationChange = (_: ChangeEvent<unknown>, page: number) => {
     setPageNumber(page);
-  };
-
-  const toggleAddToPortfolioIsOpen = () => {
-    console.log("firing");
-    setIsAddToPortfolioModalOpen(!isAddToPortfolioModalOpen);
-  };
-  const closeAddToPortfolioModal = () => {
-    setIsAddToPortfolioModalOpen(false);
   };
 
   useEffect(() => {
@@ -140,13 +128,14 @@ const SlugPage = () => {
               <TcgCard
                 key={card.printing_unique_id}
                 image={card.image_url}
+                uniquePrintingId={card.printing_unique_id}
+                uniqueCardId={card.card_unique_id}
                 title={card.card_name}
                 slug={slug}
                 foiling={card.foiling as "S" | "C" | "R"}
                 cardPrice={card.low_price}
                 cardId={card.printing_id || ""}
                 edition={card.edition}
-                toggleAddToPortfolioModalCb={toggleAddToPortfolioIsOpen}
               />
             );
           })}
@@ -168,10 +157,7 @@ const SlugPage = () => {
           />
         </Box>
       )}
-      <AddToPortfolioModal
-        isOpen={isAddToPortfolioModalOpen}
-        onCloseCb={closeAddToPortfolioModal}
-      />
+      <AddToPortfolioModal />
     </Container>
   );
 };

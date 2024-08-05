@@ -13,6 +13,12 @@ import FoilOverlay from "./FoilOverlay";
 import convertFoilingLabel from "@/helpers/convertFoilingLabel";
 import AddIcon from "@mui/icons-material/Add";
 import theme from "../theme";
+import {
+  addToPortfolio,
+  CardToAdd,
+  toggleModalIsOpen,
+} from "../lib/features/addToPortfolioSlice";
+import { useAppDispatch } from "../lib/hooks";
 
 interface TcgCardProps {
   image: string | undefined;
@@ -23,7 +29,8 @@ interface TcgCardProps {
   foiling: "S" | "C" | "R";
   edition: string;
   featured?: boolean;
-  toggleAddToPortfolioModalCb?: () => void;
+  uniquePrintingId?: string;
+  uniqueCardId?: string;
 }
 
 const TcgCard: React.FC<TcgCardProps> = ({
@@ -35,11 +42,25 @@ const TcgCard: React.FC<TcgCardProps> = ({
   foiling,
   edition,
   featured,
-  toggleAddToPortfolioModalCb,
+  uniquePrintingId,
+  uniqueCardId,
 }) => {
+  const dispatch = useAppDispatch();
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
   const formattedFoiling = convertFoilingLabel(foiling);
   const isFoiled = foiling !== "S";
+
+  const toggleAddToPortfolioIsOpen = (cardData: CardToAdd) => {
+    dispatch(toggleModalIsOpen());
+    dispatch(
+      addToPortfolio({
+        cardTitle: cardData.cardTitle,
+        cardImageUrl: cardData.cardImageUrl,
+        cardUniqueId: cardData.cardUniqueId,
+        printingUniqueId: cardData.printingUniqueId,
+      })
+    );
+  };
 
   return (
     <Link
@@ -99,11 +120,14 @@ const TcgCard: React.FC<TcgCardProps> = ({
                     boxShadow: "0px 1px 4px 0px #0000008c",
                   }}
                   onClick={(e) => {
-                    console.log("trying to fire");
-                    console.log({ toggleAddToPortfolioModalCb });
                     e.preventDefault();
-                    toggleAddToPortfolioModalCb &&
-                      toggleAddToPortfolioModalCb();
+                    if (!!uniqueCardId && !!uniquePrintingId && !!image)
+                      toggleAddToPortfolioIsOpen({
+                        cardTitle: title,
+                        cardImageUrl: image,
+                        cardUniqueId: uniqueCardId,
+                        printingUniqueId: uniquePrintingId,
+                      });
                   }}
                 >
                   <AddIcon color="primary" />

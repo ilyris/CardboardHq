@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import {
   Box,
+  Button,
   Checkbox,
   Dialog,
   FormControlLabel,
-  FormGroup,
   MenuItem,
   TextField,
   Typography,
@@ -13,11 +13,12 @@ import theme from "../theme";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-
-interface PortfolioModalProps {
-  isOpen: boolean;
-  onCloseCb: () => void;
-}
+import { useAppDispatch, useAppSelector } from "../lib/hooks";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import {
+  resetState,
+  toggleModalIsOpen,
+} from "../lib/features/addToPortfolioSlice";
 
 const gradeOptions = [
   { text: "PSA", value: "psa" },
@@ -26,16 +27,24 @@ const gradeOptions = [
   { text: "PCG", value: "pcg" },
 ];
 
-const AddToPortfolioModal: React.FC<PortfolioModalProps> = ({
-  isOpen,
-  onCloseCb,
-}) => {
+const AddToPortfolioModal = () => {
+  const dispatch = useAppDispatch();
+  const cardToAddToPortfolio = useAppSelector(
+    (state) => state.addToPortfolio.cardToAdd
+  );
+  const isModdalOpen = useAppSelector(
+    (state) => state.addToPortfolio.isModalOpen
+  );
   const [gradeValue, setGradeValue] = useState<string>("Raw");
   const [quantity, setQuantity] = useState<number | null>(null);
   const [unitPrice, setUnitPrice] = useState<number | null>(null);
   const [isMarketPriceChecked, setIsMarketPriceChecked] =
     useState<boolean>(false);
 
+  const handleDialogClose = () => {
+    dispatch(toggleModalIsOpen());
+    dispatch(resetState());
+  };
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<any>>, isCheckbox = false) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -45,20 +54,56 @@ const AddToPortfolioModal: React.FC<PortfolioModalProps> = ({
       setter(value);
     };
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const cardObj = {
+      title: cardToAddToPortfolio.cardTitle,
+      imageUrl: cardToAddToPortfolio.cardImageUrl,
+      grade: gradeValue,
+      quantity,
+      unitPrice,
+      useMarketPrice: isMarketPriceChecked,
+    };
+    console.log({ cardObj });
+  };
+
   return (
     <Dialog
       sx={{
         color: "#fff",
         zIndex: theme.zIndex.drawer + 1,
+        overflow: "visible",
       }}
-      open={isOpen}
-      onClose={onCloseCb}
+      PaperProps={{
+        sx: {
+          overflow: "visible",
+        },
+      }}
+      open={isModdalOpen}
+      onClose={handleDialogClose}
     >
-      <Box p={5}>
-        <Typography variant="h6" color={theme.palette.background.default}>
-          Greninja Ex
-        </Typography>
-        <FormGroup sx={{ display: "flex", flexFlow: "row wrap", mt: 3 }}>
+      <Box p={5} overflow="visible">
+        {cardToAddToPortfolio.cardTitle &&
+          cardToAddToPortfolio.cardImageUrl && (
+            <Box mb={5} position="relative">
+              <Typography variant="h6" color={theme.palette.background.default}>
+                {cardToAddToPortfolio.cardTitle}
+              </Typography>
+              <LazyLoadImage
+                alt={cardToAddToPortfolio.cardTitle}
+                height={"auto"}
+                src={cardToAddToPortfolio.cardImageUrl}
+                width={"125px"}
+                style={{ position: "absolute", top: "-125px", right: 0 }}
+              />
+            </Box>
+          )}
+
+        <Box
+          component="form"
+          sx={{ display: "flex", flexFlow: "row wrap", mt: 3 }}
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <Box display="flex" justifyContent="space-between" width="100%">
             <TextField
               id="quantity"
@@ -181,7 +226,12 @@ const AddToPortfolioModal: React.FC<PortfolioModalProps> = ({
               ))}
             </TextField>
           </Box>
-        </FormGroup>
+          <Box width={"100%"} display="flex" justifyContent="flex-end">
+            <Button type="submit" variant="contained" color="success">
+              Add Card
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Dialog>
   );

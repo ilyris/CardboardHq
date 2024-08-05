@@ -3,6 +3,7 @@ import fabSetData from "@/app/jsonData/FaBSet.json";
 import SetCard from "./components/SetCard";
 import { Box, Container, Typography } from "@mui/material";
 import FeaturedCards from "./components/FeaturedCards";
+import AddToPortfolioModal from "./components/AddToPortfolioModal";
 
 export default function Home() {
   return (
@@ -32,6 +33,7 @@ export default function Home() {
             })}
           </Box>
         </div>
+        <AddToPortfolioModal />
       </Container>
     </main>
   );

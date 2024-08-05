@@ -71,6 +71,8 @@ const FeaturedCards: React.FC = () => {
                     cardPrice={card.low_price}
                     edition={card.edition}
                     foiling={card.foiling as "S" | "C" | "R"}
+                    uniquePrintingId={card.printing_unique_id}
+                    uniqueCardId={card.card_unique_id}
                     featured
                   />
                   <Box
