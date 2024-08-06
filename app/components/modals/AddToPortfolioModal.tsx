@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -9,16 +9,20 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import theme from "../theme";
+import theme from "../../theme";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useAppDispatch, useAppSelector } from "../lib/hooks";
+import { useAppDispatch, useAppSelector } from "../../lib/hooks";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import {
   resetState,
   toggleModalIsOpen,
-} from "../lib/features/addToPortfolioSlice";
+} from "../../lib/features/addToPortfolioSlice";
+import { getPortfolioList } from "@/helpers/getPortfolioList";
+import { Portfolio, PortfolioCard } from "@/app/lib/db";
+import { addCardToPortfolio } from "@/helpers/addCardToPortfolio";
+import { v4 as uuidv4 } from "uuid";
 
 const gradeOptions = [
   { text: "PSA", value: "psa" },
@@ -40,11 +44,16 @@ const AddToPortfolioModal = () => {
   const [unitPrice, setUnitPrice] = useState<number | null>(null);
   const [isMarketPriceChecked, setIsMarketPriceChecked] =
     useState<boolean>(false);
+  const [selectedPortfolio, setSelectedPortfolio] = useState<string | null>(
+    null
+  );
+  const [portfolios, setPortfolios] = useState<Portfolio[] | null>(null);
 
   const handleDialogClose = () => {
     dispatch(toggleModalIsOpen());
     dispatch(resetState());
   };
+
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<any>>, isCheckbox = false) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -56,16 +65,45 @@ const AddToPortfolioModal = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const cardObj = {
-      title: cardToAddToPortfolio.cardTitle,
-      imageUrl: cardToAddToPortfolio.cardImageUrl,
+    const portfolioUniqueId = portfolios?.find(
+      (portfolio) => portfolio.name === selectedPortfolio
+    )?.unique_id;
+    const newPortfolioId = uuidv4();
+
+    if (
+      !selectedPortfolio ||
+      !cardToAddToPortfolio.cardUniqueId ||
+      !cardToAddToPortfolio.printingUniqueId ||
+      !portfolioUniqueId ||
+      !quantity
+    )
+      return;
+
+    const cardObj: PortfolioCard = {
+      unique_id: newPortfolioId,
+      card_unique_id: cardToAddToPortfolio.cardUniqueId,
+      printing_unique_id: cardToAddToPortfolio.printingUniqueId,
+      quantity: quantity,
       grade: gradeValue,
-      quantity,
-      unitPrice,
-      useMarketPrice: isMarketPriceChecked,
+      unit_price: unitPrice,
+      use_market_price: isMarketPriceChecked,
+      date_added: new Date(),
+      portfolio_unique_id: portfolioUniqueId,
     };
-    console.log({ cardObj });
+
+    addCardToPortfolio(cardObj);
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getPortfolioList();
+        setPortfolios(data);
+      } catch (error) {
+        console.error("Error fetching the portfolio list", error);
+      }
+    })();
+  }, [cardToAddToPortfolio.cardUniqueId]);
 
   return (
     <Dialog
@@ -204,24 +242,24 @@ const AddToPortfolioModal = () => {
                   height: "20px",
                 },
               }}
-              onChange={handleInputChange(setGradeValue)}
+              onChange={handleInputChange(setSelectedPortfolio)}
               select
               label="Portfolio"
-              value={null}
+              value={selectedPortfolio}
             >
               <MenuItem
                 sx={{ padding: 1, color: theme.palette.background.default }}
                 value="Raw"
               >
-                Raw
+                Select a portfolio
               </MenuItem>
-              {gradeOptions.map(({ value, text }) => (
+              {portfolios?.map(({ name, unique_id }) => (
                 <MenuItem
                   sx={{ padding: 1, color: theme.palette.background.default }}
-                  key={value}
-                  value={value}
+                  key={unique_id}
+                  value={name}
                 >
-                  {text}
+                  {name}
                 </MenuItem>
               ))}
             </TextField>

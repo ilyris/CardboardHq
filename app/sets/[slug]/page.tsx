@@ -17,7 +17,7 @@ import getFaBCardData from "@/helpers/getFaBCardData";
 import getCardSet from "@/helpers/getSetData";
 import Filter from "@/app/components/Filter";
 import { CardPrintingPriceView } from "@/app/lib/db";
-import AddToPortfolioModal from "@/app/components/AddToPortfolioModal";
+import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 
 const SlugPage = () => {
   const params = useParams<{ slug: string }>();

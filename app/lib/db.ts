@@ -90,6 +90,24 @@ export interface AllCardPrintingView {
   sub_type_name: string;
 }
 
+export interface Portfolio {
+  name: string;
+  description?: string;
+  unique_id: string;
+}
+
+export interface PortfolioCard {
+  unique_id: string;
+  card_unique_id: string;
+  printing_unique_id: string;
+  quantity: number;
+  grade: string;
+  unit_price: number | null;
+  use_market_price: boolean;
+  date_added: Date;
+  portfolio_unique_id: string;
+}
+
 export interface Database {
   printing_with_card_and_latest_pricing: CardPrintingPriceView;
   product_prices: CardPriceData;
@@ -97,4 +115,6 @@ export interface Database {
   all_printings_with_card_prices_weekly: AllCardPrintingView;
   all_printings_with_card_prices_weekly_new: AllCardPrintingView;
   card: CardInformation;
+  portfolio: Portfolio;
+  portfolio_card: PortfolioCard;
 }

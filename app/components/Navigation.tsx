@@ -67,7 +67,7 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
           {isUserLoggedIn ? (
             <>
               <MainStyledLink
-                href="/"
+                href="/collection"
                 component="button"
                 variant="body2"
                 sx={{ mr: 1 }}
