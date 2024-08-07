@@ -20,7 +20,7 @@ import {
   toggleModalIsOpen,
 } from "../../lib/features/addToPortfolioSlice";
 import { getPortfolioList } from "@/helpers/getPortfolioList";
-import { Portfolio, PortfolioCard } from "@/app/lib/db";
+import { Portfolio, PortfolioAggregate, PortfolioCard } from "@/app/lib/db";
 import { addCardToPortfolio } from "@/helpers/addCardToPortfolio";
 import { v4 as uuidv4 } from "uuid";
 
@@ -48,7 +48,6 @@ const AddToPortfolioModal = () => {
     null
   );
   const [portfolios, setPortfolios] = useState<Portfolio[] | null>(null);
-
   const handleDialogClose = () => {
     dispatch(toggleModalIsOpen());
     dispatch(resetState());

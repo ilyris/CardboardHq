@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
         `%${convertEditionFoilString(edition as string, foiling as string)}%`
       )
       .execute();
-    console.log({ cardPriceQuery });
+
     // need to massage the data to the object structure we need.
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
       const UTCDate = new Date(priceObj.price_date);

@@ -52,7 +52,6 @@ const CardPage = () => {
       loadLogo();
       (async () => {
         const cardDataResults = await getFaBCardData({ slug, cardId, edition });
-        console.log({ cardDataResults });
         const cardData: CardPrintingPriceViewWithPercentage =
           cardDataResults.data.result.find(
             (card: CardPrintingPriceViewWithPercentage) =>
@@ -61,7 +60,6 @@ const CardPage = () => {
         setCardData(cardData);
 
         if (foiling) {
-          console.log({ cardData });
           const cardPriceData = await fetchCardPriceData(
             cardData.tcgplayer_product_id,
             foiling,

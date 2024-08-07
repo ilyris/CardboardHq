@@ -27,12 +27,12 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({
 
   const handleSubmit = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const response = await axios.post("/api/portfolio", {
+    await axios.post("/api/portfolio/allPortfolios", {
       portfolioName,
       portfolioDescription,
     });
-    console.log({ response });
   };
+
   return (
     <Dialog
       open={isOpen}

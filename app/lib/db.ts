@@ -108,6 +108,32 @@ export interface PortfolioCard {
   portfolio_unique_id: string;
 }
 
+export interface PortfolioAggregate {
+  portfolio_name: string;
+  description?: string;
+  portfolio_id: string;
+  portfolio_card_id: string;
+  card_unique_id: string;
+  printing_unique_id: string;
+  quantity: number;
+  grade: string;
+  unit_price?: number;
+  use_market_price: boolean;
+  date_added: Date;
+  card_name: string;
+  set_printing_unique_id: string;
+  printing_id: string;
+  set_id: string;
+  edition: string;
+  foiling: string;
+  image_url: string;
+  tcgplayer_product_id: string;
+  tcgplayer_url: string;
+  low_price: number;
+  market_price: number;
+  date: Date;
+}
+
 export interface Database {
   printing_with_card_and_latest_pricing: CardPrintingPriceView;
   product_prices: CardPriceData;
@@ -117,4 +143,5 @@ export interface Database {
   card: CardInformation;
   portfolio: Portfolio;
   portfolio_card: PortfolioCard;
+  portfolio_aggregate: PortfolioAggregate;
 }
