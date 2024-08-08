@@ -16,7 +16,6 @@ export const config = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ], // rest of your config
-  debug: true, // Enable debug mode
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
