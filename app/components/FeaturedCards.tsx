@@ -58,6 +58,7 @@ const FeaturedCards: React.FC = () => {
             (card: CardPrintingPriceViewWithPercentage) => {
               const setName = fabSetData.find((set) => set.id === card.set_id)
                 ?.formatted_name as string;
+              const cardPrice = card.prices[card.prices.length - 1].price;
               return (
                 <BoxFirstNoPadding
                   position={"relative"}
@@ -68,7 +69,7 @@ const FeaturedCards: React.FC = () => {
                     title={card.card_name}
                     slug={setName}
                     cardId={card.printing_id}
-                    cardPrice={card.low_price}
+                    cardPrice={cardPrice}
                     edition={card.edition}
                     foiling={card.foiling as "S" | "C" | "R"}
                     uniquePrintingId={card.printing_unique_id}
