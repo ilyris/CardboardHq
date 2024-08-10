@@ -67,7 +67,6 @@ export async function GET(req: NextRequest) {
       }
     );
   } catch (error) {
-    console.log({ error });
     return new Response(
       JSON.stringify({
         result: { message: "Failed to fetch card pricing data" },

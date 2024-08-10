@@ -58,6 +58,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
         cardImageUrl: cardData.cardImageUrl,
         cardUniqueId: cardData.cardUniqueId,
         printingUniqueId: cardData.printingUniqueId,
+        lowPrice: cardPrice,
       })
     );
   };
@@ -127,6 +128,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
                         cardImageUrl: image,
                         cardUniqueId: uniqueCardId,
                         printingUniqueId: uniquePrintingId,
+                        lowPrice: cardPrice,
                       });
                   }}
                 >

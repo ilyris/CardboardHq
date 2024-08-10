@@ -8,6 +8,8 @@ export interface CardToAdd {
   cardImageUrl: string | null;
   cardUniqueId: string | null;
   printingUniqueId: string | null;
+  lowPrice: null | number;
+  marketPrice?: null | number;
 }
 
 export interface AddToPortfolioState {
@@ -21,6 +23,8 @@ const initialState: AddToPortfolioState = {
     cardImageUrl: null,
     cardUniqueId: null,
     printingUniqueId: null,
+    lowPrice: null,
+    marketPrice: null,
   },
   isModalOpen: false,
 };
@@ -35,11 +39,14 @@ export const addToPortfolioSlice = createSlice({
         state.cardToAdd.cardImageUrl = action.payload.cardImageUrl;
         state.cardToAdd.cardUniqueId = action.payload.cardUniqueId;
         state.cardToAdd.printingUniqueId = action.payload.printingUniqueId;
+        (state.cardToAdd.lowPrice = action.payload.lowPrice ?? null),
+          (state.cardToAdd.marketPrice = action.payload.marketPrice ?? null);
       } else {
         state.cardToAdd.cardTitle = null;
         state.cardToAdd.cardImageUrl = null;
         state.cardToAdd.cardUniqueId = null;
         state.cardToAdd.printingUniqueId = null;
+        (state.cardToAdd.lowPrice = null), (state.cardToAdd.marketPrice = null);
       }
     },
 

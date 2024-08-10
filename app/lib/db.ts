@@ -58,6 +58,7 @@ export interface CardPrintingPriceView {
   card_name: string;
   low_price: number | null;
   market_price: number | null;
+  price_date: Date;
 }
 
 export interface CardPriceData {
@@ -144,4 +145,6 @@ export interface Database {
   portfolio: Portfolio;
   portfolio_card: PortfolioCard;
   portfolio_aggregate: PortfolioAggregate;
+  portfolio_prices: any;
+  portfolio_with_latest_prices: any;
 }

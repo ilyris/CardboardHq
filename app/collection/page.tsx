@@ -49,19 +49,21 @@ const CollectionPage = () => {
               return acc + card.quantity;
             }, 0);
 
-            const marketPriceSum = portfolio.cards.reduce((acc, card) => {
-              const price =
-                (card.market_price ?? card.unit_price) * card.quantity;
-              return acc + price;
-            }, 0);
-
             return (
               <Box key={portfolio.id}>
                 <PortfolioCard
                   portfolioName={portfolio.name}
                   portfolioId={portfolio.id}
                   portfolioCards={sumOfCards}
-                  portfolioSum={parseFloat(marketPriceSum.toFixed(2))}
+                  portfolioSum={parseFloat(
+                    portfolio.recentPortfolioCostChange.toFixed(2)
+                  )}
+                  portfolioPercentageChange={
+                    ((portfolio.recentPortfolioCostChange -
+                      portfolio.initialPortfolioCost) /
+                      portfolio.initialPortfolioCost) *
+                    100
+                  }
                 />
               </Box>
             );

@@ -5,11 +5,13 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function GET() {
   try {
-    const portfolios = await db.selectFrom("portfolio").selectAll().execute();
+    const portfolios_with_prices = await db
+      .selectFrom("portfolio_with_latest_prices")
+      .selectAll()
+      .execute();
 
-    if (portfolios) {
-      console.log({ portfolios });
-      return successResponse(portfolios);
+    if (portfolios_with_prices) {
+      return successResponse(portfolios_with_prices);
     }
     return NextResponse.json(
       { error: "Failed find portfolios" },

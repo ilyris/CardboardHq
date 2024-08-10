@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
+import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 
 const SearchPage = () => {
   const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];
@@ -49,11 +50,14 @@ const SearchPage = () => {
                   cardPrice={card.low_price}
                   foiling={card.foiling as "S" | "R" | "C"}
                   edition={card.edition}
+                  uniquePrintingId={card.printing_unique_id}
+                  uniqueCardId={card.card_unique_id}
                 />
               );
           })}
         </Box>
       )}
+      <AddToPortfolioModal />
     </Container>
   );
 };

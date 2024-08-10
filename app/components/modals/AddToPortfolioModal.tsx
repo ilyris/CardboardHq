@@ -23,6 +23,7 @@ import { getPortfolioList } from "@/helpers/getPortfolioList";
 import { Portfolio, PortfolioAggregate, PortfolioCard } from "@/app/lib/db";
 import { addCardToPortfolio } from "@/helpers/addCardToPortfolio";
 import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/navigation";
 
 const gradeOptions = [
   { text: "PSA", value: "psa" },
@@ -41,8 +42,8 @@ const AddToPortfolioModal = () => {
   );
   const [gradeValue, setGradeValue] = useState<string>("Raw");
   const [quantity, setQuantity] = useState<number | null>(null);
-  const [unitPrice, setUnitPrice] = useState<number | null>(null);
-  const [isMarketPriceChecked, setIsMarketPriceChecked] =
+  const [unitPrice, setUnitPrice] = useState<number | "">("");
+  const [isLowestPriceChecked, setIsLowestPriceChecked] =
     useState<boolean>(false);
   const [selectedPortfolio, setSelectedPortfolio] = useState<string | null>(
     null
@@ -74,7 +75,8 @@ const AddToPortfolioModal = () => {
       !cardToAddToPortfolio.cardUniqueId ||
       !cardToAddToPortfolio.printingUniqueId ||
       !portfolioUniqueId ||
-      !quantity
+      !quantity ||
+      !unitPrice
     )
       return;
 
@@ -85,12 +87,13 @@ const AddToPortfolioModal = () => {
       quantity: quantity,
       grade: gradeValue,
       unit_price: unitPrice,
-      use_market_price: isMarketPriceChecked,
+      use_market_price: isLowestPriceChecked,
       date_added: new Date(),
       portfolio_unique_id: portfolioUniqueId,
     };
 
     addCardToPortfolio(cardObj);
+    handleDialogClose();
   };
 
   useEffect(() => {
@@ -104,6 +107,13 @@ const AddToPortfolioModal = () => {
     })();
   }, [cardToAddToPortfolio.cardUniqueId]);
 
+  useEffect(() => {
+    if (isLowestPriceChecked && cardToAddToPortfolio.lowPrice) {
+      setUnitPrice(cardToAddToPortfolio.lowPrice);
+    } else {
+      setUnitPrice("");
+    }
+  }, [isLowestPriceChecked]);
   return (
     <Dialog
       sx={{
@@ -197,7 +207,13 @@ const AddToPortfolioModal = () => {
               id="unit-price"
               label="Unit Price (USD)"
               variant="outlined"
-              value={unitPrice || ""}
+              InputLabelProps={{ shrink: !isLowestPriceChecked ? false : true }}
+              value={
+                !isLowestPriceChecked
+                  ? unitPrice
+                  : cardToAddToPortfolio.lowPrice
+              }
+              disabled={isLowestPriceChecked}
               onChange={handleInputChange(setUnitPrice)}
               sx={{
                 input: { color: theme.palette.background.default },
@@ -208,13 +224,13 @@ const AddToPortfolioModal = () => {
               sx={{ color: theme.palette.background.default }}
               control={
                 <Checkbox
-                  checked={isMarketPriceChecked}
+                  checked={isLowestPriceChecked}
                   onChange={() =>
-                    setIsMarketPriceChecked(!isMarketPriceChecked)
+                    setIsLowestPriceChecked(!isLowestPriceChecked)
                   }
                 />
               }
-              label="Use Market Price"
+              label="Use Lowest Price"
               labelPlacement="start"
             />
           </Box>

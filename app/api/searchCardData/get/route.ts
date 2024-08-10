@@ -20,7 +20,6 @@ export async function GET(req: NextRequest) {
     }
     failureResponse("Failued to find searched card");
   } catch (err) {
-    console.log(err);
     failureResponse();
   }
 }

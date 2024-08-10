@@ -8,19 +8,35 @@ export interface TransformedPortfolioData {
   id: string;
   name: string;
   cards: any[];
+  initialPortfolioCost: number;
+  recentPortfolioCostChange: number;
 }
 
+// Transform the data to create the portfolio view
 const transformData = (
-  rows: PortfolioAggregate[]
+  aggregatePortfolioWithCardsData: PortfolioAggregate[],
+  mostRecentCardDataWithPricing: {
+    printing_unique_id: string;
+    low_price: number | null;
+    market_price: number | null;
+    price_date: Date;
+  }[]
 ): TransformedPortfolioData[] => {
   const portfolios: { [key: string]: TransformedPortfolioData } = {};
 
-  rows.forEach((row) => {
+  const priceLookup = mostRecentCardDataWithPricing.reduce((acc, card) => {
+    acc[card.printing_unique_id] = card.low_price ?? card.market_price ?? 0;
+    return acc;
+  }, {} as { [key: string]: number });
+
+  aggregatePortfolioWithCardsData.forEach((row) => {
     if (!portfolios[row.portfolio_id]) {
       portfolios[row.portfolio_id] = {
         id: row.portfolio_id,
         name: row.portfolio_name,
         cards: [],
+        initialPortfolioCost: 0,
+        recentPortfolioCostChange: 0,
       };
     }
 
@@ -49,6 +65,16 @@ const transformData = (
     if (!!card.card_unique_id) {
       portfolios[row.portfolio_id].cards.push(card);
     }
+
+    // Calculate initialPortfolioCost using unit_price
+    const unitPrice = row.unit_price ?? 0;
+    portfolios[row.portfolio_id].initialPortfolioCost +=
+      unitPrice * row.quantity;
+
+    // Calculate recentPortfolioCostChange using low_price or market_price
+    const recentPrice = priceLookup[row.printing_unique_id] ?? 0;
+    portfolios[row.portfolio_id].recentPortfolioCostChange +=
+      recentPrice * row.quantity;
   });
 
   return Object.values(portfolios);
@@ -56,20 +82,40 @@ const transformData = (
 
 export async function GET() {
   try {
+    // Step 1: Fetch portfolio data with aggregated card data
     const portfolios = await db
       .selectFrom("portfolio_aggregate")
       .selectAll()
       .execute();
 
-    if (portfolios) {
-      const portfolioData = transformData(portfolios);
-      return successResponse(portfolioData);
+    if (portfolios.length === 0) {
+      return NextResponse.json(
+        { error: "No portfolios found" },
+        { status: 404 }
+      );
     }
-    return NextResponse.json(
-      { error: "Failed find portfolios" },
-      { status: 500 }
+
+    // Step 2: Fetch the most recent prices for each card in the portfolio
+    const printingUniqueIds = portfolios.map(
+      (portfolio) => portfolio.printing_unique_id
     );
+
+    const mostRecentCardDataWithPricing = await db
+      .selectFrom("printing_with_card_and_latest_pricing")
+      .select(["printing_unique_id", "low_price", "market_price", "price_date"])
+      .where("printing_unique_id", "in", printingUniqueIds)
+      .execute();
+
+    // Step 3: Transform the data to include both the initial and recent portfolio costs
+    const portfolioData = transformData(
+      portfolios,
+      mostRecentCardDataWithPricing
+    );
+
+    // Step 4: Return the transformed portfolio data
+    return successResponse(portfolioData);
   } catch (err) {
+    console.error("Error processing portfolios:", err);
     return NextResponse.json(
       { error: "Failed to process request" },
       { status: 500 }
@@ -81,33 +127,24 @@ export async function DELETE(req: NextRequest) {
   const body = await req.json();
 
   try {
-    const portfolioRow = await db
-      .selectFrom("portfolio")
-      .selectAll()
+    await db
+      .deleteFrom("portfolio_prices")
+      .where("portfolio_id", "=", body.portfolioId)
+      .execute();
+
+    await db
+      .deleteFrom("portfolio_card")
+      .where("portfolio_unique_id", "=", body.portfolioId)
+      .execute();
+
+    await db
+      .deleteFrom("portfolio")
       .where("unique_id", "=", body.portfolioId)
-      .executeTakeFirst();
+      .execute();
 
-    if (portfolioRow) {
-      // Perform the delete operation on the base table
-      await db
-        .deleteFrom("portfolio_card")
-        .where("portfolio_unique_id", "=", body.portfolioId)
-        .execute();
-
-      // Optionally, delete from the 'portfolio' table if needed
-      await db
-        .deleteFrom("portfolio")
-        .where("unique_id", "=", body.portfolioId)
-        .execute();
-
-      return NextResponse.json(
-        { error: "Portfolio has been deleted" },
-        { status: 200 }
-      );
-    }
     return NextResponse.json(
-      { error: "Failed find portfolios" },
-      { status: 500 }
+      { error: "Portfolio has been deleted" },
+      { status: 200 }
     );
   } catch (err) {
     return NextResponse.json(
