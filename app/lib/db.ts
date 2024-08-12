@@ -92,7 +92,8 @@ export interface AllCardPrintingView {
 }
 
 export interface Portfolio {
-  portfolio_name: string;
+  portfolio_name?: string;
+  name?: string;
   description?: string;
   unique_id: string;
   user_id: string;
