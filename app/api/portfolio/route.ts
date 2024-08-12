@@ -3,6 +3,7 @@ import { findUserByEmail } from "@/helpers/api/findUserByEmail";
 import { auth } from "@/helpers/auth";
 import { successResponse } from "@/helpers/successResponse";
 import { TransformedPortfolioData } from "@/typings/Portfolios";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 // Transform the data to create the portfolio view
@@ -74,6 +75,17 @@ const transformData = (
 
 export async function GET() {
   const session = await auth();
+  const cookieStore = cookies();
+
+  // Log both possible cookie names
+  const secureSessionToken = cookieStore.get(
+    "__Secure-next-auth.session-token"
+  );
+  const sessionToken = cookieStore.get("next-auth.session-token");
+
+  console.log("Secure Session Token:", secureSessionToken?.value);
+  console.log("Session Token:", sessionToken?.value);
+
   console.log({ session });
   try {
     if (!session || !session.user.email)
