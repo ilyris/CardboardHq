@@ -23,7 +23,6 @@ import { getPortfolioList } from "@/helpers/getPortfolioList";
 import { Portfolio, PortfolioAggregate, PortfolioCard } from "@/app/lib/db";
 import { addCardToPortfolio } from "@/helpers/addCardToPortfolio";
 import { v4 as uuidv4 } from "uuid";
-import { useRouter } from "next/navigation";
 
 const gradeOptions = [
   { text: "PSA", value: "psa" },
@@ -66,7 +65,7 @@ const AddToPortfolioModal = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const portfolioUniqueId = portfolios?.find(
-      (portfolio) => portfolio.name === selectedPortfolio
+      (portfolio) => portfolio.portfolio_name === selectedPortfolio
     )?.unique_id;
     const newPortfolioId = uuidv4();
 
@@ -268,13 +267,13 @@ const AddToPortfolioModal = () => {
               >
                 Select a portfolio
               </MenuItem>
-              {portfolios?.map(({ name, unique_id }) => (
+              {portfolios?.map(({ portfolio_name, unique_id }) => (
                 <MenuItem
                   sx={{ padding: 1, color: theme.palette.background.default }}
                   key={unique_id}
-                  value={name}
+                  value={portfolio_name}
                 >
-                  {name}
+                  {portfolio_name}
                 </MenuItem>
               ))}
             </TextField>
