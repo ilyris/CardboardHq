@@ -1,2 +1,5 @@
 // NextJs Routing HTTP Methods
 https://nextjs.org/docs/app/api-reference/file-conventions/route
+
+// Server and Client Composition Patters.
+https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#sharing-data-between-components

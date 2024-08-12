@@ -95,6 +95,7 @@ export interface Portfolio {
   name: string;
   description?: string;
   unique_id: string;
+  user_id: string;
 }
 
 export interface PortfolioCard {
@@ -147,4 +148,5 @@ export interface Database {
   portfolio_aggregate: PortfolioAggregate;
   portfolio_prices: any;
   portfolio_with_latest_prices: any;
+  users: any;
 }

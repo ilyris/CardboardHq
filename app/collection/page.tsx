@@ -1,83 +1,18 @@
-"use client";
-import { Box, Button, Container, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import AddPortfolioModal from "../components/modals/AddPortfolioModal";
-import PortfolioCard from "../components/portfolio/PortfolioCard";
-import { TransformedPortfolioData } from "../api/portfolio/route";
+import { Container, Typography } from "@mui/material";
 import { getPortfolioWithCardsList } from "@/helpers/getPortfolioWithCardsList";
+import { TransformedPortfolioData } from "../api/portfolio/route";
+import CollectionClientWrapper from "../components/collections/CollectionClientWrapper";
 
-const CollectionPage = () => {
-  const [openPortfolioModal, setOpenPortfolioModal] = useState<boolean>(false);
-  const [portfolioList, setPortfolioList] = useState<
-    TransformedPortfolioData[]
-  >([]);
-
-  const togglePortfolioModalOpen = () => {
-    setOpenPortfolioModal(!openPortfolioModal);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const response = await getPortfolioWithCardsList();
-      setPortfolioList(response);
-    })();
-  }, [portfolioList?.length]);
+export default async function CollectionPage() {
+  const portfolioList: TransformedPortfolioData[] =
+    await getPortfolioWithCardsList();
 
   return (
     <Container>
       <Typography mb={4} variant="h3">
         Your Collections
       </Typography>
-      <Box
-        display="flex"
-        justifyContent={"space-between"}
-        borderBottom={"1px solid #fff"}
-      >
-        <Typography variant="h5">Portfolios</Typography>
-        <Button
-          variant="contained"
-          sx={{ mb: 1 }}
-          onClick={togglePortfolioModalOpen}
-        >
-          Add Portfolio
-        </Button>
-      </Box>
-      {!!portfolioList.length && (
-        <Box display="flex">
-          {portfolioList.map((portfolio) => {
-            const sumOfCards = portfolio.cards.reduce((acc, card) => {
-              return acc + card.quantity;
-            }, 0);
-
-            return (
-              <Box key={portfolio.id}>
-                <PortfolioCard
-                  portfolioName={portfolio.name}
-                  portfolioId={portfolio.id}
-                  portfolioCards={sumOfCards}
-                  portfolioSum={parseFloat(
-                    portfolio.recentPortfolioCostChange.toFixed(2)
-                  )}
-                  portfolioPercentageChange={
-                    ((portfolio.recentPortfolioCostChange -
-                      portfolio.initialPortfolioCost) /
-                      portfolio.initialPortfolioCost) *
-                    100
-                  }
-                />
-              </Box>
-            );
-          })}
-        </Box>
-      )}
-
-      <Box></Box>
-      <AddPortfolioModal
-        isOpen={openPortfolioModal}
-        isModalOpenCb={togglePortfolioModalOpen}
-      />
+      <CollectionClientWrapper portfolioList={portfolioList} />
     </Container>
   );
-};
-
-export default CollectionPage;
+}
