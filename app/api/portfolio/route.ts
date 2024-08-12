@@ -85,6 +85,11 @@ const transformData = (
 export async function GET() {
   try {
     const session = await auth();
+    if (!session || !session.user.email)
+      return NextResponse.json(
+        { error: "Failed to find user" },
+        { status: 500 }
+      );
     if (session?.user.email) {
       const user = await findUserByEmail(session?.user.email);
       if (!user)
