@@ -13,7 +13,6 @@ interface NavigationProps {
   isUserLoggedIn: boolean;
 }
 const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
-  console.log({ isUserLoggedIn });
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
 

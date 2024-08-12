@@ -1,40 +1,23 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button, TextField, Container, Typography, Box } from "@mui/material";
-import {
-  signIn,
-  getProviders,
-  LiteralUnion,
-  ClientSafeProvider,
-  useSession,
-} from "next-auth/react";
-import { BuiltInProviderType } from "next-auth/providers/index";
+
+import { getProviders, signIn } from "next-auth/react";
 import { FaGoogle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { Button, Container, Typography, Box } from "@mui/material";
+import { useEffect, useState } from "react";
 
-interface LoginProps {}
-
-const LoginForm: React.FC<LoginProps> = ({}) => {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const [providers, setProviders] = useState<Record<
-    LiteralUnion<BuiltInProviderType, string>,
-    ClientSafeProvider
-  > | null>(null);
-
-  const handleLogin = async (provider: string) => {
-    if (provider === "google") await signIn(providers?.google.id);
-  };
+export default function LoginClient() {
+  const [providers, setProviders] = useState<any>(null);
 
   useEffect(() => {
-    const setTheProviders = async () => {
-      const setUpTheProviders = await getProviders();
-      setProviders(setUpTheProviders);
-    };
-    if (session?.user) router.push("/");
+    (async () => {
+      const response = await getProviders();
+      setProviders(response);
+    })();
+  }, []);
 
-    setTheProviders();
-  }, [session?.user?.name]);
+  const handleLogin = async (provider: string) => {
+    if (provider === "google") await signIn(providers.google.id);
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -50,52 +33,14 @@ const LoginForm: React.FC<LoginProps> = ({}) => {
           Sign in
         </Typography>
         <Box mt={5}>
-          <Button variant="contained" onClick={() => handleLogin("google")}>
-            <FaGoogle style={{ fontSize: "30px", marginRight: "10px" }} />
-            Continue with Google
-          </Button>
+          {providers && (
+            <Button variant="contained" onClick={() => handleLogin("google")}>
+              <FaGoogle style={{ fontSize: "30px", marginRight: "10px" }} />
+              Continue with Google
+            </Button>
+          )}
         </Box>
-        {/* <Box
-          component="form"
-          onSubmit={(e) => handleSubmit(e, username, password)}
-          sx={{ mt: 1 }}
-        >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign In
-          </Button>
-        </Box> */}
       </Box>
     </Container>
   );
-};
-
-export default LoginForm;
+}

@@ -1,3 +1,4 @@
+import { db } from "@/app/lib/db";
 import type {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -6,16 +7,15 @@ import type {
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { findUserByEmail } from "./api/findUserByEmail";
 
-// You'll need to import and pass this
-// to `NextAuth` in `app/api/auth/[...nextauth]/route.ts`
-export const config = {
+export const config: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
-  ], // rest of your config
+  ],
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -24,17 +24,47 @@ export const config = {
     async jwt({ token, account }) {
       if (account) {
         token.provider = account.provider;
+        token.provider_id = account.providerAccountId;
       }
       return token;
     },
-    async session({ session }) {
+    async session({ session, token }) {
+      // Ensure session.user has an id field
+      if (session.user) {
+        session.user.id = token.id as string; // Assigning the id
+      }
+
       return session;
+    },
+    async signIn({ profile }) {
+      try {
+        if (profile) {
+          if (profile.email) {
+            // Check if the user already exists based on email
+            let user = await findUserByEmail(profile.email);
+
+            // If the user doesn't exist, create a new user
+            if (!user) {
+              user = {
+                email: profile.email as string,
+                name: profile.name ?? null,
+              };
+
+              await db.insertInto("users").values(user).execute();
+            }
+          }
+        }
+
+        return true;
+      } catch (err) {
+        console.log({ err });
+        return false;
+      }
     },
   },
   secret: process.env.JWT_SECRET,
 } satisfies NextAuthOptions;
 
-// Use it in server contexts
 export function auth(
   ...args:
     | [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]]

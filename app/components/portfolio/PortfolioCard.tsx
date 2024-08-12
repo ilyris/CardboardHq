@@ -4,7 +4,6 @@ import Link from "next/link";
 import StyleIcon from "@mui/icons-material/Style";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 interface PortfolioCardProps {
   portfolioName: string;
@@ -20,7 +19,6 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
   portfolioId,
   portfolioPercentageChange,
 }) => {
-  const router = useRouter();
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -28,7 +26,6 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
       data: { portfolioId },
       headers: { Authorization: "***" },
     });
-    router.refresh();
   };
 
   return (
