@@ -1,6 +1,6 @@
 import { db } from "@/app/lib/db";
 import { findUserByEmail } from "@/helpers/api/findUserByEmail";
-import { auth } from "@/helpers/auth";
+import { auth } from "@/auth";
 import { successResponse } from "@/helpers/successResponse";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";

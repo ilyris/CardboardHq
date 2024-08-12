@@ -1,17 +1,19 @@
 import { TransformedPortfolioData } from "@/typings/Portfolios";
 import { createAuthHeaders } from "./api/cookieAuthHeaders";
 
-export const getPortfolioWithCardsList = async (): Promise<
-  TransformedPortfolioData[]
-> => {
+export const getPortfolioWithCardsList = async (
+  email?: string | null
+): Promise<TransformedPortfolioData[]> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const headers = createAuthHeaders();
-
-  const response = await fetch(`${baseUrl}/api/portfolio`, {
+  if (!email) {
+    throw new Error(" Email not provided");
+  }
+  const response = await fetch(`${baseUrl}/api/portfolio?email=${email}`, {
     method: "GET",
     headers,
-    credentials: "include",
+    credentials: "include", // Ensures cookies are included
     cache: "no-store",
   });
 

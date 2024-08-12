@@ -1,6 +1,6 @@
 // app/login/page.tsx
 import { redirect } from "next/navigation";
-import { auth } from "@/helpers/auth";
+import { auth } from "@/auth";
 import LoginForm from "../components/login/LoginForm";
 
 export default async function LoginPage() {

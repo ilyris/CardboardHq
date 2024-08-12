@@ -1,9 +1,7 @@
 import { db, PortfolioAggregate } from "@/app/lib/db";
 import { findUserByEmail } from "@/helpers/api/findUserByEmail";
-import { auth } from "@/helpers/auth";
 import { successResponse } from "@/helpers/successResponse";
 import { TransformedPortfolioData } from "@/typings/Portfolios";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 // Transform the data to create the portfolio view
@@ -73,28 +71,17 @@ const transformData = (
   return Object.values(portfolios);
 };
 
-export async function GET() {
-  const session = await auth();
-  const cookieStore = cookies();
+export async function GET(req: NextRequest) {
+  const userEmail = req.nextUrl.searchParams.get("email");
 
-  // Log both possible cookie names
-  const secureSessionToken = cookieStore.get(
-    "__Secure-next-auth.session-token"
-  );
-  const sessionToken = cookieStore.get("next-auth.session-token");
-
-  console.log("Secure Session Token:", secureSessionToken?.value);
-  console.log("Session Token:", sessionToken?.value);
-
-  console.log({ session });
   try {
-    if (!session || !session.user.email)
+    if (!userEmail)
       return NextResponse.json(
         { error: "No session available" },
         { status: 500 }
       );
-    if (session?.user.email) {
-      const user = await findUserByEmail(session?.user.email);
+    if (userEmail) {
+      const user = await findUserByEmail(userEmail);
       if (!user)
         return NextResponse.json(
           { error: "Failed to find user" },

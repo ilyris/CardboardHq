@@ -6,7 +6,7 @@ import ThemeProvider from "./components/ThemeProvider";
 import { theme } from "./theme";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
-import { auth } from "@/helpers/auth";
+import { auth } from "@/auth";
 import StoreProvider from "./StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });

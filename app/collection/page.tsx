@@ -2,10 +2,17 @@ import { Container, Typography } from "@mui/material";
 import { getPortfolioWithCardsList } from "@/helpers/getPortfolioWithCardsList";
 import CollectionClientWrapper from "../components/collections/CollectionClientWrapper";
 import { TransformedPortfolioData } from "@/typings/Portfolios";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function CollectionPage() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/");
+  }
   const portfolioList: TransformedPortfolioData[] =
-    await getPortfolioWithCardsList();
+    await getPortfolioWithCardsList(session?.user.email);
 
   return (
     <Container>

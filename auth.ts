@@ -1,21 +1,10 @@
 import { db } from "@/app/lib/db";
-import type {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
-import type { NextAuthOptions } from "next-auth";
-import { getServerSession } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import { findUserByEmail } from "./api/findUserByEmail";
+import Google from "next-auth/providers/google";
+import { findUserByEmail } from "./helpers/api/findUserByEmail";
+import NextAuth from "next-auth";
 
-export const config: NextAuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
-  ],
+export const { auth, handlers, signIn, signOut } = NextAuth({
+  providers: [Google],
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -63,13 +52,4 @@ export const config: NextAuthOptions = {
     },
   },
   secret: process.env.JWT_SECRET,
-} satisfies NextAuthOptions;
-
-export function auth(
-  ...args:
-    | [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]]
-    | [NextApiRequest, NextApiResponse]
-    | []
-) {
-  return getServerSession(...args, config);
-}
+});
