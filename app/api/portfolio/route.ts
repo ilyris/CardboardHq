@@ -2,17 +2,8 @@ import { db, PortfolioAggregate } from "@/app/lib/db";
 import { findUserByEmail } from "@/helpers/api/findUserByEmail";
 import { auth } from "@/helpers/auth";
 import { successResponse } from "@/helpers/successResponse";
+import { TransformedPortfolioData } from "@/typings/Portfolios";
 import { NextRequest, NextResponse } from "next/server";
-
-// Return Portfolios
-// Adding Portfolio Route
-export interface TransformedPortfolioData {
-  id: string;
-  name: string;
-  cards: any[];
-  initialPortfolioCost: number;
-  recentPortfolioCostChange: number;
-}
 
 // Transform the data to create the portfolio view
 const transformData = (
@@ -73,7 +64,6 @@ const transformData = (
     portfolios[row.portfolio_id].initialPortfolioCost +=
       unitPrice * row.quantity;
 
-    // Calculate recentPortfolioCostChange using low_price or market_price
     const recentPrice = priceLookup[row.printing_unique_id] ?? 0;
     portfolios[row.portfolio_id].recentPortfolioCostChange +=
       recentPrice * row.quantity;
@@ -83,11 +73,11 @@ const transformData = (
 };
 
 export async function GET() {
+  const session = await auth();
   try {
-    const session = await auth();
     if (!session || !session.user.email)
       return NextResponse.json(
-        { error: "Failed to find user" },
+        { error: "No session available" },
         { status: 500 }
       );
     if (session?.user.email) {
@@ -98,11 +88,10 @@ export async function GET() {
           { status: 500 }
         );
       if (user) {
-        // Step 1: Fetch portfolio data with aggregated card data
         const portfolios = await db
           .selectFrom("portfolio_aggregate")
           .selectAll()
-          .where("user_id", "=", user.id)
+          .where("portfolio_user_id", "=", user.id)
           .execute();
 
         if (portfolios.length === 0) {
@@ -112,7 +101,6 @@ export async function GET() {
           );
         }
 
-        // Step 2: Fetch the most recent prices for each card in the portfolio
         const printingUniqueIds = portfolios.map(
           (portfolio) => portfolio.printing_unique_id
         );
@@ -128,13 +116,11 @@ export async function GET() {
           .where("printing_unique_id", "in", printingUniqueIds)
           .execute();
 
-        // Step 3: Transform the data to include both the initial and recent portfolio costs
         const portfolioData = transformData(
           portfolios,
           mostRecentCardDataWithPricing
         );
 
-        // Step 4: Return the transformed portfolio data
         return successResponse(portfolioData);
       }
     }

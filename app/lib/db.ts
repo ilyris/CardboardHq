@@ -112,7 +112,7 @@ export interface PortfolioCard {
 
 export interface PortfolioAggregate {
   portfolio_name: string;
-  user_id: string;
+  portfolio_user_id: string;
   description?: string;
   portfolio_id: string;
   portfolio_card_id: string;

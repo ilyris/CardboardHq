@@ -1,5 +1,5 @@
 "use client";
-import { TransformedPortfolioData } from "@/app/api/portfolio/route";
+import { TransformedPortfolioData } from "@/typings/Portfolios";
 import CollectionClient from "./CollectionPage";
 import CollectionPageHeader from "./CollectionPageHeader";
 import { useState } from "react";

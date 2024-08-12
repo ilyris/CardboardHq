@@ -1,7 +1,7 @@
 import { Container, Typography } from "@mui/material";
 import { getPortfolioWithCardsList } from "@/helpers/getPortfolioWithCardsList";
-import { TransformedPortfolioData } from "../api/portfolio/route";
 import CollectionClientWrapper from "../components/collections/CollectionClientWrapper";
+import { TransformedPortfolioData } from "@/typings/Portfolios";
 
 export default async function CollectionPage() {
   const portfolioList: TransformedPortfolioData[] =
