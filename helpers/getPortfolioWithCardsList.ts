@@ -7,7 +7,6 @@ export const getPortfolioWithCardsList = async (): Promise<
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const headers = createAuthHeaders();
-  console.log({ headers });
 
   const response = await fetch(`${baseUrl}/api/portfolio`, {
     method: "GET",
