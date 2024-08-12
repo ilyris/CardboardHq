@@ -8,10 +8,11 @@ export const getPortfolioWithCardsList = async (): Promise<
 
   const headers = createAuthHeaders();
   console.log({ headers });
+
   const response = await fetch(`${baseUrl}/api/portfolio`, {
     method: "GET",
     headers,
-    credentials: "include", // Ensures cookies are included
+    credentials: "include",
     cache: "no-store",
   });
 
