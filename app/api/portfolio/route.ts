@@ -1,4 +1,6 @@
 import { db, PortfolioAggregate } from "@/app/lib/db";
+import { findUserByEmail } from "@/helpers/api/findUserByEmail";
+import { auth } from "@/helpers/auth";
 import { successResponse } from "@/helpers/successResponse";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -82,38 +84,55 @@ const transformData = (
 
 export async function GET() {
   try {
-    // Step 1: Fetch portfolio data with aggregated card data
-    const portfolios = await db
-      .selectFrom("portfolio_aggregate")
-      .selectAll()
-      .execute();
+    const session = await auth();
+    if (session?.user.email) {
+      const user = await findUserByEmail(session?.user.email);
+      if (!user)
+        return NextResponse.json(
+          { error: "Failed to find user" },
+          { status: 500 }
+        );
+      if (user) {
+        // Step 1: Fetch portfolio data with aggregated card data
+        const portfolios = await db
+          .selectFrom("portfolio_aggregate")
+          .selectAll()
+          .where("user_id", "=", user.id)
+          .execute();
 
-    if (portfolios.length === 0) {
-      return NextResponse.json(
-        { error: "No portfolios found" },
-        { status: 404 }
-      );
+        if (portfolios.length === 0) {
+          return NextResponse.json(
+            { error: `No portfolios found for user: ${user.email}` },
+            { status: 404 }
+          );
+        }
+
+        // Step 2: Fetch the most recent prices for each card in the portfolio
+        const printingUniqueIds = portfolios.map(
+          (portfolio) => portfolio.printing_unique_id
+        );
+
+        const mostRecentCardDataWithPricing = await db
+          .selectFrom("printing_with_card_and_latest_pricing")
+          .select([
+            "printing_unique_id",
+            "low_price",
+            "market_price",
+            "price_date",
+          ])
+          .where("printing_unique_id", "in", printingUniqueIds)
+          .execute();
+
+        // Step 3: Transform the data to include both the initial and recent portfolio costs
+        const portfolioData = transformData(
+          portfolios,
+          mostRecentCardDataWithPricing
+        );
+
+        // Step 4: Return the transformed portfolio data
+        return successResponse(portfolioData);
+      }
     }
-
-    // Step 2: Fetch the most recent prices for each card in the portfolio
-    const printingUniqueIds = portfolios.map(
-      (portfolio) => portfolio.printing_unique_id
-    );
-
-    const mostRecentCardDataWithPricing = await db
-      .selectFrom("printing_with_card_and_latest_pricing")
-      .select(["printing_unique_id", "low_price", "market_price", "price_date"])
-      .where("printing_unique_id", "in", printingUniqueIds)
-      .execute();
-
-    // Step 3: Transform the data to include both the initial and recent portfolio costs
-    const portfolioData = transformData(
-      portfolios,
-      mostRecentCardDataWithPricing
-    );
-
-    // Step 4: Return the transformed portfolio data
-    return successResponse(portfolioData);
   } catch (err) {
     console.error("Error processing portfolios:", err);
     return NextResponse.json(
