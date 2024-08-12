@@ -74,6 +74,7 @@ const transformData = (
 
 export async function GET() {
   const session = await auth();
+  console.log({ session });
   try {
     if (!session || !session.user.email)
       return NextResponse.json(

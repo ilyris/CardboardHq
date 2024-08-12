@@ -7,17 +7,13 @@ export const getPortfolioWithCardsList = async (): Promise<
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const headers = createAuthHeaders();
-
+  console.log({ headers });
   const response = await fetch(`${baseUrl}/api/portfolio`, {
     method: "GET",
     headers,
     credentials: "include", // Ensures cookies are included
     cache: "no-store",
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch portfolio data");
-  }
 
   const data = await response.json();
   return data.results;
