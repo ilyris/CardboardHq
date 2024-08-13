@@ -30,7 +30,8 @@ const Header: React.FC<HeaderProps> = ({ logo }) => {
       slug.toLocaleLowerCase().replace(/-to-|-of-/gi, "-")
   ) as CardSet;
 
-  const printingReleaseDate = set.printings[0].initial_release_date;
+  const printingReleaseDate =
+    set?.printings[0].initial_release_date ?? undefined;
   return (
     <Box component="header" sx={{ ...headerStyles }}>
       <Box>

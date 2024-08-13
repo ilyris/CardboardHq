@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
   const page = req.nextUrl.searchParams.get("page");
   const pageSize = 25;
   const startIndex = (Number(page) - 1) * pageSize;
-
   try {
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
@@ -35,10 +34,11 @@ export async function GET(req: NextRequest) {
         set.formatted_name.toUpperCase() ===
         setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
     )?.id;
+
     if (setId) {
       const totalCount = await db
         .selectFrom("printing_with_card_and_latest_pricing")
-        .select(db.fn.count("printing_unique_id").as("count")) // 'id' should be a primary key or another column
+        .select(db.fn.count("printing_unique_id").as("count"))
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition)
         .execute();
@@ -73,17 +73,21 @@ export async function GET(req: NextRequest) {
 
       if (cardId) {
         const specificCardIdQuery = db
-          .selectFrom("all_printings_with_card_prices_weekly")
+          .selectFrom("all_printings_with_card_prices_weekly_new")
           .selectAll()
-          .where("all_printings_with_card_prices_weekly.set_id", "=", setId)
-          .where("all_printings_with_card_prices_weekly.edition", "=", edition)
+          .where("all_printings_with_card_prices_weekly_new.set_id", "=", setId)
           .where(
-            "all_printings_with_card_prices_weekly.printing_id",
+            "all_printings_with_card_prices_weekly_new.edition",
+            "=",
+            edition
+          )
+          .where(
+            "all_printings_with_card_prices_weekly_new.printing_id",
             "ilike",
             `%${cardId}%`
           );
-
         const specificCardByCardId = await specificCardIdQuery.execute();
+
         const movements: {
           [key: string]: CardPrintingPriceViewWithPercentage;
         } = {};
@@ -92,7 +96,6 @@ export async function GET(req: NextRequest) {
           if (item.low_price === null) return;
 
           const key = `${item.tcgplayer_product_id}-${item.foiling}-${item.edition}`;
-
           if (!movements[key]) {
             movements[key] = {
               ...item,
@@ -123,7 +126,6 @@ export async function GET(req: NextRequest) {
             percentage_change,
           };
         });
-
         return new Response(
           JSON.stringify({
             result: result,
