@@ -1,4 +1,3 @@
-import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -6,6 +5,8 @@ import Typography from "@mui/material/Typography";
 import { Box, CardActionArea, Link, Skeleton } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import theme from "../theme";
+import { useEffect, useState } from "react";
+import { checkImageExists } from "@/helpers/checkImageExists";
 
 interface SetCardProps {
   assetFilePath: string;
@@ -20,7 +21,16 @@ const SetCard: React.FC<SetCardProps> = ({
   title,
   edition,
 }) => {
-  const [hasImageLoaded, setHasImageLoaded] = React.useState<boolean>(false);
+  const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
+  const [imageExists, setImageExists] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      const exists = await checkImageExists(logo);
+      if (exists) setImageExists(true);
+    })();
+  }, [logo]);
+
   return (
     <Link
       underline="none"
@@ -82,7 +92,7 @@ const SetCard: React.FC<SetCardProps> = ({
 
               <CardMedia
                 component="img"
-                image={logo ?? ""}
+                image={imageExists ? logo : ""}
                 sx={{
                   filter: "drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5))",
                   width: "75%",
