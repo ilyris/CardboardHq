@@ -338,5 +338,24 @@
                 "card_gallery": "https://fabtcg.com/resources/card-galleries/welcome-rathe-unlimited-booster/"
             }
         ]
+    },
+    {
+        "unique_id": "Q7kcdgCRNm6fWmNjgTbnF",
+        "id": "JDG",
+        "name": "Judge Unique Promos",
+        "formatted_name": "judge-unique-promos",
+        "printings": [
+            {
+                "unique_id": "hqBm7CnKjCWzKBQcph89t",
+                "edition": "N",
+                "start_card_id": "JDG000",
+                "end_card_id": "JDG029",
+                "initial_release_date": null,
+                "out_of_print_date": null,
+                "product_page": null,
+                "collectors_center": "https://fabtcg.com/collectors-centre/promos-and-extras/",
+                "card_gallery": null
+            }
+        ]
     }
 ]
