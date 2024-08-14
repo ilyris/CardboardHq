@@ -82,7 +82,7 @@ const SetCard: React.FC<SetCardProps> = ({
 
               <CardMedia
                 component="img"
-                image={logo}
+                image={logo ?? ""}
                 sx={{
                   filter: "drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5))",
                   width: "75%",

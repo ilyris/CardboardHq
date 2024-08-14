@@ -357,5 +357,43 @@
                 "card_gallery": null
             }
         ]
+    },
+    {
+        "unique_id": "Q7pWcKBwRPzjFthNTWWnR",
+        "id": "LGS",
+        "name": "Local Game Store Promos",
+        "formatted_name": "local-game-store-promos",
+        "printings": [
+            {
+                "unique_id": "Cbc6mFhKFNdqtCTJ9wwGJ",
+                "edition": "N",
+                "start_card_id": "LGS001",
+                "end_card_id": "LGS308",
+                "initial_release_date": null,
+                "out_of_print_date": null,
+                "product_page": null,
+                "collectors_center": "https://fabtcg.com/collectors-centre/promos-and-extras/",
+                "card_gallery": null
+            }
+        ]
+    },
+    {
+        "unique_id": "zQFpFP9kJrcgWJmR8w6Nr",
+        "id": "HER",
+        "name": "Hero Card Promos",
+        "formatted_name": "hero-card-promos",
+        "printings": [
+            {
+                "unique_id": "NrpJFBQQGpNM8D9w8BBfG",
+                "edition": "N",
+                "start_card_id": "HER000",
+                "end_card_id": "HER117",
+                "initial_release_date": null,
+                "out_of_print_date": null,
+                "product_page": null,
+                "collectors_center": "https://fabtcg.com/collectors-centre/promos-and-extras/",
+                "card_gallery": null
+            }
+        ]
     }
 ]
