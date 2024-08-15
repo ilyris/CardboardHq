@@ -8,6 +8,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
 import { auth } from "@/auth";
 import StoreProvider from "./StoreProvider";
+import GlobalMessage from "./components/GlobalMessage";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default async function RootLayout({
               <ThemeProvider theme={theme}>
                 <Navigation isUserLoggedIn={!!session} />
                 {children}
+                <GlobalMessage />
               </ThemeProvider>
             </AppRouterCacheProvider>
           </SessionProviderWrapper>

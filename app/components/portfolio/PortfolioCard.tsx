@@ -1,9 +1,11 @@
+"use client";
 import theme from "@/app/theme";
 import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
 import Link from "next/link";
 import StyleIcon from "@mui/icons-material/Style";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import useHandleSystemMessage from "@/app/hooks/useHandleSystemMessage";
 
 interface PortfolioCardProps {
   portfolioName: string;
@@ -19,13 +21,26 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
   portfolioId,
   portfolioPercentageChange,
 }) => {
+  const {
+    handleApiResponseMessage,
+    handleApiErrorMessage,
+    handleOpeningSystemMessage,
+  } = useHandleSystemMessage();
+
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    await axios.delete("/api/portfolio", {
-      data: { portfolioId },
-      headers: { Authorization: "***" },
-    });
+    try {
+      const response = await axios.delete("/api/portfolio", {
+        data: { portfolioId },
+        headers: { Authorization: "***" },
+      });
+      handleApiResponseMessage(response);
+    } catch (err) {
+      handleApiErrorMessage(err);
+    } finally {
+      handleOpeningSystemMessage();
+    }
   };
 
   return (

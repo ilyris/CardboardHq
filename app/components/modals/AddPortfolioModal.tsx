@@ -3,6 +3,7 @@ import { Box, Button, Dialog, TextField } from "@mui/material";
 import React, { useState } from "react";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
+import useHandleSystemMessage from "@/app/hooks/useHandleSystemMessage";
 
 interface AddPortfolioModalProps {
   isOpen: boolean;
@@ -12,6 +13,12 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({
   isOpen,
   isModalOpenCb,
 }) => {
+  const {
+    handleApiErrorMessage,
+    handleApiResponseMessage,
+    handleOpeningSystemMessage,
+  } = useHandleSystemMessage();
+
   const [portfolioName, setPortfolioName] = useState<string>("");
   const [portfolioDescription, setPortfolioDescription] = useState<string>("");
 
@@ -27,10 +34,17 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({
 
   const handleSubmit = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    await axios.post("/api/portfolio/allPortfolios", {
-      portfolioName,
-      portfolioDescription,
-    });
+    try {
+      const response = await axios.post("/api/portfolio/allPortfolios", {
+        portfolioName,
+        portfolioDescription,
+      });
+      handleApiResponseMessage(response);
+    } catch (err) {
+      handleApiErrorMessage(err);
+    } finally {
+      handleOpeningSystemMessage();
+    }
   };
 
   return (

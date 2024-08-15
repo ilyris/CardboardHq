@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import addToPortfolioSlice from "./features/addToPortfolioSlice";
+import systemMessageSlice from "./features/systemMessageSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       addToPortfolio: addToPortfolioSlice,
+      systemMessage: systemMessageSlice,
     },
   });
 };

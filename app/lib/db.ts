@@ -97,6 +97,7 @@ export interface Portfolio {
   description?: string;
   unique_id: string;
   user_id: string;
+  portfolio_unique_id?: string;
 }
 
 export interface PortfolioCard {

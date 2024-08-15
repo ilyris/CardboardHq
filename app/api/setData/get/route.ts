@@ -8,10 +8,13 @@ export async function GET(req: NextRequest) {
   const setName = req.nextUrl.searchParams.get("setName");
 
   if (!setName) {
-    return new Response(JSON.stringify({ error: "Failed to find Set Name" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ message: "Failed to find Set Name" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   const filteredFabSet = FaBSetDataJson.find(

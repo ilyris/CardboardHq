@@ -77,14 +77,14 @@ export async function GET(req: NextRequest) {
   try {
     if (!userEmail)
       return NextResponse.json(
-        { error: "No session available" },
+        { message: "No session available" },
         { status: 500 }
       );
     if (userEmail) {
       const user = await findUserByEmail(userEmail);
       if (!user)
         return NextResponse.json(
-          { error: "Failed to find user" },
+          { message: "Failed to find user" },
           { status: 500 }
         );
       if (user) {
@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
 
         if (portfolios.length === 0) {
           return NextResponse.json(
-            { error: `No portfolios found for user: ${user.email}` },
+            { message: `No portfolios found for user: ${user.email}` },
             { status: 404 }
           );
         }
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     console.error("Error processing portfolios:", err);
     return NextResponse.json(
-      { error: "Failed to process request" },
+      { message: "Failed to process request" },
       { status: 500 }
     );
   }
@@ -153,12 +153,12 @@ export async function DELETE(req: NextRequest) {
       .execute();
 
     return NextResponse.json(
-      { error: "Portfolio has been deleted" },
+      { message: "Portfolio has been deleted" },
       { status: 200 }
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to process request" },
+      { message: "Failed to process request" },
       { status: 500 }
     );
   }

@@ -20,9 +20,10 @@ import {
   toggleModalIsOpen,
 } from "../../lib/features/addToPortfolioSlice";
 import { getPortfolioList } from "@/helpers/getPortfolioList";
-import { Portfolio, PortfolioAggregate, PortfolioCard } from "@/app/lib/db";
+import { Portfolio, PortfolioCard } from "@/app/lib/db";
 import { addCardToPortfolio } from "@/helpers/addCardToPortfolio";
 import { v4 as uuidv4 } from "uuid";
+import useHandleSystemMessage from "@/app/hooks/useHandleSystemMessage";
 
 const gradeOptions = [
   { text: "PSA", value: "psa" },
@@ -33,6 +34,12 @@ const gradeOptions = [
 
 const AddToPortfolioModal = () => {
   const dispatch = useAppDispatch();
+  const {
+    handleApiErrorMessage,
+    handleApiResponseMessage,
+    handleOpeningSystemMessage,
+  } = useHandleSystemMessage();
+
   const cardToAddToPortfolio = useAppSelector(
     (state) => state.addToPortfolio.cardToAdd
   );
@@ -62,11 +69,12 @@ const AddToPortfolioModal = () => {
       setter(value);
     };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const portfolioUniqueId = portfolios?.find(
       (portfolio) => portfolio.portfolio_name === selectedPortfolio
-    )?.unique_id;
+    )?.portfolio_unique_id;
     const newPortfolioId = uuidv4();
 
     if (
@@ -91,8 +99,15 @@ const AddToPortfolioModal = () => {
       portfolio_unique_id: portfolioUniqueId,
     };
 
-    addCardToPortfolio(cardObj);
-    handleDialogClose();
+    try {
+      const response = await addCardToPortfolio(cardObj);
+      handleApiResponseMessage(response);
+    } catch (err) {
+      handleApiErrorMessage(err);
+    } finally {
+      handleDialogClose();
+      handleOpeningSystemMessage();
+    }
   };
 
   useEffect(() => {

@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     const newPortfolioId = uuidv4();
 
-    if (!!session && session.user.email) {
+    if (!!session && session.user.email && !!portfolioName) {
       const user = await findUserByEmail(session.user.email);
       if (user) {
         const result = await db
@@ -67,12 +67,12 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: "Failed to add the portfolio" },
+      { message: "Failed to add the portfolio" },
       { status: 500 }
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to process request" },
+      { message: "Failed to process request" },
       { status: 500 }
     );
   }
