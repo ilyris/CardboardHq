@@ -1,7 +1,7 @@
 // app/login/page.tsx
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import LoginForm from "../components/login/LoginForm";
+import LoginClientWrapper from "../components/login/LoginClientWrapper";
 
 export default async function LoginPage() {
   // Check if the user is already authenticated
@@ -11,5 +11,5 @@ export default async function LoginPage() {
     redirect("/");
   }
 
-  return <LoginForm />;
+  return <LoginClientWrapper />;
 }

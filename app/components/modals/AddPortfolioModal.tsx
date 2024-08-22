@@ -44,6 +44,7 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({
       handleApiErrorMessage(err);
     } finally {
       handleOpeningSystemMessage();
+      isModalOpenCb();
     }
   };
 

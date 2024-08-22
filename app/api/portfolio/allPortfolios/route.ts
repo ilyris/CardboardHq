@@ -60,7 +60,21 @@ export async function POST(req: NextRequest) {
             user_id: user.id,
           })
           .executeTakeFirst();
+
+        const newPortfolioData = await db
+          .selectFrom("portfolio_with_latest_prices")
+          .select([
+            "price",
+            "portfolio_name",
+            "description",
+            "portfolio_unique_id",
+          ])
+          .where("user_id", "=", user.id)
+          .where("portfolio_unique_id", "=", newPortfolioId)
+          .execute();
+        console.log({ newPortfolioData });
         if (result) {
+          console.log({ result });
           return NextResponse.json({ message: " Portfolio was added" });
         }
       }

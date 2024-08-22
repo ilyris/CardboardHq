@@ -24,6 +24,8 @@ import { Portfolio, PortfolioCard } from "@/app/lib/db";
 import { addCardToPortfolio } from "@/helpers/addCardToPortfolio";
 import { v4 as uuidv4 } from "uuid";
 import useHandleSystemMessage from "@/app/hooks/useHandleSystemMessage";
+import { useSession } from "next-auth/react";
+import LoginForm from "../login/LoginForm";
 
 const gradeOptions = [
   { text: "PSA", value: "psa" },
@@ -32,8 +34,18 @@ const gradeOptions = [
   { text: "PCG", value: "pcg" },
 ];
 
-const AddToPortfolioModal = () => {
+interface AddToPortfolioModalProps {
+  handleLogin: (provider: string) => Promise<void>;
+  providers?: any;
+}
+const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
+  handleLogin,
+  providers,
+}) => {
+  const session = useSession();
+  const isAuthenticationed = session.status === "authenticated";
   const dispatch = useAppDispatch();
+
   const {
     handleApiErrorMessage,
     handleApiResponseMessage,
@@ -55,6 +67,7 @@ const AddToPortfolioModal = () => {
     null
   );
   const [portfolios, setPortfolios] = useState<Portfolio[] | null>(null);
+
   const handleDialogClose = () => {
     dispatch(toggleModalIsOpen());
     dispatch(resetState());
@@ -128,6 +141,7 @@ const AddToPortfolioModal = () => {
       setUnitPrice("");
     }
   }, [isLowestPriceChecked]);
+
   return (
     <Dialog
       sx={{
@@ -159,146 +173,168 @@ const AddToPortfolioModal = () => {
               />
             </Box>
           )}
-
-        <Box
-          component="form"
-          sx={{ display: "flex", flexFlow: "row wrap", mt: 3 }}
-          onSubmit={(e) => handleSubmit(e)}
-        >
-          <Box display="flex" justifyContent="space-between" width="100%">
-            <TextField
-              id="quantity"
-              label="Quantity"
-              variant="outlined"
-              value={quantity || ""}
-              defaultValue={1}
-              onChange={handleInputChange(setQuantity)}
-              sx={{ flexBasis: "30%" }}
-            />
-            <TextField
-              sx={{
-                backgroundColor: "#fff",
-                flexBasis: "55%",
-                "& .MuiSelect-select": {
-                  color: theme.palette.background.default,
-                  paddingRight: 4,
-                  paddingLeft: 2,
-                  paddingTop: 1,
-                  paddingBottom: 1,
-                  fontSize: "1.2rem",
-                  height: "20px",
-                },
-              }}
-              onChange={handleInputChange(setGradeValue)}
-              select
-              label="Grade"
-              value={gradeValue}
-            >
-              <MenuItem
-                sx={{ padding: 1, color: theme.palette.background.default }}
-                value="Raw"
+        {isAuthenticationed ? (
+          <Box
+            component="form"
+            sx={{ display: "flex", flexFlow: "row wrap", mt: 3 }}
+            onSubmit={(e) => handleSubmit(e)}
+          >
+            <Box display="flex" justifyContent="space-between" width="100%">
+              <TextField
+                id="quantity"
+                label="Quantity"
+                variant="outlined"
+                value={quantity || ""}
+                defaultValue={1}
+                onChange={handleInputChange(setQuantity)}
+                sx={{ flexBasis: "30%" }}
+              />
+              <TextField
+                sx={{
+                  backgroundColor: "#fff",
+                  flexBasis: "55%",
+                  "& .MuiSelect-select": {
+                    color: theme.palette.background.default,
+                    paddingRight: 4,
+                    paddingLeft: 2,
+                    paddingTop: 1,
+                    paddingBottom: 1,
+                    fontSize: "1.2rem",
+                    height: "20px",
+                  },
+                }}
+                onChange={handleInputChange(setGradeValue)}
+                select
+                label="Grade"
+                value={gradeValue}
               >
-                Raw
-              </MenuItem>
-              {gradeOptions.map(({ value, text }) => (
                 <MenuItem
                   sx={{ padding: 1, color: theme.palette.background.default }}
-                  key={value}
-                  value={value}
+                  value="Raw"
                 >
-                  {text}
+                  Raw
                 </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            width="100%"
-            mt={3}
-          >
-            <TextField
-              id="unit-price"
-              label="Unit Price (USD)"
-              variant="outlined"
-              InputLabelProps={{ shrink: !isLowestPriceChecked ? false : true }}
-              value={
-                !isLowestPriceChecked
-                  ? unitPrice
-                  : cardToAddToPortfolio.lowPrice
-              }
-              disabled={isLowestPriceChecked}
-              onChange={handleInputChange(setUnitPrice)}
-              sx={{
-                input: { color: theme.palette.background.default },
-                flexBasis: "45%",
-              }}
-            />
-            <FormControlLabel
-              sx={{ color: theme.palette.background.default }}
-              control={
-                <Checkbox
-                  checked={isLowestPriceChecked}
-                  onChange={() =>
-                    setIsLowestPriceChecked(!isLowestPriceChecked)
-                  }
-                />
-              }
-              label="Use Lowest Price"
-              labelPlacement="start"
-            />
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            width="100%"
-            mt={3}
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker defaultValue={dayjs()} label="Date" />
-            </LocalizationProvider>
-            <TextField
-              sx={{
-                backgroundColor: "#fff",
-                flexBasis: "55%",
-                "& .MuiSelect-select": {
-                  color: theme.palette.background.default,
-                  paddingRight: 4,
-                  paddingLeft: 2,
-                  paddingTop: 1,
-                  paddingBottom: 1,
-                  fontSize: "1.2rem",
-                  height: "20px",
-                },
-              }}
-              onChange={handleInputChange(setSelectedPortfolio)}
-              select
-              label="Portfolio"
-              value={selectedPortfolio}
+                {gradeOptions.map(({ value, text }) => (
+                  <MenuItem
+                    sx={{ padding: 1, color: theme.palette.background.default }}
+                    key={value}
+                    value={value}
+                  >
+                    {text}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              width="100%"
+              mt={3}
             >
-              <MenuItem
-                sx={{ padding: 1, color: theme.palette.background.default }}
-                value="Raw"
+              <TextField
+                id="unit-price"
+                label="Unit Price (USD)"
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: !isLowestPriceChecked ? false : true,
+                }}
+                value={
+                  !isLowestPriceChecked
+                    ? unitPrice
+                    : cardToAddToPortfolio.lowPrice
+                }
+                disabled={isLowestPriceChecked}
+                onChange={handleInputChange(setUnitPrice)}
+                sx={{
+                  input: { color: theme.palette.background.default },
+                  flexBasis: "45%",
+                }}
+              />
+              <FormControlLabel
+                sx={{ color: theme.palette.background.default }}
+                control={
+                  <Checkbox
+                    checked={isLowestPriceChecked}
+                    onChange={() =>
+                      setIsLowestPriceChecked(!isLowestPriceChecked)
+                    }
+                  />
+                }
+                label="Use Lowest Price"
+                labelPlacement="start"
+              />
+            </Box>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              width="100%"
+              mt={3}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker defaultValue={dayjs()} label="Date" />
+              </LocalizationProvider>
+              <TextField
+                sx={{
+                  backgroundColor: "#fff",
+                  flexBasis: "55%",
+                  "& .MuiSelect-select": {
+                    color: theme.palette.background.default,
+                    paddingRight: 4,
+                    paddingLeft: 2,
+                    paddingTop: 1,
+                    paddingBottom: 1,
+                    fontSize: "1.2rem",
+                    height: "20px",
+                  },
+                }}
+                onChange={handleInputChange(setSelectedPortfolio)}
+                select
+                label="Portfolio"
+                value={selectedPortfolio}
               >
-                Select a portfolio
-              </MenuItem>
-              {portfolios?.map(({ portfolio_name, unique_id }) => (
                 <MenuItem
                   sx={{ padding: 1, color: theme.palette.background.default }}
-                  key={unique_id}
-                  value={portfolio_name}
+                  value="Raw"
                 >
-                  {portfolio_name}
+                  Select a portfolio
                 </MenuItem>
-              ))}
-            </TextField>
+                {portfolios?.map(({ portfolio_name, unique_id }) => (
+                  <MenuItem
+                    sx={{ padding: 1, color: theme.palette.background.default }}
+                    key={unique_id}
+                    value={portfolio_name}
+                  >
+                    {portfolio_name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+            <Box width={"100%"} display="flex" justifyContent="flex-end">
+              <Button type="submit" variant="contained" color="success">
+                Add Card
+              </Button>
+            </Box>
           </Box>
-          <Box width={"100%"} display="flex" justifyContent="flex-end">
-            <Button type="submit" variant="contained" color="success">
-              Add Card
-            </Button>
+        ) : (
+          <Box
+            m={5}
+            p={2}
+            width={350}
+            display={"flex"}
+            flexDirection={"column"}
+            justifyContent={"center"}
+          >
+            <Typography
+              variant={"h6"}
+              textAlign={"center"}
+              color={theme.palette.text.secondary}
+            >
+              {" "}
+              Login to add this card to your portfolio
+            </Typography>
+            <LoginForm providers={providers} handleLoginCb={handleLogin} />
           </Box>
-        </Box>
+        )}
       </Box>
     </Dialog>
   );

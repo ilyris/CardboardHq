@@ -4,8 +4,11 @@ import SetCard from "./components/SetCard";
 import { Box, Container, Typography } from "@mui/material";
 import FeaturedCards from "./components/FeaturedCards";
 import AddToPortfolioModal from "./components/modals/AddToPortfolioModal";
+import useAuthProviders from "./hooks/useAuthProviders";
 
 export default function Home() {
+  const { providers, handleLogin } = useAuthProviders();
+
   return (
     <main>
       <Container maxWidth="lg">
@@ -33,7 +36,7 @@ export default function Home() {
             })}
           </Box>
         </div>
-        <AddToPortfolioModal />
+        <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
       </Container>
     </main>
   );

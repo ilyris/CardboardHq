@@ -10,7 +10,7 @@ import {
 
 const SnearBarContainerStyles = {
   position: "fixed",
-  bottom: "0",
+  top: "70px",
   transform: "translate(-50%, -50%)",
   left: "50%",
   zIndex: "10",

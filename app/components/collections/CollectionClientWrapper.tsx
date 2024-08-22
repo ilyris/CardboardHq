@@ -2,7 +2,8 @@
 import { TransformedPortfolioData } from "@/typings/Portfolios";
 import CollectionClient from "./CollectionPage";
 import CollectionPageHeader from "./CollectionPageHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+// import { revalidatePath } from "next/cache";
 
 interface CollectionClientProps {
   portfolioList: TransformedPortfolioData[];
@@ -17,6 +18,7 @@ const CollectionClientWrapper: React.FC<CollectionClientProps> = ({
   const toggleIsPortfolioModalOpen = () => {
     setIsPortfolioModalOpen(!isPortfolioModalOpen);
   };
+
   return (
     <>
       <CollectionPageHeader
