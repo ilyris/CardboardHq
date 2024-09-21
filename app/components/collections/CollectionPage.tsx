@@ -19,6 +19,7 @@ const CollectionClient: React.FC<CollectionClientProps> = ({
       {!!portfolioList?.length ? (
         <Box display="flex">
           {portfolioList.map((portfolio) => {
+            console.log({ portfolio });
             const totalCards = portfolio.cards.reduce(
               (sum, card) => sum + card.quantity,
               0

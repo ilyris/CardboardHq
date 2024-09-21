@@ -8,8 +8,11 @@ import React, { useEffect, useState } from "react";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
+import useAuthProviders from "@/app/hooks/useAuthProviders";
 
 const SearchPage = () => {
+  const { providers, handleLogin } = useAuthProviders();
+
   const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];
 
   const params = useParams();
@@ -57,7 +60,7 @@ const SearchPage = () => {
           })}
         </Box>
       )}
-      <AddToPortfolioModal />
+      <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
     </Container>
   );
 };

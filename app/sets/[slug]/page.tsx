@@ -19,8 +19,11 @@ import Filter from "@/app/components/Filter";
 import { CardPrintingPriceView } from "@/app/lib/db";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 import { fetchCardPriceData } from "@/helpers/getFaBCardPriceData";
+import useAuthProviders from "@/app/hooks/useAuthProviders";
 
 const SlugPage = () => {
+  const { providers, handleLogin } = useAuthProviders();
+
   const params = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
 
@@ -158,7 +161,7 @@ const SlugPage = () => {
           />
         </Box>
       )}
-      <AddToPortfolioModal />
+      <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
     </Container>
   );
 };
