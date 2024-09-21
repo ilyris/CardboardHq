@@ -73,7 +73,7 @@ const transformData = (
 
 export async function GET(req: NextRequest) {
   const userEmail = req.nextUrl.searchParams.get("email");
-
+  const pidQuery = req.nextUrl.searchParams.get("pid");
   try {
     if (!userEmail)
       return NextResponse.json(
@@ -121,6 +121,11 @@ export async function GET(req: NextRequest) {
           mostRecentCardDataWithPricing
         );
 
+        // if the user requests a single portfolio.
+        if (pidQuery) {
+          const portfolioById = portfolioData.find((p) => p.id === pidQuery);
+          return successResponse(portfolioById);
+        }
         return successResponse(portfolioData);
       }
     }
