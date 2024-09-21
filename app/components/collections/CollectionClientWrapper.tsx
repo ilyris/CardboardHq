@@ -2,7 +2,7 @@
 import { TransformedPortfolioData } from "@/typings/Portfolios";
 import CollectionClient from "./CollectionPage";
 import CollectionPageHeader from "./CollectionPageHeader";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { revalidatePath } from "next/cache";
 
 interface CollectionClientProps {
