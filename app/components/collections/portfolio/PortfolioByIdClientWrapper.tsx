@@ -74,6 +74,7 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
             const cardSumCost = low_price || unit_price * quantity;
             return (
               <TcgCard
+                key={printing_id}
                 image={image_url}
                 title={card_name}
                 slug={printing_id} // setName
