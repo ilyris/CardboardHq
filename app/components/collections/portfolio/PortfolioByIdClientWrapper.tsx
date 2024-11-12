@@ -10,6 +10,7 @@ import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPrice
 import { DateString } from "@/typings/Dates";
 import { CardSet } from "@/typings/FaBSet";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
+import { current } from "@reduxjs/toolkit";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;
@@ -41,6 +42,12 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
     })();
   }, [userEmail, pid]);
 
+  const totalCardQty = portfolioData?.cards.reduce(
+    (acc, cardObj) => acc + cardObj.quantity,
+    0
+  );
+
+  console.log({ totalCardQty });
   if (!userEmail && !portfolioData) {
     return (
       <Box display="flex">
@@ -54,8 +61,12 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
       <Box width={"100%"} display={"flex"} justifyContent={"space-between"}>
         <Typography variant="h4">{portfolioData?.name}</Typography>
         <Typography variant="h4">
-          {portfolioData?.recentPortfolioCostChange}
+          {portfolioData?.recentPortfolioCostChange.toFixed(2)}
         </Typography>
+      </Box>
+      <Box width={"100%"} display={"flex"} justifyContent={"space-between"}>
+        <Typography variant="h5">Total Cards:</Typography>
+        <Typography variant="h5">{totalCardQty}</Typography>
       </Box>
       <Box mt={10}>
         <TCGLineChart data={historicPriceData} width={1100} />
