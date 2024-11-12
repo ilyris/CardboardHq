@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const portfolioId = req.nextUrl.searchParams.get("portfolioId");
+  const dayInterval = req.nextUrl.searchParams.get("dayInterval") || 7;
 
   const session = await auth();
   try {
@@ -19,8 +20,8 @@ export async function GET(req: NextRequest) {
           .where(
             "price_timestamp",
             ">=",
-            new Date(Date.now() - 31 * 24 * 60 * 60 * 1000)
-          ) // Filter for last 31 days
+            new Date(Date.now() - Number(dayInterval) * 24 * 60 * 60 * 1000)
+          )
           .execute();
 
         if (portfolio_with_historic_data) {

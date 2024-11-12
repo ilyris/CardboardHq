@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "recharts";
 import theme from "../theme";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { DateString } from "@/typings/Dates";
 
 interface TCGLineChartData {
@@ -21,15 +21,24 @@ interface TCGLineChartData {
   width?: number;
   height?: number;
 }
-const TCGLineChart: React.FC<TCGLineChartData> = ({
+interface TCGProps {
+  historicDataCb?: (dayInterval: string) => void;
+}
+
+const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
   data,
   width = 600,
   height = 300,
+  historicDataCb,
 }) => {
   let maxPrice = 0;
   let minPrice = 0;
   let lowerBound = 0;
   let upperBound = 20;
+
+  const [activeButton, setActiveButton] = useState<
+    "button1" | "button2" | "button3" | null
+  >(null);
 
   if (data && data.length > 0) {
     maxPrice = Math.max(...data.map((d) => d.low_price));
@@ -63,6 +72,56 @@ const TCGLineChart: React.FC<TCGLineChartData> = ({
         />
         <Tooltip />
       </LineChart>
+      <Box>
+        <Button
+          variant="contained"
+          sx={{
+            mr: 5,
+            backgroundColor:
+              activeButton === "button1"
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main,
+          }}
+          onClick={() => {
+            historicDataCb && historicDataCb("7d");
+            setActiveButton("button1");
+          }}
+        >
+          7D
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            mr: 5,
+            backgroundColor:
+              activeButton === "button2"
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main,
+          }}
+          onClick={() => {
+            historicDataCb && historicDataCb("1m");
+            setActiveButton("button2");
+          }}
+        >
+          1M
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            mr: 5,
+            backgroundColor:
+              activeButton === "button3"
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main,
+          }}
+          onClick={() => {
+            historicDataCb && historicDataCb("6m");
+            setActiveButton("button3");
+          }}
+        >
+          6M
+        </Button>
+      </Box>
     </Box>
   );
 };

@@ -10,7 +10,6 @@ import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPrice
 import { DateString } from "@/typings/Dates";
 import { CardSet } from "@/typings/FaBSet";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
-import { current } from "@reduxjs/toolkit";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;
@@ -47,6 +46,13 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
     0
   );
 
+  const fetchPortfolioPriceDataByDayInterval = async (dayInterval: string) => {
+    const historicPriceData = await getPortfolioHistoryPriceData(
+      pid,
+      dayInterval
+    );
+    setHistoricPriceData(historicPriceData);
+  };
   console.log({ totalCardQty });
   if (!userEmail && !portfolioData) {
     return (
@@ -69,7 +75,11 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
         <Typography variant="h5">{totalCardQty}</Typography>
       </Box>
       <Box mt={10}>
-        <TCGLineChart data={historicPriceData} width={1100} />
+        <TCGLineChart
+          data={historicPriceData}
+          width={1100}
+          historicDataCb={fetchPortfolioPriceDataByDayInterval}
+        />
       </Box>
       {!!portfolioData?.cards.length && (
         <Box display={"flex"} mt={10}>
