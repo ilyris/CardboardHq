@@ -8,6 +8,8 @@ import TcgCard from "../../TcgCard";
 import TCGLineChart from "../../TCGLineChart";
 import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPriceData";
 import { DateString } from "@/typings/Dates";
+import { CardSet } from "@/typings/FaBSet";
+import FaBSetJson from "@/app/jsonData/FaBSet.json";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;
@@ -16,6 +18,7 @@ interface PortfolioByIdClientWrapper {
 const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
   userEmail,
 }) => {
+  const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];
   const params = useParams<{ pid: string }>();
   const pid = params.pid;
 
@@ -71,13 +74,18 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
               quantity,
               set_id,
             } = card;
+
+            const formattedSetName = FaBSetDataJson.find(
+              (set) => set.id === set_id
+            )?.formatted_name;
+
             const cardSumCost = low_price || unit_price * quantity;
             return (
               <TcgCard
                 key={printing_id}
                 image={image_url}
                 title={card_name}
-                slug={printing_id} // setName
+                slug={formattedSetName!} // setName EVR should be Everfest
                 cardId={printing_id}
                 cardPrice={cardSumCost}
                 foiling={foiling}
