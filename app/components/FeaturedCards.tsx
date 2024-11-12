@@ -87,6 +87,8 @@ const FeaturedCards: React.FC = () => {
                       paddingLeft: "10px",
                       display: "flex",
                       borderBottomLeftRadius: "10px",
+                      borderTopRightRadius: "10px",
+                      boxShadow: "-7px 3px 8px 2px #00000059",
                     }}
                   >
                     <Typography

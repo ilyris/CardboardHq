@@ -6,6 +6,7 @@ import StyleIcon from "@mui/icons-material/Style";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import useHandleSystemMessage from "@/app/hooks/useHandleSystemMessage";
+import { isNegativeNumber } from "@/helpers/isNegativeNumber";
 
 interface PortfolioCardProps {
   portfolioName: string;
@@ -68,14 +69,20 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
             {!!portfolioPercentageChange && (
               <>
                 <Typography variant="h6" component="span" ml={1}>
-                  +
+                  -{" "}
                 </Typography>
                 <Typography
                   variant="h6"
                   component="span"
-                  color={theme.palette.success.main}
+                  color={
+                    isNegativeNumber(
+                      Number(portfolioPercentageChange.toFixed(2))
+                    )
+                      ? theme.palette.error.main
+                      : theme.palette.success.main
+                  }
                 >
-                  {` (%${portfolioPercentageChange.toFixed(2)})`}
+                  {`(%${portfolioPercentageChange.toFixed(2)})`}
                 </Typography>
               </>
             )}

@@ -31,6 +31,7 @@ interface TcgCardProps {
   featured?: boolean;
   uniquePrintingId?: string;
   uniqueCardId?: string;
+  quantity?: number;
 }
 
 const TcgCard: React.FC<TcgCardProps> = ({
@@ -44,6 +45,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
   featured,
   uniquePrintingId,
   uniqueCardId,
+  quantity,
 }) => {
   const dispatch = useAppDispatch();
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
@@ -156,13 +158,30 @@ const TcgCard: React.FC<TcgCardProps> = ({
                   marginTop: 1,
                 }}
               >
-                <Typography gutterBottom variant="body1">
+                <Typography gutterBottom variant="body2">
                   Raw
                 </Typography>
-                <Typography gutterBottom variant="body1">
+                <Typography gutterBottom variant="body2">
                   {cardPrice ?? "Price Not Found"}
                 </Typography>
               </Box>
+              {!!quantity && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    borderTop: "1px solid #b1afaf",
+                    marginTop: 1,
+                  }}
+                >
+                  <Typography gutterBottom variant="body2">
+                    Quantity
+                  </Typography>
+                  <Typography gutterBottom variant="body2">
+                    {quantity}
+                  </Typography>
+                </Box>
+              )}
             </CardContent>
           )}
         </CardActionArea>

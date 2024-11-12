@@ -18,8 +18,14 @@ interface TCGLineChartData {
         low_price: number;
       }[]
     | null;
+  width?: number;
+  height?: number;
 }
-const TCGLineChart: React.FC<TCGLineChartData> = ({ data }) => {
+const TCGLineChart: React.FC<TCGLineChartData> = ({
+  data,
+  width = 600,
+  height = 300,
+}) => {
   let maxPrice = 0;
   let minPrice = 0;
   let lowerBound = 0;
@@ -34,8 +40,8 @@ const TCGLineChart: React.FC<TCGLineChartData> = ({ data }) => {
   return (
     <Box sx={{ color: theme.palette.text.primary }}>
       <LineChart
-        width={600}
-        height={300}
+        width={width}
+        height={height}
         data={data || []}
         margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
       >

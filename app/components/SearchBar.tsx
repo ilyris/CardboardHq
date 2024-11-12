@@ -32,6 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <TextField
         sx={{
           marginRight: "20px",
+          borderRadius: "5px",
           backgroundColor: "#fff",
           "& .MuiInputBase-input": {
             fontSize: "1.2rem",
