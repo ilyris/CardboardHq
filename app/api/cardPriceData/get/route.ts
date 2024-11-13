@@ -7,15 +7,11 @@ const convertEditionFoilString = (edition: string, foiling: string) => {
     if (foiling === "S") return "Normal";
     if (foiling === "C") return "Cold Foil";
     if (foiling === "R") return "Rainbow Foil";
-  }
-
-  if (edition === "F" || edition === "A") {
+  } else if (edition === "F" || edition === "A") {
     if (foiling === "S") return "1st Edition Normal";
     if (foiling === "C") return "1st Edition Cold Foil";
     if (foiling === "R") return "1st Edition Rainbow Foil";
-  }
-
-  if (edition === "U") {
+  } else if (edition === "U") {
     if (foiling === "S") return "Unlimited Edition Normal";
     if (foiling === "C") return "Unlimited Edition Cold Foil";
     if (foiling === "R") return "Unlimited Edition Rainbow Foil";
@@ -27,45 +23,58 @@ export async function GET(req: NextRequest) {
   const foiling = req.nextUrl.searchParams.get("foiling");
   const productId = req.nextUrl.searchParams.get("productId");
   const edition = req.nextUrl.searchParams.get("edition");
+  const dayInterval = Number(req.nextUrl.searchParams.get("dayInterval")) || 7;
+
   try {
+    const tableName =
+      dayInterval === 7
+        ? "all_printings_with_card_prices_weekly_new"
+        : "product_prices";
+
     const cardPriceQuery = await db
-      .selectFrom("all_printings_with_card_prices_weekly_new")
+      .selectFrom(tableName)
       .selectAll()
       .where(
-        "all_printings_with_card_prices_weekly_new.tcgplayer_product_id",
+        tableName === "all_printings_with_card_prices_weekly_new"
+          ? "all_printings_with_card_prices_weekly_new.tcgplayer_product_id"
+          : "product_prices.product_id",
         "=",
         productId
       )
       .where(
-        "all_printings_with_card_prices_weekly_new.sub_type_name",
+        `${tableName}.sub_type_name`,
         "ilike",
         `%${convertEditionFoilString(edition as string, foiling as string)}%`
       )
+      .where(
+        tableName === "all_printings_with_card_prices_weekly_new"
+          ? "price_date"
+          : "date",
+        ">=",
+        new Date(Date.now() - dayInterval * 24 * 60 * 60 * 1000).toISOString()
+      )
       .execute();
 
-    // need to massage the data to the object structure we need.
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
-      const UTCDate = new Date(priceObj.price_date);
-      const options: Intl.DateTimeFormatOptions = {
+      const UTCDate = new Date(
+        tableName === "product_prices" && priceObj.low_price
+          ? priceObj.low_price
+          : priceObj.price_date || Date.now()
+      );
+      const formattedDate = UTCDate.toLocaleDateString("en-US", {
         month: "2-digit",
         day: "2-digit",
-      };
-      const formattedDate = UTCDate.toLocaleDateString("en-US", options);
+      });
       return {
         date: formattedDate,
         low_price: priceObj.low_price,
       };
     });
 
-    return new Response(
-      JSON.stringify({
-        results: formattedPriceData,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ results: formattedPriceData }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     return new Response(
       JSON.stringify({

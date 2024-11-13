@@ -10,16 +10,32 @@ export interface ProductPriceData {
   subTypeName: string;
 }
 
+const getDays = (dayInterval: string) => {
+  switch (dayInterval) {
+    case "7d":
+      return 7;
+    case "1m":
+      return 31;
+    case "6m":
+      return 31 * 6;
+    default:
+      return 7;
+  }
+};
+
 const fetchCardPriceData = async (
   productId: string,
   foiling: string,
-  edition: string
+  edition: string,
+  dayInterval = "7d"
 ) => {
+  const days = getDays(dayInterval);
   const FabCardPriceResults = await axios.get("/api/cardPriceData/get", {
     params: {
       productId: productId || "",
       foiling,
       edition,
+      dayInterval: days,
     },
   });
   return FabCardPriceResults.data.results;

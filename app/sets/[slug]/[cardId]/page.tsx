@@ -1,14 +1,7 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Skeleton,
-  CardActionArea,
-  Button,
-} from "@mui/material";
+import { Box, Container, Typography, CardActionArea } from "@mui/material";
 import importLogo from "@/helpers/importLogo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Image from "next/image";
@@ -23,12 +16,13 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import isNegativePriceChange from "@/helpers/isNegativePriceChange";
 import { DateString } from "@/typings/Dates";
 import CardLegalityContainer from "@/app/components/CardLegalityContainer";
+import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPriceData";
 
 const CardPage = () => {
   const params = useParams<{ slug: string; cardId: string }>();
   const { slug, cardId } = params;
   const searchParams = useSearchParams();
-  const foiling = searchParams.get("foiling");
+  const foiling = searchParams.get("foiling") as string;
   const edition = searchParams.get("edition") as string;
   const isFoiled = foiling !== "S";
 
@@ -47,6 +41,19 @@ const CardPage = () => {
     const importedLogo = await importLogo(slug);
     setLogo(importedLogo);
   };
+
+  const fetchPortfolioPriceDataByDayInterval = async (dayInterval: string) => {
+    if (!!cardData) {
+      const historicPriceData = await fetchCardPriceData(
+        cardData.tcgplayer_product_id,
+        foiling,
+        edition,
+        dayInterval
+      );
+      setCardPriceHistoryData(historicPriceData);
+    }
+  };
+
   useEffect(() => {
     if (cardId) {
       loadLogo();
@@ -120,7 +127,10 @@ const CardPage = () => {
             </Box>
           </Box>
           <Box mt={3}>
-            <TCGLineChart data={cardPriceHistoryData} />
+            <TCGLineChart
+              data={cardPriceHistoryData}
+              historicDataCb={fetchPortfolioPriceDataByDayInterval}
+            />
           </Box>
         </Box>
         <Box sx={{ width: "auto" }}>
