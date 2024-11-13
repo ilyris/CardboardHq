@@ -57,10 +57,11 @@ export async function GET(req: NextRequest) {
 
     const formattedPriceData = cardPriceQuery.map((priceObj) => {
       const UTCDate = new Date(
-        tableName === "product_prices" && priceObj.low_price
-          ? priceObj.low_price
+        tableName === "product_prices" && priceObj.date
+          ? priceObj.date
           : priceObj.price_date || Date.now()
       );
+
       const formattedDate = UTCDate.toLocaleDateString("en-US", {
         month: "2-digit",
         day: "2-digit",
