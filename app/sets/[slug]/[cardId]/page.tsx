@@ -87,7 +87,7 @@ const CardPage = () => {
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ width: "62%" }} mr={2}>
+        <Box sx={{ width: "100%" }} mr={2}>
           <Box
             sx={{
               display: "flex",
@@ -126,14 +126,21 @@ const CardPage = () => {
               )}
             </Box>
           </Box>
-          <Box mt={3}>
-            <TCGLineChart
-              data={cardPriceHistoryData}
-              historicDataCb={fetchPortfolioPriceDataByDayInterval}
-            />
-          </Box>
         </Box>
-        <Box sx={{ width: "auto" }}>
+        <Box mt={3} width={"65%"}>
+          <TCGLineChart
+            data={cardPriceHistoryData}
+            historicDataCb={fetchPortfolioPriceDataByDayInterval}
+          />
+        </Box>
+        <Box
+          sx={{
+            width: "auto",
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: "column",
+          }}
+        >
           {!!cardData && (
             <>
               <CardActionArea>

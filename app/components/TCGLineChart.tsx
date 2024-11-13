@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   LineChart,
   Line,
-  CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
@@ -88,7 +87,7 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
             mr: 5,
             backgroundColor:
               activeButton === "button1"
-                ? theme.palette.secondary.main
+                ? theme.palette.success.light
                 : theme.palette.primary.main,
           }}
           onClick={() => {
@@ -104,7 +103,7 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
             mr: 5,
             backgroundColor:
               activeButton === "button2"
-                ? theme.palette.secondary.main
+                ? theme.palette.success.light
                 : theme.palette.primary.main,
           }}
           onClick={() => {
@@ -120,7 +119,7 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
             mr: 5,
             backgroundColor:
               activeButton === "button3"
-                ? theme.palette.secondary.main
+                ? theme.palette.success.light
                 : theme.palette.primary.main,
           }}
           onClick={() => {
