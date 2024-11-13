@@ -31,6 +31,9 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
     { low_price: number; date: DateString }[] | null
   >(null);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredCards, setFilteredCards] = useState<any[]>([]);
+
   useEffect(() => {
     (async () => {
       if (userEmail && !portfolioData) {
@@ -55,7 +58,19 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
     );
     setHistoricPriceData(historicPriceData);
   };
-  console.log({ totalCardQty });
+
+  const handleSearchChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setSearchQuery(e.currentTarget.value);
+    if (e.currentTarget.value !== "" && !!portfolioData?.cards.length) {
+      const searchedCards = portfolioData?.cards.filter((card) =>
+        card.card_name
+          .toLowerCase()
+          .includes(e.currentTarget.value.toLowerCase())
+      );
+      setFilteredCards(searchedCards);
+    }
+  };
+
   if (!userEmail && !portfolioData) {
     return (
       <Box display="flex">
@@ -100,16 +115,16 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
           {totalCardQty}
         </Typography>
       </Box>
-      <Box component="form" mt={2}>
+      <Box mt={2}>
         <SearchBar
-          value={""}
+          value={searchQuery}
           placeholder={"Search your collection"}
-          onChange={(e) => console.log(e)}
+          onChange={(e) => handleSearchChange(e)}
         />
       </Box>
-      {!!portfolioData?.cards.length && (
-        <Box display={"flex"} mt={10}>
-          {portfolioData?.cards.map((card) => {
+      <Box display="flex" mt={10} width={"100%"}>
+        {(searchQuery ? filteredCards : portfolioData?.cards || []).map(
+          (card) => {
             const {
               card_name,
               edition,
@@ -125,14 +140,14 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
             const formattedSetName = FaBSetDataJson.find(
               (set) => set.id === set_id
             )?.formatted_name;
-
             const cardSumCost = low_price || unit_price * quantity;
+
             return (
               <TcgCard
                 key={printing_id}
                 image={image_url}
                 title={card_name}
-                slug={formattedSetName!} // setName EVR should be Everfest
+                slug={formattedSetName || "na"}
                 cardId={printing_id}
                 cardPrice={cardSumCost}
                 foiling={foiling}
@@ -140,9 +155,9 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
                 quantity={quantity}
               />
             );
-          })}
-        </Box>
-      )}
+          }
+        )}
+      </Box>
     </Box>
   );
 };

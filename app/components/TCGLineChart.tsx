@@ -56,6 +56,7 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
           backgroundColor: theme.palette.secondary.main,
           padding: "5px",
           marginBottom: "1rem",
+          borderRadius: "5px",
         }}
       >
         <LineChart
