@@ -38,7 +38,7 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
 
   const [activeButton, setActiveButton] = useState<
     "button1" | "button2" | "button3" | null
-  >(null);
+  >("button1");
 
   if (data && data.length > 0) {
     maxPrice = Math.max(...data.map((d) => d.low_price));
