@@ -16,7 +16,19 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import isNegativePriceChange from "@/helpers/isNegativePriceChange";
 import { DateString } from "@/typings/Dates";
 import CardLegalityContainer from "@/app/components/CardLegalityContainer";
-import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPriceData";
+
+const dayIntervalTranslation = (dayInterval: string) => {
+  switch (dayInterval) {
+    case "7d":
+      return "Weekly";
+    case "1m":
+      return "Last Month";
+    case "6m":
+      return "Half Year";
+    default:
+      return "Weekly";
+  }
+};
 
 const CardPage = () => {
   const params = useParams<{ slug: string; cardId: string }>();
@@ -36,7 +48,7 @@ const CardPage = () => {
       }[]
     | null
   >(null);
-
+  const [dayInterval, setDayInterval] = useState("7d");
   const loadLogo = async () => {
     const importedLogo = await importLogo(slug);
     setLogo(importedLogo);
@@ -50,6 +62,7 @@ const CardPage = () => {
         edition,
         dayInterval
       );
+      setDayInterval(dayInterval);
       setCardPriceHistoryData(historicPriceData);
     }
   };
@@ -78,6 +91,7 @@ const CardPage = () => {
     }
   }, [cardId, slug, foiling]);
 
+  console.log({ cardData, cardPriceHistoryData });
   return (
     <Container maxWidth="lg">
       <Box
@@ -141,7 +155,7 @@ const CardPage = () => {
             flexDirection: "column",
           }}
         >
-          {!!cardData && (
+          {!!cardPriceHistoryData && cardData && (
             <>
               <CardActionArea>
                 <LazyLoadImage
@@ -157,13 +171,20 @@ const CardPage = () => {
                 alignItems={"center"}
                 justifyContent={"space-between"}
               >
-                <Typography variant="h4">Weekly:</Typography>
+                <Typography variant="h4">
+                  {dayIntervalTranslation(dayInterval)}:
+                </Typography>
                 <Typography
                   variant="h4"
                   sx={{
                     color: !isNegativePriceChange(
                       Math.round(
-                        (cardData.percentage_change + Number.EPSILON) * 100
+                        ((cardPriceHistoryData[cardPriceHistoryData.length - 1]
+                          .low_price -
+                          cardPriceHistoryData[0].low_price) /
+                          cardPriceHistoryData[0].low_price +
+                          Number.EPSILON) *
+                          100
                       ) / 100
                     )
                       ? "#98ff65"
@@ -174,12 +195,22 @@ const CardPage = () => {
                   }}
                 >
                   {Math.round(
-                    (cardData.percentage_change + Number.EPSILON) * 100
+                    ((cardPriceHistoryData[cardPriceHistoryData.length - 1]
+                      .low_price -
+                      cardPriceHistoryData[0].low_price) /
+                      cardPriceHistoryData[0].low_price +
+                      Number.EPSILON) *
+                      100
                   ) / 100}
                   %
                   {!isNegativePriceChange(
                     Math.round(
-                      (cardData.percentage_change + Number.EPSILON) * 100
+                      ((cardPriceHistoryData[cardPriceHistoryData.length - 1]
+                        .low_price -
+                        cardPriceHistoryData[0].low_price) /
+                        cardPriceHistoryData[0].low_price +
+                        Number.EPSILON) *
+                        100
                     ) / 100
                   ) ? (
                     <TrendingUpIcon fontSize="large" />
