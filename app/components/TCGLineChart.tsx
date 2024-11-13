@@ -6,6 +6,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 import theme from "../theme";
 import { Box, Button } from "@mui/material";
@@ -48,30 +49,37 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
   }
   return (
     <Box sx={{ color: theme.palette.text.primary }}>
-      <LineChart
-        width={width}
-        height={height}
-        data={data || []}
-        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+      <ResponsiveContainer
+        width="100%"
+        height={400}
+        style={{
+          backgroundColor: theme.palette.secondary.main,
+          padding: "5px",
+          marginBottom: "1rem",
+        }}
       >
-        <Line type="monotone" dataKey="low_price" stroke={"#98ff65"} />
-        <CartesianGrid
-          stroke="#FFF"
-          strokeDasharray="5 5"
-          color={theme.palette.text.primary}
-        />
-        <XAxis
-          dataKey="date"
-          padding={{ left: 2, right: 2 }}
-          color={theme.palette.text.primary}
-        />
-        <YAxis
-          domain={[lowerBound, upperBound]}
-          padding={{ bottom: 50 }}
-          color={theme.palette.text.primary}
-        />
-        <Tooltip />
-      </LineChart>
+        <LineChart
+          width={width}
+          height={height}
+          data={data || []}
+          margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+        >
+          <Line type="monotone" dataKey="low_price" stroke={"#98ff65"} />
+
+          <XAxis
+            dataKey="date"
+            padding={{ left: 2, right: 2 }}
+            color={theme.palette.text.primary}
+          />
+          <YAxis
+            domain={[lowerBound, upperBound]}
+            padding={{ bottom: 50 }}
+            color={theme.palette.text.primary}
+          />
+          <Tooltip />
+        </LineChart>
+      </ResponsiveContainer>
+
       <Box>
         <Button
           variant="contained"

@@ -10,6 +10,8 @@ import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPrice
 import { DateString } from "@/typings/Dates";
 import { CardSet } from "@/typings/FaBSet";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
+import theme from "../../../theme";
+import SearchBar from "../../SearchBar";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;
@@ -70,15 +72,39 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
           {portfolioData?.recentPortfolioCostChange.toFixed(2)}
         </Typography>
       </Box>
-      <Box width={"100%"} display={"flex"} justifyContent={"space-between"}>
-        <Typography variant="h5">Total Cards:</Typography>
-        <Typography variant="h5">{totalCardQty}</Typography>
-      </Box>
-      <Box mt={10}>
+      <Box mt={10} width={"100%"}>
         <TCGLineChart
           data={historicPriceData}
           width={1100}
+          height={500}
           historicDataCb={fetchPortfolioPriceDataByDayInterval}
+        />
+      </Box>
+      <Box width={"100%"} display={"flex"} mt={5}>
+        <Typography variant="h6">Total Cards:</Typography>
+        <Typography
+          ml={1}
+          variant="body1"
+          sx={{
+            borderRadius: "50%",
+            backgroundColor: theme.palette.primary.main,
+            height: "35px",
+            width: "35px",
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontWeight: "bold",
+          }}
+        >
+          {totalCardQty}
+        </Typography>
+      </Box>
+      <Box component="form" mt={2}>
+        <SearchBar
+          value={""}
+          placeholder={"Search your collection"}
+          onChange={(e) => console.log(e)}
         />
       </Box>
       {!!portfolioData?.cards.length && (
