@@ -78,7 +78,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
       style={{
         flex: "1 0 auto",
         maxWidth: "20%",
-        marginBottom: featured ? 0 : 20,
+        marginBottom: featured ? 0 : 45,
         position: "relative",
       }}
     >

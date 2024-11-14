@@ -6,52 +6,91 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const portfolio_result = await db
+    const portfolioResult = await db
       .insertInto("portfolio_card")
-      .values({
-        ...body,
-      })
+      .values(body)
       .executeTakeFirst();
 
-    const portfolio_cards = await db
+    const portfolioCards = await db
       .selectFrom("portfolio_card")
-      .select([
-        "printing_unique_id",
-        "quantity",
-        "unit_price",
-        "portfolio_unique_id",
-      ])
+      .select(["printing_unique_id", "quantity"])
       .where("portfolio_unique_id", "=", body.portfolio_unique_id)
       .execute();
 
-    // Step 5: Calculate the total portfolio value
-    let portfolioValue = 0;
-    portfolio_cards.forEach((card) => {
-      const unit_price = card.unit_price as number;
-      portfolioValue += unit_price * card.quantity;
-    });
+    const cardPrintingIdsAndQuantity = portfolioCards.map(
+      ({ printing_unique_id, quantity }) => ({
+        printing_unique_id,
+        quantity,
+      })
+    );
+
+    const printingIds = cardPrintingIdsAndQuantity.map(
+      (card) => card.printing_unique_id
+    );
+
+    const portfolioCardPrices = await db
+      .selectFrom("printing_with_card_and_latest_pricing")
+      .select(["low_price", "printing_unique_id"])
+      .where("printing_unique_id", "in", printingIds)
+      .execute();
+
+    // Calculate portfolio value
+    const portfolioValue = cardPrintingIdsAndQuantity.reduce((total, card) => {
+      const matchedPrice = portfolioCardPrices.find(
+        (price) => price.printing_unique_id === card.printing_unique_id
+      );
+
+      if (matchedPrice && matchedPrice.low_price !== null) {
+        return total + matchedPrice.low_price * card.quantity;
+      } else {
+        return total;
+      }
+    }, 0);
 
     const timestamp = new Date();
 
-    const portfolio_prices_response = await db
-      .insertInto("portfolio_prices")
-      .values({
-        portfolio_id: body.portfolio_unique_id,
-        price_timestamp: timestamp,
-        price: portfolioValue,
-      })
-      .execute();
+    // Get the most recent portfolio price entry for this portfolio
+    const latestPrice = await db
+      .selectFrom("portfolio_prices")
+      .select(["price_timestamp"])
+      .where("portfolio_id", "=", body.portfolio_unique_id)
+      .orderBy("price_timestamp", "desc")
+      .limit(1)
+      .executeTakeFirst();
 
-    if (portfolio_result && portfolio_prices_response) {
-      return NextResponse.json({
-        message: `Card was added to your portfolio`,
-      });
+    const isToday =
+      latestPrice &&
+      new Date(latestPrice.price_timestamp).toDateString() ===
+        timestamp.toDateString();
+
+    // Insert or update today's portfolio price
+    if (isToday) {
+      await db
+        .updateTable("portfolio_prices")
+        .set({ price_timestamp: timestamp, price: portfolioValue })
+        .where("portfolio_id", "=", body.portfolio_unique_id)
+        .where("price_timestamp", "=", latestPrice.price_timestamp)
+        .execute();
+    } else {
+      await db
+        .insertInto("portfolio_prices")
+        .values({
+          portfolio_id: body.portfolio_unique_id,
+          price_timestamp: timestamp,
+          price: portfolioValue,
+        })
+        .execute();
     }
-    return NextResponse.json(
-      { error: "Failed to add the portfolio" },
-      { status: 500 }
-    );
+
+    // Response based on success
+    return portfolioResult
+      ? NextResponse.json({ message: `Card was added to your portfolio` })
+      : NextResponse.json(
+          { error: "Failed to add the portfolio" },
+          { status: 500 }
+        );
   } catch (err) {
+    console.error("Error processing request:", err);
     return NextResponse.json(
       { error: "Failed to process request" },
       { status: 500 }

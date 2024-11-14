@@ -5,3 +5,12 @@ export interface TransformedPortfolioData {
   initialPortfolioCost: number;
   recentPortfolioCostChange: number;
 }
+interface ReturnData {
+  usd: number;
+  percentage: string;
+}
+
+export interface PortfolioHoldingAdjustment {
+  todaysReturn: ReturnData;
+  totalReturn: ReturnData;
+}

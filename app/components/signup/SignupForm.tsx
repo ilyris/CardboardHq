@@ -15,7 +15,6 @@ const SignupForm: React.FC<SignupProps> = ({ onSignup }) => {
     password: string
   ) => {
     event.preventDefault();
-    console.log({ username, password });
     onSignup(username, password);
   };
 

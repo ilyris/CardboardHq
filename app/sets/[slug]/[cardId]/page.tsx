@@ -91,7 +91,6 @@ const CardPage = () => {
     }
   }, [cardId, slug, foiling]);
 
-  console.log({ cardData, cardPriceHistoryData });
   return (
     <Container maxWidth="lg">
       <Box

@@ -19,7 +19,6 @@ const CollectionClient: React.FC<CollectionClientProps> = ({
       {!!portfolioList?.length ? (
         <Box display="flex">
           {portfolioList.map((portfolio) => {
-            console.log({ portfolio });
             const totalCards = portfolio.cards.reduce(
               (sum, card) => sum + card.quantity,
               0
@@ -27,6 +26,8 @@ const CollectionClient: React.FC<CollectionClientProps> = ({
             const portfolioSum = parseFloat(
               portfolio.recentPortfolioCostChange.toFixed(2)
             );
+
+            // calculates initial cost of all cards then checks on the most recent price.
             const percentageChange =
               ((portfolio.recentPortfolioCostChange -
                 portfolio.initialPortfolioCost) /

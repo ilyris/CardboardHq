@@ -12,6 +12,7 @@ import { CardSet } from "@/typings/FaBSet";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import theme from "../../../theme";
 import SearchBar from "../../SearchBar";
+import PortfolioReturnHeader from "./PortfolioReturnHeader";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;
@@ -81,12 +82,27 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
 
   return (
     <Box display="flex" sx={{ flexFlow: "row wrap" }}>
-      <Box width={"100%"} display={"flex"} justifyContent={"space-between"}>
+      <Box
+        width={"100%"}
+        display={"flex"}
+        justifyContent={"space-between"}
+        borderBottom={`1px solid ${theme.palette.secondary.main}`}
+        pb={1}
+        mb={1}
+      >
         <Typography variant="h4">{portfolioData?.name}</Typography>
-        <Typography variant="h4">
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            color: theme.palette.success.light,
+          }}
+        >
           {portfolioData?.recentPortfolioCostChange.toFixed(2)}
         </Typography>
       </Box>
+      <PortfolioReturnHeader portfolioId={pid} />
       <Box mt={10} width={"100%"}>
         <TCGLineChart
           data={historicPriceData}
@@ -122,7 +138,7 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
           onChange={(e) => handleSearchChange(e)}
         />
       </Box>
-      <Box display="flex" mt={10} width={"100%"}>
+      <Box display="flex" mt={10} width={"100%"} sx={{ flexFlow: "row wrap" }}>
         {(searchQuery ? filteredCards : portfolioData?.cards || []).map(
           (card) => {
             const {
