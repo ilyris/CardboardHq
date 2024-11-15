@@ -13,6 +13,8 @@ import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import theme from "../../../theme";
 import SearchBar from "../../SearchBar";
 import PortfolioReturnHeader from "./PortfolioReturnHeader";
+import UpdatePortfolioCardModal from "../../modals/UpdatePortfolioCardModal";
+import useAuthProviders from "@/app/hooks/useAuthProviders";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;
@@ -21,6 +23,7 @@ interface PortfolioByIdClientWrapper {
 const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
   userEmail,
 }) => {
+  const { providers, handleLogin } = useAuthProviders();
   const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];
   const params = useParams<{ pid: string }>();
   const pid = params.pid;
@@ -35,16 +38,18 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredCards, setFilteredCards] = useState<any[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      if (userEmail && !portfolioData) {
-        const portfolioDataById = await getPortfolioById(pid, userEmail);
-        setPortfolioData(portfolioDataById);
+  const setPortfolioState = async () => {
+    console.log({ portfolioData, userEmail });
+    if (userEmail) {
+      const portfolioDataById = await getPortfolioById(pid, userEmail);
+      setPortfolioData(portfolioDataById);
 
-        const historicPriceData = await getPortfolioHistoryPriceData(pid);
-        setHistoricPriceData(historicPriceData);
-      }
-    })();
+      const historicPriceData = await getPortfolioHistoryPriceData(pid);
+      setHistoricPriceData(historicPriceData);
+    }
+  };
+  useEffect(() => {
+    setPortfolioState();
   }, [userEmail, pid]);
 
   const totalCardQty = portfolioData?.cards.reduce(
@@ -99,7 +104,7 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
             color: theme.palette.success.light,
           }}
         >
-          {portfolioData?.recentPortfolioCostChange.toFixed(2)}
+          ${portfolioData?.recentPortfolioCostChange.toFixed(2)}
         </Typography>
       </Box>
       <PortfolioReturnHeader portfolioId={pid} />
@@ -151,6 +156,7 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
               printing_id,
               quantity,
               set_id,
+              printing_unique_id,
             } = card;
 
             const formattedSetName = FaBSetDataJson.find(
@@ -169,11 +175,19 @@ const PortfolioByIdClientWrapper: React.FC<PortfolioByIdClientWrapper> = ({
                 foiling={foiling}
                 edition={edition}
                 quantity={quantity}
+                canDelete
+                portfolioId={pid}
+                uniquePrintingId={printing_unique_id}
               />
             );
           }
         )}
       </Box>
+      <UpdatePortfolioCardModal
+        providers={providers}
+        handleLogin={handleLogin}
+        onCloseCb={setPortfolioState}
+      />
     </Box>
   );
 };

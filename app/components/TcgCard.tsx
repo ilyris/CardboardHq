@@ -12,6 +12,7 @@ import CardFoilingChip from "./CardFoilingChip";
 import FoilOverlay from "./FoilOverlay";
 import convertFoilingLabel from "@/helpers/convertFoilingLabel";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import theme from "../theme";
 import {
   addToPortfolio,
@@ -19,6 +20,12 @@ import {
   toggleModalIsOpen,
 } from "../lib/features/addToPortfolioSlice";
 import { useAppDispatch } from "../lib/hooks";
+import { deleteCardFromPortfolio } from "@/helpers/deleteCardFromPortfolio";
+import {
+  CardToUpdate,
+  cardToUpdate,
+  togglePortfolioCardToUpdateModal,
+} from "../lib/features/updatePortfolioCard";
 
 interface TcgCardProps {
   image: string | undefined;
@@ -32,6 +39,8 @@ interface TcgCardProps {
   uniquePrintingId?: string;
   uniqueCardId?: string;
   quantity?: number;
+  canDelete?: boolean;
+  portfolioId?: string;
 }
 
 const TcgCard: React.FC<TcgCardProps> = ({
@@ -46,6 +55,8 @@ const TcgCard: React.FC<TcgCardProps> = ({
   uniquePrintingId,
   uniqueCardId,
   quantity,
+  canDelete = false,
+  portfolioId,
 }) => {
   const dispatch = useAppDispatch();
   const [hasImageLoaded, setHasImageLoaded] = useState<boolean>(false);
@@ -65,6 +76,29 @@ const TcgCard: React.FC<TcgCardProps> = ({
     );
   };
 
+  const togglePortfolioCardToUpdate = (cardData: CardToUpdate) => {
+    // when card updates, send updates data back
+    if (
+      quantity &&
+      cardData.cardTitle &&
+      cardData.cardImageUrl &&
+      cardData.printingUniqueId &&
+      portfolioId
+    ) {
+      dispatch(togglePortfolioCardToUpdateModal());
+      dispatch(
+        cardToUpdate({
+          cardTitle: cardData.cardTitle,
+          cardImageUrl: cardData.cardImageUrl,
+          printingUniqueId: cardData.printingUniqueId,
+          quantity,
+          portfolioId,
+          edition: cardData.edition,
+          foiling: cardData.foiling,
+        })
+      );
+    }
+  };
   return (
     <Link
       href={{
@@ -103,40 +137,103 @@ const TcgCard: React.FC<TcgCardProps> = ({
           </Box>
           {hasImageLoaded && (
             <CardContent sx={{ padding: 0, paddingTop: 1 }}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: -20,
-                  left: -15,
-                }}
-              >
+              {!canDelete ? (
                 <Box
                   sx={{
-                    padding: "3px",
-                    boxSizing: "content-box",
-                    borderRadius: "50%",
-                    backgroundColor: theme.palette.success.main,
-                    zIndex: 1,
-                    position: "relative",
-                    width: "25px",
-                    height: "25px",
-                    boxShadow: "0px 1px 4px 0px #0000008c",
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (!!uniqueCardId && !!uniquePrintingId && !!image)
-                      toggleAddToPortfolioIsOpen({
-                        cardTitle: title,
-                        cardImageUrl: image,
-                        cardUniqueId: uniqueCardId,
-                        printingUniqueId: uniquePrintingId,
-                        lowPrice: cardPrice,
-                      });
+                    position: "absolute",
+                    top: -12,
+                    left: -12,
                   }}
                 >
-                  <AddIcon color="primary" />
+                  <Box
+                    sx={{
+                      padding: "3px",
+                      boxSizing: "content-box",
+                      borderRadius: "50%",
+                      backgroundColor: theme.palette.success.main,
+                      zIndex: 1,
+                      position: "relative",
+                      width: "25px",
+                      height: "25px",
+                      boxShadow: "0px 1px 4px 0px #0000008c",
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!!uniqueCardId && !!uniquePrintingId && !!image)
+                        toggleAddToPortfolioIsOpen({
+                          cardTitle: title,
+                          cardImageUrl: image,
+                          cardUniqueId: uniqueCardId,
+                          printingUniqueId: uniquePrintingId,
+                          lowPrice: cardPrice,
+                        });
+                    }}
+                  >
+                    <AddIcon color="primary" />
+                  </Box>
                 </Box>
-              </Box>
+              ) : (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: -12,
+                    left: -12,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      padding: "3px",
+                      boxSizing: "content-box",
+                      borderRadius: "50%",
+                      backgroundColor: theme.palette.error.main,
+                      zIndex: 1,
+                      position: "relative",
+                      width: "25px",
+                      height: "25px",
+                      boxShadow: "0px 1px 4px 0px #0000008c",
+                    }}
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      if (
+                        !!uniquePrintingId &&
+                        !!image &&
+                        portfolioId &&
+                        edition &&
+                        foiling &&
+                        title &&
+                        !!quantity
+                      )
+                        // deleteCardFromPortfolio({
+                        //   printingId: uniquePrintingId,
+                        //   portfolioId,
+                        //   edition,
+                        //   foiling,
+                        //   title,
+                        // });
+
+                        // toggleDeleteCardFromPortfolioModal({
+                        //                             cardTitle: title,
+                        //   cardImageUrl: image,
+                        //   cardUniqueId: uniqueCardId,
+                        //   printingUniqueId: uniquePrintingId,
+                        //   lowPrice: cardPrice,
+                        // })
+                        togglePortfolioCardToUpdate({
+                          cardTitle: title,
+                          cardImageUrl: image,
+                          printingUniqueId: uniquePrintingId,
+                          quantity,
+                          portfolioId,
+                          edition,
+                          foiling,
+                        });
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Box>
+                </Box>
+              )}
+
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography
                   gutterBottom

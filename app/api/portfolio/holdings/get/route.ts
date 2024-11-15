@@ -59,11 +59,11 @@ export async function GET(req: NextRequest) {
 
       const portfolioHoldingAdjustment: PortfolioHoldingAdjustment = {
         todaysReturn: {
-          usd: todaysPriceDiff,
+          usd: Number(todaysPriceDiff.toFixed(2)),
           percentage: todaysPercentageDiff.toFixed(2),
         },
         totalReturn: {
-          usd: totalPriceDiff,
+          usd: Number(totalPriceDiff.toFixed(2)),
           percentage: totalPercentageDiff.toFixed(2),
         },
       };

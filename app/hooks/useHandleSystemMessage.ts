@@ -8,21 +8,23 @@ const useHandleSystemMessage = () => {
   const dispatch = useAppDispatch();
 
   const handleApiResponseMessage = (response: any) => {
+    const message =
+      response.data?.results?.message || response.results?.message;
+
     if (response.status === 200) {
-      dispatch(
-        addMessage({ text: response.data.message, severity: "success" })
-      );
+      dispatch(addMessage({ text: message, severity: "success" }));
     } else {
-      dispatch(addMessage({ text: response.data.message, severity: "error" }));
+      dispatch(addMessage({ text: message, severity: "error" }));
     }
   };
 
   const handleApiErrorMessage = (error: any) => {
+    const message =
+      error.response.data?.message || error.response.results?.message;
+
     dispatch(
       addMessage({
-        text:
-          error.response?.data?.message ||
-          "An error occurred. Please try again.",
+        text: message || "An error occurred. Please try again.",
         severity: "error",
       })
     );
