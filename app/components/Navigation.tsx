@@ -19,9 +19,11 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
   const handleSearchChange = (e: React.FormEvent<HTMLInputElement>) => {
     setSearchQuery(e.currentTarget.value);
   };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      setSearchQuery("");
       router.push(`/search/all/${searchQuery}`);
     } catch (error) {
       console.error("Error fetching card data:", error);

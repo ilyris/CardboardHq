@@ -63,14 +63,12 @@ const PortfolioReturnHeader: React.FC<PortfolioReturnHeader> = ({
           ml={1}
           fontWeight={100}
           color={
-            !isNegativeNumber(
-              portfolioHoldingAdjustments?.todaysReturn.usd || 0
-            )
+            !isNegativeNumber(portfolioHoldingAdjustments?.totalReturn.usd || 0)
               ? theme.palette.success.light
               : theme.palette.error.light
           }
         >
-          {!isNegativeNumber(portfolioHoldingAdjustments?.todaysReturn.usd || 0)
+          {!isNegativeNumber(portfolioHoldingAdjustments?.totalReturn.usd || 0)
             ? "+"
             : "-"}
           ${portfolioHoldingAdjustments?.totalReturn.usd} (

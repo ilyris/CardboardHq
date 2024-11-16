@@ -1,4 +1,6 @@
 import { db } from "@/app/lib/db";
+import { failureResponse } from "@/helpers/failureResponse";
+import { successResponse } from "@/helpers/successResponse";
 import { NextRequest, NextResponse } from "next/server";
 
 // Adding Portfolio Route
@@ -31,14 +33,8 @@ export async function DELETE(req: NextRequest) {
       .limit(1)
       .executeTakeFirst();
 
-    // const removedCardResult = await db
-    //   .deleteFrom("portfolio_card")
-    //   .where("portfolio_unique_id", "=", portfolioId)
-    //   .where("printing_unique_id", "=", printingId)
-    //   .executeTakeFirst();
-
     const timestamp = new Date();
-    const lowPrice = portfolioCardWithLatestPrice[0]?.low_price ?? null;
+    const lowPrice = Number(portfolioCardWithLatestPrice[0]?.low_price ?? 0);
 
     if (
       portfolioCard &&
@@ -50,19 +46,33 @@ export async function DELETE(req: NextRequest) {
       const totalCostOfCards = quantity * lowPrice;
       const updatedPortfolioPrice =
         lastAddedPortfolioPrice!.price - totalCostOfCards;
-      console.log({ updatedPortfolioPrice });
 
-      // await db
-      //   .updateTable("portfolio_prices")
-      //   .set({ price_timestamp: timestamp, price: updatedPortfolioPrice })
-      //   .where("portfolio_id", "=", portfolioId)
-      //   .where("price_timestamp", "=", lastAddedPortfolioPrice.price_timestamp)
-      //   .execute();
+      if (updatedPortfolioPrice) {
+        const removedCardResult = await db
+          .deleteFrom("portfolio_card")
+          .where("portfolio_unique_id", "=", portfolioId)
+          .where("printing_unique_id", "=", printingId)
+          .executeTakeFirst();
+
+        const latestPortfolioPrice = await db
+          .updateTable("portfolio_prices")
+          .set({ price_timestamp: timestamp, price: updatedPortfolioPrice })
+          .where("portfolio_id", "=", portfolioId)
+          .where(
+            "price_timestamp",
+            "=",
+            lastAddedPortfolioPrice.price_timestamp
+          )
+          .execute();
+
+        if (removedCardResult && latestPortfolioPrice) {
+          return successResponse({
+            message: `Deleted your ${title}`,
+          });
+        }
+      }
+      return failureResponse(`Failed to update portfolio pricing`);
     }
-
-    return NextResponse.json({
-      message: `Deleted your ${title}`,
-    });
   } catch (err) {
     // Response based on success
     console.error("Error processing request:", err);

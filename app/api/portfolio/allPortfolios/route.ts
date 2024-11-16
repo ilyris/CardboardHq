@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
           .where("portfolio_unique_id", "=", newPortfolioId)
           .execute();
         if (result) {
-          return NextResponse.json({ message: " Portfolio was added" });
+          return successResponse({ message: " Portfolio was added" });
         }
       }
     }

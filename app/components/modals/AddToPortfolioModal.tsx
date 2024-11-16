@@ -235,9 +235,6 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                 id="unit-price"
                 label="Unit Price (USD)"
                 variant="outlined"
-                InputLabelProps={{
-                  shrink: !isLowestPriceChecked ? false : true,
-                }}
                 value={
                   !isLowestPriceChecked
                     ? unitPrice

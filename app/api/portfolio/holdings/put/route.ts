@@ -43,10 +43,9 @@ export async function PUT(req: NextRequest) {
       lowPrice
     ) {
       const isAddingQuantity = portfolioCard[0].quantity < quantity;
-      const quantityDifference = quantity - portfolioCard[0].quantity; // Positive for adding, negative for removing
+      const quantityDifference = quantity - portfolioCard[0].quantity;
       const totalCostOfCards = quantityDifference * lowPrice;
 
-      // Ensure subtraction when quantityDifference is negative
       const updatedPortfolioPrice = isAddingQuantity
         ? Number(lastAddedPortfolioPrice!.price) + totalCostOfCards
         : Number(lastAddedPortfolioPrice!.price) - Math.abs(totalCostOfCards);

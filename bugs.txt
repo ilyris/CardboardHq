@@ -1,0 +1,6 @@
+#1
+    Certain cards will duplicate within a portfolio randomly.
+
+#2
+    When a user updated their portfolio by removing cards, even if the portfolio % is positive, it shows a negative. (total return goes from 320 -> 298, still shows red negative)
+    -- RESOULTION IDEA: Create a table for portfolios by portfolio_id to track historical product changes (qty change, deletions, etc).

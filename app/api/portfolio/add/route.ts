@@ -1,4 +1,6 @@
 import { db } from "@/app/lib/db";
+import { failureResponse } from "@/helpers/failureResponse";
+import { successResponse } from "@/helpers/successResponse";
 import { NextRequest, NextResponse } from "next/server";
 
 // Adding Portfolio Route
@@ -84,11 +86,8 @@ export async function POST(req: NextRequest) {
 
     // Response based on success
     return portfolioResult
-      ? NextResponse.json({ message: `Card was added to your portfolio` })
-      : NextResponse.json(
-          { error: "Failed to add the portfolio" },
-          { status: 500 }
-        );
+      ? successResponse({ message: `Card was added to your portfolio` })
+      : failureResponse("Failed to add the portfolio");
   } catch (err) {
     console.error("Error processing request:", err);
     return NextResponse.json(
