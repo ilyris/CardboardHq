@@ -91,7 +91,7 @@ if __name__ == "__main__":
         print("Error: JSON data is not a list.")
     else:
         # List of IDs to include
-        desired_ids = ["WTR", "DTD", "MST", "OUT", "UPR", "ELE", "CRU", "EVO", "DYN", "1HP", "EVR", "ARC", "MON", "HVY"]
+        desired_ids = ["WTR", "DTD", "MST", "OUT", "UPR", "ELE", "CRU", "EVO", "DYN", "1HP", "EVR", "ARC", "MON", "HVY", "MST", "ROS"]
 
         # Filter the assets based on the desired IDs
         filtered_assets = [item for item in assets_data if item["id"] in desired_ids]

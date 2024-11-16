@@ -6,13 +6,14 @@ export interface Printing {
   edition: string;
   foiling: string;
   rarity: string;
-  artist: string;
+  artist: string | string[];
   art_variation: string | null;
   flavor_text: string;
   flavor_text_plain: string;
   image_url: string;
   tcgplayer_product_id: string;
   tcgplayer_url: string;
+  artist_array: string | string[];
 }
 
 export interface Card {

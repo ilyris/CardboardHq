@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
         set.formatted_name.toUpperCase() ===
         setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
     )?.id;
-
+    console.log(setId);
     if (setId) {
       const totalCount = await db
         .selectFrom("printing_with_card_and_latest_pricing")
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
         .offset(startIndex)
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition);
-
+      console.log({ cardsBySetIdQuery });
       if (searchQuery) {
         const searchedCardQuery = cardsBySetIdQuery.where(
           "printing_with_card_and_latest_pricing.card_name",
@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
         }
 
         const allCardsBySetId = await orderQuery.execute();
-
+        console.log({ allCardsBySetId });
         return new Response(
           JSON.stringify({
             result: allCardsBySetId,

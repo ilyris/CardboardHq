@@ -12,6 +12,7 @@ class Printing:
         self.foiling = foiling
         self.rarity = rarity
         self.artist = artist
+        self.artists = artists
         self.art_variation = art_variation
         self.image_url = image_url
         self.tcgplayer_product_id = tcgplayer_product_id
@@ -44,7 +45,7 @@ def convertCardDataToHashMap(cards: List[Dict]) -> Dict:
                 printing_data['edition'],
                 printing_data['foiling'],
                 printing_data['rarity'],
-                printing_data['artist'],
+                printing_data['artists'],
                 printing_data.get('art_variation', ''),
                 printing_data.get('image_url', ''),
                 printing_data.get('tcgplayer_product_id', ''),

@@ -51,6 +51,7 @@ export interface CardPrintingPriceView {
   edition: string;
   foiling: string;
   artist: string;
+  artist_array: string[];
   image_url: string;
   tcgplayer_product_id: string;
   tcgplayer_url: string;
@@ -80,6 +81,7 @@ export interface AllCardPrintingView {
   edition: string;
   foiling: string;
   artist: string;
+  artist_array: string[];
   image_url: string;
   tcgplayer_product_id: string;
   tcgplayer_url: string;
