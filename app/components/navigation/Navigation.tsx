@@ -46,7 +46,7 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
             priority
             src={logo}
             alt="Cardboard HQ Logo"
-            style={{ width: 75, height: 75 }}
+            style={{ width: 100, height: 100 }}
           />
         </NextLink>
         <NextLink href="/" component="button" variant="body2">

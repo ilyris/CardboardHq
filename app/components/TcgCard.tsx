@@ -251,7 +251,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  borderTop: "1px solid #b1afaf",
+                  borderTop: "1px solid #b1afaf36",
                   marginTop: 1,
                 }}
               >
@@ -267,7 +267,7 @@ const TcgCard: React.FC<TcgCardProps> = ({
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    borderTop: "1px solid #b1afaf",
+                    borderTop: "1px solid #b1afaf36",
                     marginTop: 1,
                   }}
                 >

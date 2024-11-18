@@ -23,8 +23,9 @@ const foilingChipStyles = (foilingLabel: string | undefined) => {
       return { backgroundColor: theme.palette.primary.main };
   }
 };
-
 const CardFoilingChip: React.FC<CardFoilingChipProps> = ({ foiling }) => {
+  console.log({ foiling });
+
   const chipStyles = foilingChipStyles(foiling);
 
   return <Chip label={foiling} sx={chipStyles} />;
