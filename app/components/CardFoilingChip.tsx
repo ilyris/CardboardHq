@@ -33,6 +33,6 @@ const foilingChipStyles = (foilingLabel: string | undefined) => {
 const CardFoilingChip: React.FC<CardFoilingChipProps> = ({ foiling }) => {
   const chipStyles = foilingChipStyles(foiling);
   const chipLabel = shortenFoilingLabel(foiling);
-  return <Chip label={foiling} sx={chipStyles} />;
+  return <Chip label={chipLabel} sx={chipStyles} />;
 };
 export default CardFoilingChip;
