@@ -6,7 +6,7 @@ interface FoilOverlayProps {
 const FoilOverlay: React.FC<FoilOverlayProps> = ({ foiling }) => {
   const styleObject = {
     width: "100%",
-    height: "99%",
+    height: "99.5%",
     position: "absolute",
     top: 0,
     ...(foiling === "C"
@@ -19,7 +19,7 @@ const FoilOverlay: React.FC<FoilOverlayProps> = ({ foiling }) => {
       : { backgroundColor: "none" }),
 
     opacity: 0.4,
-    borderRadius: "10px",
+    borderRadius: "18px",
   };
 
   return <Box sx={styleObject}></Box>;
