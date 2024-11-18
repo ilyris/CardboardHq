@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navigation from "./components/Navigation";
+import Navigation from "./components/navigation/Navigation";
 import ThemeProvider from "./components/ThemeProvider";
 import { theme } from "./theme";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";

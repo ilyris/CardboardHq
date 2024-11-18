@@ -183,7 +183,7 @@ const CardPage = () => {
                           cardPriceHistoryData[0].low_price) /
                           cardPriceHistoryData[0].low_price +
                           Number.EPSILON) *
-                          100
+                          10000
                       ) / 100
                     )
                       ? "#98ff65"
@@ -199,7 +199,7 @@ const CardPage = () => {
                       cardPriceHistoryData[0].low_price) /
                       cardPriceHistoryData[0].low_price +
                       Number.EPSILON) *
-                      100
+                      10000
                   ) / 100}
                   %
                   {!isNegativePriceChange(
@@ -209,7 +209,7 @@ const CardPage = () => {
                         cardPriceHistoryData[0].low_price) /
                         cardPriceHistoryData[0].low_price +
                         Number.EPSILON) *
-                        100
+                        10000
                     ) / 100
                   ) ? (
                     <TrendingUpIcon fontSize="large" />

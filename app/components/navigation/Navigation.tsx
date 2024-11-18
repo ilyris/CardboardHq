@@ -1,8 +1,8 @@
 "use client";
 import { Box } from "@mui/material";
-import NextLink from "./NextLink";
-import MainStyledLink from "./MainStyledLink";
-import SearchBar from "./SearchBar";
+import NextLink from "../NextLink";
+import MainStyledLink from "../MainStyledLink";
+import SearchBar from "../SearchBar";
 import Image from "next/image";
 import logo from "@/public/Logo.svg";
 import { useState } from "react";
