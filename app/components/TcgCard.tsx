@@ -234,11 +234,17 @@ const TcgCard: React.FC<TcgCardProps> = ({
                 </Box>
               )}
 
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                }}
+              >
                 <Typography
-                  gutterBottom
                   variant="body1"
-                  maxWidth={featured ? 100 : "unset"}
+                  maxWidth={featured ? 200 : "unset"}
+                  minHeight={50}
                 >
                   {title}
                 </Typography>
