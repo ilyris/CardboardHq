@@ -1,6 +1,6 @@
-export const dynamic = "force-dynamic";
+"use client";
 
-("use client");
+export const dynamic = "force-dynamic";
 
 import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
 import TcgCard from "@/app/components/TcgCard";
