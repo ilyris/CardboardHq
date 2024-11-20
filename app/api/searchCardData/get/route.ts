@@ -2,25 +2,67 @@ import { failureResponse } from "@/helpers/failureResponse";
 import { NextRequest } from "next/server";
 import { db } from "@/app/lib/db";
 import { successResponse } from "@/helpers/successResponse";
+import { sql } from "kysely";
 
 export async function GET(req: NextRequest) {
-  const searchQuery = req.nextUrl.searchParams.get("searchQuery");
+  const url = new URL(req.url);
+  const searchParams = url.searchParams;
+
+  // Convert query parameters into an object
+  const queryParams: Record<string, string> = {};
+  searchParams.forEach((value, key) => {
+    queryParams[key] = value.trim();
+  });
+
+  const page = Number(queryParams.page || 1); // Default to page 1
+  const pageSize = 25; // Page size
+  const startIndex = (page - 1) * pageSize;
+
   try {
-    if (searchQuery) {
-      const searchedDbQuery = await db
-        .selectFrom("printing_with_card_and_latest_pricing")
-        .selectAll()
-        .where(
-          "printing_with_card_and_latest_pricing.card_name",
-          "ilike",
-          `%${searchQuery}%`
-        )
-        .execute();
-      return successResponse(searchedDbQuery);
+    let queryBuilder = db
+      .selectFrom("printing_with_card_and_latest_pricing")
+      .innerJoin(
+        "card",
+        "card.unique_id",
+        "printing_with_card_and_latest_pricing.card_unique_id"
+      )
+      .selectAll();
+
+    // Add filters dynamically
+    if (queryParams.query) {
+      console.log("Cards by name");
+      queryBuilder = queryBuilder.where(
+        "printing_with_card_and_latest_pricing.card_name",
+        "ilike",
+        `%${queryParams.query}%`
+      );
     }
-    failureResponse("Failued to find searched card");
+
+    if (queryParams.artist) {
+      queryBuilder = queryBuilder.where(
+        sql`printing_with_card_and_latest_pricing.artist_array`,
+        "@>",
+        sql`ARRAY[${queryParams.artist}]::VARCHAR[]`
+      );
+    }
+    if (queryParams.className) {
+      queryBuilder = queryBuilder.where(
+        "card.type_text",
+        "ilike",
+        `%${queryParams.className}%`
+      );
+    }
+
+    // Add ordering and pagination
+    const results = await queryBuilder
+      .orderBy(sql`low_price DESC NULLS LAST`)
+      .offset(startIndex)
+      .limit(pageSize)
+      .execute();
+
+    return successResponse(results);
   } catch (err) {
-    failureResponse();
+    return failureResponse("Failed to find cards!");
   }
 }
 
