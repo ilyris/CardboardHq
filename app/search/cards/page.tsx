@@ -53,8 +53,8 @@ const SearchPage = () => {
   }, [artist, searchQuery, className]);
 
   return (
-    <Container>
-      <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Container>
         <Typography mb={4} variant="h4">
           Searching for: {artist || searchQuery}
         </Typography>
@@ -84,8 +84,8 @@ const SearchPage = () => {
           </Box>
         )}
         <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
-      </Suspense>
-    </Container>
+      </Container>
+    </Suspense>
   );
 };
 
