@@ -1,19 +1,19 @@
-"use client";
+export const dynamic = "force-dynamic";
+
+("use client");
+
 import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
 import TcgCard from "@/app/components/TcgCard";
 import getSearchCardData from "@/helpers/getSearchCardData";
 import { Box, Container, Typography } from "@mui/material";
-import { useParams } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 import useAuthProviders from "@/app/hooks/useAuthProviders";
 import { useAppSelector } from "@/app/lib/hooks";
 import { searchByFacetFilter } from "@/helpers/searchByFacetFilter";
-import SearchBar from "@/app/components/SearchBar";
-import { Suspense } from "react";
 
 const SearchPage = () => {
   const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];
@@ -29,6 +29,7 @@ const SearchPage = () => {
   const artist = searchParams.get("artist");
   const searchQuery = searchParams.get("query");
   const className = searchParams.get("class");
+
   const handleSearchCardData = async () => {
     if (searchQuery && !facetSearchData.isFacetSearchOpen) {
       const response = await getSearchCardData({ searchQuery });
@@ -46,7 +47,9 @@ const SearchPage = () => {
   };
 
   useEffect(() => {
-    handleFacetSearchData();
+    if (artist || searchQuery || className) {
+      handleFacetSearchData();
+    }
   }, [artist, searchQuery, className]);
 
   return (
@@ -68,7 +71,7 @@ const SearchPage = () => {
                     key={card.printing_unique_id}
                     image={card.image_url}
                     title={card.card_name}
-                    slug={formattedSetName} // this needs to be like heavy-hitters
+                    slug={formattedSetName}
                     cardId={card.printing_id}
                     cardPrice={card.low_price}
                     foiling={card.foiling as "S" | "R" | "C"}
@@ -81,17 +84,6 @@ const SearchPage = () => {
           </Box>
         )}
         <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
-        {/* {cardSetTotal && cardData && (
-        <Box display={"flex"} justifyContent={"center"}>
-          <Pagination
-            sx={{ marginTop: 5, marginBottom: 10 }}
-            count={Math.ceil(cardSetTotal / 25)}
-            page={pageNumber}
-            color="primary"
-            onChange={handlePaginationChange}
-          />
-        </Box>
-      )} */}
       </Suspense>
     </Container>
   );
