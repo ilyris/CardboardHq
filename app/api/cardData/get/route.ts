@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
   const page = req.nextUrl.searchParams.get("page");
   const pageSize = 25;
   const startIndex = (Number(page) - 1) * pageSize;
+
   try {
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
@@ -147,7 +148,7 @@ export async function GET(req: NextRequest) {
         }
 
         const allCardsBySetId = await orderQuery.execute();
-        console.log({ allCardsBySetId });
+
         return new Response(
           JSON.stringify({
             result: allCardsBySetId,

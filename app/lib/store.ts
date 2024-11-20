@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import addToPortfolioSlice from "./features/addToPortfolioSlice";
 import systemMessageSlice from "./features/systemMessageSlice";
 import updatePortfolioCardSlice from "./features/updatePortfolioCard";
+import facetSearchSlice from "./features/facetSearchSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -9,6 +10,7 @@ export const makeStore = () => {
       addToPortfolio: addToPortfolioSlice,
       systemMessage: systemMessageSlice,
       portfolioCardToUpdate: updatePortfolioCardSlice,
+      facetSearch: facetSearchSlice,
     },
   });
 };

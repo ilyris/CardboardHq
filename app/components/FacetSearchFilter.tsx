@@ -1,6 +1,18 @@
+"use client";
 import * as React from "react";
-import { Box, Button, FormGroup, MenuItem, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormGroup,
+  MenuItem,
+  TextField,
+  Typography,
+} from "@mui/material";
 import theme from "../theme";
+import artists from "@/app/jsonData/artist.json";
+import { setArtist, setClass } from "../lib/features/facetSearchSlice";
+import { useAppDispatch } from "../lib/hooks";
+import { useRouter } from "next/navigation";
 
 const classOptions = [
   "Adjudicator",
@@ -21,12 +33,30 @@ const classOptions = [
 ];
 
 export default function FacetSearchFilter() {
-  const [classValue, setClassValue] = React.useState<string>("Select a class");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [classValue, setClassValue] = React.useState<string>("");
+  const [artistValue, setArtistValue] = React.useState<string>("");
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setClassValue(event.target.value as string);
+    dispatch(setClass(event.target.value));
+  };
+
+  const handleArtistChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setArtistValue(event.target.value as string);
+    dispatch(setArtist(event.target.value));
+  };
+
+  const handleSubmit = async () => {
+    router.push(
+      `/search/cards?query=%20&artist=${artistValue}&class=${classValue}`
+    );
   };
 
   return (
@@ -39,54 +69,110 @@ export default function FacetSearchFilter() {
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Box display={"flex"} justifyContent={"flex-end"} mb={5}>
-        <Button variant="contained" color="secondary" sx={{ marginRight: 5 }}>
-          Reset
-        </Button>
-        <Button variant="contained" color="success">
-          Search
-        </Button>
+      <Box display={"flex"} justifyContent={"space-between"} mb={5}>
+        <Typography variant="h4">Search Filters</Typography>
+        <Box>
+          <Button variant="contained" color="secondary" sx={{ marginRight: 5 }}>
+            Reset
+          </Button>
+          <Button variant="contained" color="success" onClick={handleSubmit}>
+            Search
+          </Button>
+        </Box>
       </Box>
-      <FormGroup>
-        <TextField
-          sx={{
-            backgroundColor: "#fff",
-            "& .MuiSelect-select": {
-              color: theme.palette.background.default,
-              paddingRight: 4,
-              paddingLeft: 2,
-              paddingTop: 1,
-              paddingBottom: 1,
-              fontSize: "1.2rem",
-              height: "20px",
-            },
-          }}
-          onChange={(e) => handleChange(e)}
-          select
-          label="Class"
-          value={classValue}
-          defaultValue={classValue}
-        >
-          <MenuItem
-            sx={{ padding: 1, color: theme.palette.background.default }}
-            key={"Select a class"}
-            data-value={"Select a class"}
-            value={"Select a class"}
+      <Box sx={{ display: "flex", gap: 3 }}>
+        <FormGroup sx={{ flex: "1 0 auto" }}>
+          <TextField
+            sx={{
+              mb: 2,
+              backgroundColor: "#fff",
+              "& .MuiSelect-select": {
+                color: theme.palette.background.default,
+                paddingRight: 4,
+                paddingLeft: 2,
+                paddingTop: 1,
+                paddingBottom: 1,
+                fontSize: "1rem",
+                height: "20px",
+              },
+            }}
+            onChange={(e) => handleChange(e)}
+            select
+            label="Class"
+            value={classValue}
+            defaultValue={classValue}
+            SelectProps={{
+              MenuProps: {
+                sx: { maxHeight: "40%" },
+              },
+            }}
           >
-            Select a class
-          </MenuItem>
-          {classOptions.map((option) => (
             <MenuItem
               sx={{ padding: 1, color: theme.palette.background.default }}
-              key={option}
-              data-value={option}
-              value={option}
+              key={"Select a class"}
+              data-value={"Select a class"}
+              value={"Select a class"}
             >
-              {option}
+              Select a class
             </MenuItem>
-          ))}
-        </TextField>
-      </FormGroup>
+            {classOptions.map((option) => (
+              <MenuItem
+                sx={{ padding: 1, color: theme.palette.background.default }}
+                key={option}
+                data-value={option}
+                value={option}
+              >
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+        </FormGroup>
+        <FormGroup sx={{ flex: "1 0 auto" }}>
+          <TextField
+            sx={{
+              backgroundColor: "#fff",
+              "& .MuiSelect-select": {
+                color: theme.palette.background.default,
+                paddingRight: 4,
+                paddingLeft: 2,
+                paddingTop: 1,
+                paddingBottom: 1,
+                fontSize: "1rem",
+                height: "20px",
+              },
+            }}
+            onChange={(e) => handleArtistChange(e)}
+            select
+            label="Artist"
+            value={artistValue}
+            defaultValue={null}
+            SelectProps={{
+              MenuProps: {
+                sx: { maxHeight: "40%" },
+              },
+            }}
+          >
+            <MenuItem
+              sx={{ padding: 1, color: theme.palette.background.default }}
+              key={"Search By Artist"}
+              data-value={"Search By Artist"}
+              value={"Search By Artist"}
+            >
+              Artist
+            </MenuItem>
+            {artists.map((artist) => (
+              <MenuItem
+                sx={{ padding: 1, color: theme.palette.background.default }}
+                key={artist.name}
+                data-value={artist.name}
+                value={artist.name}
+              >
+                {artist.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </FormGroup>
+      </Box>
     </Box>
   );
 }

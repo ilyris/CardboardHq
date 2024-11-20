@@ -24,7 +24,7 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
     event.preventDefault();
     try {
       setSearchQuery("");
-      router.push(`/search/all/${searchQuery}`);
+      router.push(`/search/cards?query=${searchQuery}`);
     } catch (error) {
       console.error("Error fetching card data:", error);
     }
