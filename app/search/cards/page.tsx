@@ -13,6 +13,7 @@ import useAuthProviders from "@/app/hooks/useAuthProviders";
 import { useAppSelector } from "@/app/lib/hooks";
 import { searchByFacetFilter } from "@/helpers/searchByFacetFilter";
 import SearchBar from "@/app/components/SearchBar";
+import { Suspense } from "react";
 
 const SearchPage = () => {
   const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];
@@ -50,36 +51,37 @@ const SearchPage = () => {
 
   return (
     <Container>
-      <Typography mb={4} variant="h4">
-        Searching for: {artist || searchQuery}
-      </Typography>
-      {cardData && (
-        <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
-          {cardData.map((card: CardPrintingPriceViewWithPercentage) => {
-            const formattedSetName = FaBSetDataJson.find(
-              (set) => set.id === card.set_id
-            )?.formatted_name;
+      <Suspense fallback={<div>Loading...</div>}>
+        <Typography mb={4} variant="h4">
+          Searching for: {artist || searchQuery}
+        </Typography>
+        {cardData && (
+          <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
+            {cardData.map((card: CardPrintingPriceViewWithPercentage) => {
+              const formattedSetName = FaBSetDataJson.find(
+                (set) => set.id === card.set_id
+              )?.formatted_name;
 
-            if (formattedSetName)
-              return (
-                <TcgCard
-                  key={card.printing_unique_id}
-                  image={card.image_url}
-                  title={card.card_name}
-                  slug={formattedSetName} // this needs to be like heavy-hitters
-                  cardId={card.printing_id}
-                  cardPrice={card.low_price}
-                  foiling={card.foiling as "S" | "R" | "C"}
-                  edition={card.edition}
-                  uniquePrintingId={card.printing_unique_id}
-                  uniqueCardId={card.card_unique_id}
-                />
-              );
-          })}
-        </Box>
-      )}
-      <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
-      {/* {cardSetTotal && cardData && (
+              if (formattedSetName)
+                return (
+                  <TcgCard
+                    key={card.printing_unique_id}
+                    image={card.image_url}
+                    title={card.card_name}
+                    slug={formattedSetName} // this needs to be like heavy-hitters
+                    cardId={card.printing_id}
+                    cardPrice={card.low_price}
+                    foiling={card.foiling as "S" | "R" | "C"}
+                    edition={card.edition}
+                    uniquePrintingId={card.printing_unique_id}
+                    uniqueCardId={card.card_unique_id}
+                  />
+                );
+            })}
+          </Box>
+        )}
+        <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
+        {/* {cardSetTotal && cardData && (
         <Box display={"flex"} justifyContent={"center"}>
           <Pagination
             sx={{ marginTop: 5, marginBottom: 10 }}
@@ -90,6 +92,7 @@ const SearchPage = () => {
           />
         </Box>
       )} */}
+      </Suspense>
     </Container>
   );
 };
