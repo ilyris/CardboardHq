@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { db } from "@/app/lib/db";
 import { PortfolioHoldingAdjustment } from "@/typings/Portfolios";
 import { NextRequest, NextResponse } from "next/server";

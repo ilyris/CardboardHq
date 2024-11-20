@@ -1,13 +1,11 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
 import TcgCard from "@/app/components/TcgCard";
 import getSearchCardData from "@/helpers/getSearchCardData";
 import { Box, Container, Typography } from "@mui/material";
 import { useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
@@ -53,39 +51,37 @@ const SearchPage = () => {
   }, [artist, searchQuery, className]);
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Container>
-        <Typography mb={4} variant="h4">
-          Searching for: {artist || searchQuery}
-        </Typography>
-        {cardData && (
-          <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
-            {cardData.map((card: CardPrintingPriceViewWithPercentage) => {
-              const formattedSetName = FaBSetDataJson.find(
-                (set) => set.id === card.set_id
-              )?.formatted_name;
+    <Container>
+      <Typography mb={4} variant="h4">
+        Searching for: {artist || searchQuery}
+      </Typography>
+      {cardData && (
+        <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
+          {cardData.map((card: CardPrintingPriceViewWithPercentage) => {
+            const formattedSetName = FaBSetDataJson.find(
+              (set) => set.id === card.set_id
+            )?.formatted_name;
 
-              if (formattedSetName)
-                return (
-                  <TcgCard
-                    key={card.printing_unique_id}
-                    image={card.image_url}
-                    title={card.card_name}
-                    slug={formattedSetName}
-                    cardId={card.printing_id}
-                    cardPrice={card.low_price}
-                    foiling={card.foiling as "S" | "R" | "C"}
-                    edition={card.edition}
-                    uniquePrintingId={card.printing_unique_id}
-                    uniqueCardId={card.card_unique_id}
-                  />
-                );
-            })}
-          </Box>
-        )}
-        <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
-      </Container>
-    </Suspense>
+            if (formattedSetName)
+              return (
+                <TcgCard
+                  key={card.printing_unique_id}
+                  image={card.image_url}
+                  title={card.card_name}
+                  slug={formattedSetName}
+                  cardId={card.printing_id}
+                  cardPrice={card.low_price}
+                  foiling={card.foiling as "S" | "R" | "C"}
+                  edition={card.edition}
+                  uniquePrintingId={card.printing_unique_id}
+                  uniqueCardId={card.card_unique_id}
+                />
+              );
+          })}
+        </Box>
+      )}
+      <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
+    </Container>
   );
 };
 
