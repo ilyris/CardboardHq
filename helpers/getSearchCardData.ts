@@ -5,6 +5,7 @@ interface FabDataProps {
 }
 
 const getSearchCardData = async ({ searchQuery }: FabDataProps) => {
+  console.log({ searchQuery });
   const cardsData = await axios.get("/api/searchCardData/get", {
     params: {
       searchQuery,

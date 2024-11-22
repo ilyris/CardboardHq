@@ -27,14 +27,14 @@ export async function GET(req: NextRequest) {
         "printing_with_card_and_latest_pricing.card_unique_id"
       )
       .selectAll();
-
+    console.log({ queryParams });
     // Add filters dynamically
-    if (queryParams.query) {
+    if (queryParams.searchQuery) {
       console.log("Cards by name");
       queryBuilder = queryBuilder.where(
         "printing_with_card_and_latest_pricing.card_name",
         "ilike",
-        `%${queryParams.query}%`
+        `%${queryParams.searchQuery}%`
       );
     }
 

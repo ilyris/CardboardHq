@@ -39,7 +39,8 @@ const SearchPage = () => {
     const response = await searchByFacetFilter(
       facetSearchData.isFacetSearchOpen,
       artist,
-      className
+      className,
+      searchQuery
     );
     setCardData(response.data.results);
   };
