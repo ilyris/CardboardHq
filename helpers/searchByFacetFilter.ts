@@ -4,7 +4,8 @@ export const searchByFacetFilter = async (
   isFacetSearchOpen: boolean,
   artist: string | null,
   className: string | null,
-  searchQuery: string | null
+  searchQuery: string | null,
+  page?: number
 ) => {
   const response = await axios.get(`/api/searchCardData/get`, {
     params: {
@@ -12,6 +13,7 @@ export const searchByFacetFilter = async (
       searchQuery,
       artist,
       className,
+      page,
     },
   });
   return response;

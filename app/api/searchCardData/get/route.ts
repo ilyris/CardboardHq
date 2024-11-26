@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
         "printing_with_card_and_latest_pricing.card_unique_id"
       )
       .selectAll();
-    console.log({ queryParams });
+
     // Add filters dynamically
     if (queryParams.searchQuery) {
       console.log("Cards by name");
@@ -60,7 +60,10 @@ export async function GET(req: NextRequest) {
       .limit(pageSize)
       .execute();
 
-    return successResponse(results);
+    const totalResults = await queryBuilder.execute();
+
+    const paginatedResults = { results, total: totalResults.length };
+    return successResponse(paginatedResults);
   } catch (err) {
     return failureResponse("Failed to find cards!");
   }

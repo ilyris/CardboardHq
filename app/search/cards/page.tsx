@@ -3,9 +3,9 @@
 import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
 import TcgCard from "@/app/components/TcgCard";
 import getSearchCardData from "@/helpers/getSearchCardData";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Pagination, Typography } from "@mui/material";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import { CardSet } from "@/typings/FaBSet";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
@@ -23,16 +23,21 @@ const SearchPage = () => {
 
   const [cardData, setCardData] = useState<any>([]);
   const [cardSetTotal, setCardSetTotal] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   const artist = searchParams.get("artist");
   const searchQuery = searchParams.get("query");
   const className = searchParams.get("class");
 
-  const handleSearchCardData = async () => {
-    if (searchQuery && !facetSearchData.isFacetSearchOpen) {
-      const response = await getSearchCardData({ searchQuery });
-      setCardData(response.data.results);
-    }
+  // const handleSearchCardData = async () => {
+  //   if (searchQuery && !facetSearchData.isFacetSearchOpen) {
+  //     const response = await getSearchCardData({ searchQuery });
+  //     setCardData(response.data.results);
+  //   }
+  // };
+
+  const handlePaginationChange = (_: ChangeEvent<unknown>, page: number) => {
+    setPageNumber(page);
   };
 
   const handleFacetSearchData = async () => {
@@ -40,16 +45,20 @@ const SearchPage = () => {
       facetSearchData.isFacetSearchOpen,
       artist,
       className,
-      searchQuery
+      searchQuery,
+      pageNumber
     );
-    setCardData(response.data.results);
+    setCardData(response.data.results.results);
+
+    const totalCards = response.data.results.total;
+    setCardSetTotal(totalCards);
   };
 
   useEffect(() => {
     if (artist || searchQuery || className) {
       handleFacetSearchData();
     }
-  }, [artist, searchQuery, className]);
+  }, [artist, searchQuery, className, pageNumber]);
 
   return (
     <Container>
@@ -79,6 +88,17 @@ const SearchPage = () => {
                 />
               );
           })}
+        </Box>
+      )}
+      {cardSetTotal && cardData && (
+        <Box display={"flex"} justifyContent={"center"}>
+          <Pagination
+            sx={{ marginTop: 5, marginBottom: 10 }}
+            count={Math.ceil(cardSetTotal / 25)}
+            page={pageNumber}
+            color="primary"
+            onChange={handlePaginationChange}
+          />
         </Box>
       )}
       <AddToPortfolioModal providers={providers} handleLogin={handleLogin} />
