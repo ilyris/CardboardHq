@@ -1,3 +1,3 @@
 export interface FilterTypes {
-  foiling: "C" | "R" | "S" | null;
+  foiling: "C" | "R" | "S" | "all";
 }

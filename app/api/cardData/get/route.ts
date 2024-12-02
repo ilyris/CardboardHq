@@ -41,13 +41,26 @@ export async function GET(req: NextRequest) {
     )?.id;
 
     if (setId) {
-      const totalCount = await db
+      let totalCountQueryBuilder = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .select(db.fn.count("printing_unique_id").as("count"))
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
-        .where("printing_with_card_and_latest_pricing.edition", "=", edition)
-        .where("printing_with_card_and_latest_pricing.foiling", "=", foiling)
-        .execute();
+        .where("printing_with_card_and_latest_pricing.edition", "=", edition);
+
+      if (foiling === "all") {
+        totalCountQueryBuilder = totalCountQueryBuilder.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "in",
+          ["C", "R", "S"]
+        );
+      } else {
+        totalCountQueryBuilder = totalCountQueryBuilder.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "=",
+          foiling
+        );
+      }
+      let totalCount = await totalCountQueryBuilder.execute();
 
       const cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
@@ -157,7 +170,14 @@ export async function GET(req: NextRequest) {
       }
 
       // filters
-      if (foiling) {
+      if (foiling === "all") {
+        let filteredQuery = cardsBySetIdQuery.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "in",
+          ["C", "R", "S"]
+        );
+        allCardsBySetId = await filteredQuery.execute();
+      } else {
         let filteredQuery = cardsBySetIdQuery.where(
           "printing_with_card_and_latest_pricing.foiling",
           "=",

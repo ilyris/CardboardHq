@@ -62,6 +62,7 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
             value={searchQuery}
             placeholder={"Nuu, Alluring Desire"}
             onChange={(e) => handleSearchChange(e)}
+            showSearchFilterButton
           />
         </Box>
         <Box>

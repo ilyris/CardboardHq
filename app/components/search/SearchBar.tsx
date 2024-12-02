@@ -13,12 +13,14 @@ interface SearchBarProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  showSearchFilterButton?: boolean;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChange,
   placeholder,
+  showSearchFilterButton = false,
 }) => {
   const dispatch = useAppDispatch();
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
@@ -56,7 +58,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               position="start"
               onClick={() => handleFacetSearchModal(true)}
             >
-              <TuneIcon />
+              {showSearchFilterButton && <TuneIcon />}
             </InputAdornment>
           ),
         }}

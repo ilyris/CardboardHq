@@ -40,7 +40,7 @@ const SlugPage = () => {
   const [loading, setLoading] = useState(false);
   const [activeSort, setActiveSort] = useState<string>("");
   const [activeFilters, setActiveFilters] = useState<FilterTypes>({
-    foiling: null,
+    foiling: "all",
   });
   const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -126,6 +126,7 @@ const SlugPage = () => {
           <Filter
             name={"foiling"}
             options={[
+              { option: "all", text: "All" },
               { option: "C", text: "Cold Foil" },
               { option: "R", text: "Rainbow Foil" },
               { option: "S", text: "Non Foil" },
@@ -133,7 +134,7 @@ const SlugPage = () => {
             onCallback={(value: string) =>
               setActiveFilters({
                 ...activeFilters,
-                foiling: value as "C" | "R" | "S" | null,
+                foiling: value as "C" | "R" | "S" | "all",
               })
             }
           />
