@@ -71,6 +71,7 @@ const SlugPage = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const response = await getFaBCardData({
           slug,
           sort: activeSort,
@@ -148,6 +149,7 @@ const SlugPage = () => {
       >
         {!!cardData.length &&
           cardSet?.id &&
+          !loading &&
           cardData?.map((card) => {
             return (
               <TcgCard
@@ -166,8 +168,16 @@ const SlugPage = () => {
           })}
       </Box>
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Skeleton variant="rectangular" width={210} height={118} />
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            gap: "50px",
+            flexFlow: "row wrap",
+            marginTop: "40px",
+          }}
+        >
+          {SkeletonLoader()}
         </Box>
       )}
 
@@ -188,3 +198,23 @@ const SlugPage = () => {
 };
 
 export default SlugPage;
+
+const SkeletonLoader = () => {
+  const skeletons = [];
+  let i = 0; // Initialize the counter
+
+  // While loop to push Skeleton components into an array
+  while (i < 20) {
+    skeletons.push(
+      <Skeleton
+        variant="rectangular"
+        height={330}
+        width={225}
+        sx={{ paddingLeft: 5 }}
+      />
+    );
+    i++; // Increment the counter
+  }
+
+  return skeletons;
+};
