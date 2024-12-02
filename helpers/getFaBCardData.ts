@@ -22,7 +22,6 @@ const getFaBCardData = async ({
   edition,
   activeFilters,
 }: FabDataProps) => {
-  console.log({ activeFilters });
   const cardsData = await axios.get("/api/cardData/get", {
     params: {
       setName: slug,

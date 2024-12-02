@@ -171,7 +171,7 @@ const SlugPage = () => {
         </Box>
       )}
 
-      {cardSetTotal && cardData && (
+      {!!cardSetTotal && cardData && cardSetTotal > 0 && (
         <Box display={"flex"} justifyContent={"center"}>
           <Pagination
             sx={{ marginTop: 5, marginBottom: 10 }}

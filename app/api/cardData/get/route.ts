@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
         .select(db.fn.count("printing_unique_id").as("count"))
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition)
+        .where("printing_with_card_and_latest_pricing.foiling", "=", foiling)
         .execute();
 
       const cardsBySetIdQuery = db
@@ -56,7 +57,6 @@ export async function GET(req: NextRequest) {
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition);
 
-      console.log({ cardsBySetIdQuery });
       if (searchQuery) {
         const searchedCardQuery = cardsBySetIdQuery.where(
           "printing_with_card_and_latest_pricing.card_name",
@@ -165,7 +165,6 @@ export async function GET(req: NextRequest) {
         );
         allCardsBySetId = await filteredQuery.execute();
       }
-      console.log({ allCardsBySetId });
       if (!allCardsBySetId) {
         return new Response(
           JSON.stringify({ error: "Failed to fetch cards" }),
