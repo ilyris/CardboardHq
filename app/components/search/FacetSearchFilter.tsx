@@ -8,11 +8,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import theme from "../theme";
+import theme from "@/app/theme";
 import artists from "@/app/jsonData/artist.json";
-import { setArtist, setClass } from "../lib/features/facetSearchSlice";
-import { useAppDispatch } from "../lib/hooks";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/app/lib/hooks";
+import { setArtist, setClass } from "@/app/lib/features/facetSearchSlice";
 
 const classOptions = [
   "Adjudicator",

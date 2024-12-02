@@ -4,9 +4,9 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Box, CardActionArea, Link, Skeleton, styled } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import theme from "../theme";
 import { useEffect, useState } from "react";
 import { checkImageExists } from "@/helpers/checkImageExists";
+import theme from "@/app/theme";
 
 interface SetCardProps {
   assetFilePath: string;

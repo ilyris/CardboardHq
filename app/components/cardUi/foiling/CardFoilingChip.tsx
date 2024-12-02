@@ -1,6 +1,6 @@
+import theme from "@/app/theme";
 import Chip from "@mui/material/Chip";
 import React from "react";
-import theme from "../theme";
 
 interface CardFoilingChipProps {
   foiling: "Normal" | "Cold Foil" | "Rainbow Foil";

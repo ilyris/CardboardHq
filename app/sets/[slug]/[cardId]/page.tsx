@@ -6,16 +6,16 @@ import importLogo from "@/helpers/importLogo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Image from "next/image";
 import TCGLineChart from "@/app/components/TCGLineChart";
-import LinkButton from "@/app/components/LinkButton";
+import LinkButton from "@/app/components/links/LinkButton";
 import getFaBCardData from "@/helpers/getFaBCardData";
-import FoilOverlay from "@/app/components/FoilOverlay";
+import FoilOverlay from "@/app/components/cardUi/foiling/FoilOverlay";
 import { fetchCardPriceData } from "@/helpers/getFaBCardPriceData";
 import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import isNegativePriceChange from "@/helpers/isNegativePriceChange";
 import { DateString } from "@/typings/Dates";
-import CardLegalityContainer from "@/app/components/CardLegalityContainer";
+import CardLegalityContainer from "@/app/components/cardPage/CardLegalityContainer";
 
 const dayIntervalTranslation = (dayInterval: string) => {
   switch (dayInterval) {

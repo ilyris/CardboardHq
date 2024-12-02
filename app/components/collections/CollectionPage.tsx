@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import PortfolioCard from "../portfolio/PortfolioCard";
+import PortfolioCard from "./portfolio/PortfolioCard";
 import AddPortfolioModal from "../modals/AddPortfolioModal";
 import { TransformedPortfolioData } from "@/typings/Portfolios";
 

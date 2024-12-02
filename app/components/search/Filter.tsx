@@ -1,7 +1,7 @@
 import React, { useState, FC } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem } from "@mui/material";
-import theme from "../theme";
+import theme from "../../theme";
 
 interface FilterProps {
   options: { text: string; option: string }[];

@@ -4,17 +4,17 @@ import { TransformedPortfolioData } from "@/typings/Portfolios";
 import { Box, Typography, Divider } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import TcgCard from "../../TcgCard";
 import TCGLineChart from "../../TCGLineChart";
 import { getPortfolioHistoryPriceData } from "@/helpers/getPortfolioHistoryPriceData";
 import { DateString } from "@/typings/Dates";
 import { CardSet } from "@/typings/FaBSet";
 import FaBSetJson from "@/app/jsonData/FaBSet.json";
 import theme from "../../../theme";
-import SearchBar from "../../SearchBar";
+import SearchBar from "../../search/SearchBar";
 import PortfolioReturnHeader from "./PortfolioReturnHeader";
 import UpdatePortfolioCardModal from "../../modals/UpdatePortfolioCardModal";
 import useAuthProviders from "@/app/hooks/useAuthProviders";
+import TcgCard from "../../cardUi/TcgCard";
 
 interface PortfolioByIdClientWrapper {
   userEmail: string | null | undefined;

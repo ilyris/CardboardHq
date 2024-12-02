@@ -2,11 +2,11 @@
 import React from "react";
 import { Snackbar } from "@mui/base/Snackbar";
 import { Alert, Box, SnackbarCloseReason } from "@mui/material";
-import { useAppSelector, useAppDispatch } from "../lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/lib/hooks";
 import {
   handleCloseMessage,
   resetState,
-} from "../lib/features/systemMessageSlice";
+} from "@/app/lib/features/systemMessageSlice";
 
 const SnearBarContainerStyles = {
   position: "fixed",

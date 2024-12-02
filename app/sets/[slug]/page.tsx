@@ -8,14 +8,14 @@ import {
   Skeleton,
   Pagination,
 } from "@mui/material";
-import TcgCard from "@/app/components/TcgCard";
+import TcgCard from "@/app/components/cardUi/TcgCard";
 import { CardSet } from "@/typings/FaBSet";
 import importLogo from "@/helpers/importLogo";
-import Header from "@/app/components/Header";
-import SearchBar from "@/app/components/SearchBar";
+import Header from "@/app/components/generics/Header";
+import SearchBar from "@/app/components/search/SearchBar";
 import getFaBCardData from "@/helpers/getFaBCardData";
 import getCardSet from "@/helpers/getSetData";
-import Filter from "@/app/components/Filter";
+import Filter from "@/app/components/search/Filter";
 import { CardPrintingPriceView } from "@/app/lib/db";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 import useAuthProviders from "@/app/hooks/useAuthProviders";

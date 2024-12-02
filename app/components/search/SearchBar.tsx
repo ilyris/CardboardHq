@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import theme from "../theme";
+import theme from "../../theme";
 import TuneIcon from "@mui/icons-material/Tune";
 import { Dialog, Box } from "@mui/material";
 import FacetSearchFilter from "./FacetSearchFilter";
 import type { DialogProps } from "@mui/material";
-import { toggleModalOpen } from "../lib/features/facetSearchSlice";
-import { useAppDispatch } from "../lib/hooks";
+import { toggleModalOpen } from "../../lib/features/facetSearchSlice";
+import { useAppDispatch } from "../../lib/hooks";
 
 interface SearchBarProps {
   value: string;

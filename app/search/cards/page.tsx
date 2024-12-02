@@ -1,8 +1,6 @@
 "use client";
 
 import { CardPrintingPriceViewWithPercentage } from "@/app/api/cardData/get/route";
-import TcgCard from "@/app/components/TcgCard";
-import getSearchCardData from "@/helpers/getSearchCardData";
 import { Box, Container, Pagination, Typography } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -12,6 +10,7 @@ import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 import useAuthProviders from "@/app/hooks/useAuthProviders";
 import { useAppSelector } from "@/app/lib/hooks";
 import { searchByFacetFilter } from "@/helpers/searchByFacetFilter";
+import TcgCard from "@/app/components/cardUi/TcgCard";
 
 const SearchPage = () => {
   const FaBSetDataJson: CardSet[] = FaBSetJson as CardSet[];

@@ -1,10 +1,10 @@
 "use client";
 import fabSetData from "@/app/jsonData/FaBSet.json";
-import SetCard from "./components/SetCard";
 import { Box, Container, Typography } from "@mui/material";
-import FeaturedCards from "./components/FeaturedCards";
+import FeaturedCards from "./components/cardUi/FeaturedCards";
 import AddToPortfolioModal from "./components/modals/AddToPortfolioModal";
 import useAuthProviders from "./hooks/useAuthProviders";
+import SetCard from "./components/cardUi/SetCard";
 
 export default function Home() {
   const { providers, handleLogin } = useAuthProviders();

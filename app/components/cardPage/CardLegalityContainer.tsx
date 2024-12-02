@@ -1,8 +1,8 @@
+import { CardInformation } from "@/app/lib/db";
+import theme from "@/app/theme";
 import { getCardInformation } from "@/helpers/getCardInformation";
 import { Box, Chip, Paper, Skeleton, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { CardInformation } from "../lib/db";
-import theme from "../theme";
 
 interface CardLegalityContainerProps {
   cardUniqueId: string | null;

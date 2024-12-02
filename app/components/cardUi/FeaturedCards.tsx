@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import TcgCard from "./TcgCard";
 import fabSetData from "@/app/jsonData/FaBSet.json";
 import { Box, Skeleton, styled, Typography } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import theme from "../theme";
-import { CardPrintingPriceViewWithPercentage } from "../api/cardData/get/route";
+import theme from "../../theme";
+import { CardPrintingPriceViewWithPercentage } from "../../api/cardData/get/route";
+import TcgCard from "./TcgCard";
 
 const BoxFirstNoPadding = styled(Box)(`
     padding-left: 40px;
