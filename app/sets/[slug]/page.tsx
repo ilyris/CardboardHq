@@ -19,6 +19,7 @@ import Filter from "@/app/components/Filter";
 import { CardPrintingPriceView } from "@/app/lib/db";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
 import useAuthProviders from "@/app/hooks/useAuthProviders";
+import { FilterTypes } from "@/typings/Filter";
 
 const SlugPage = () => {
   const { providers, handleLogin } = useAuthProviders();
@@ -38,6 +39,9 @@ const SlugPage = () => {
   const [cardSetTotal, setCardSetTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeSort, setActiveSort] = useState<string>("");
+  const [activeFilters, setActiveFilters] = useState<FilterTypes>({
+    foiling: null,
+  });
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const loadLogo = async () => {
@@ -72,6 +76,7 @@ const SlugPage = () => {
           sort: activeSort,
           edition,
           page: pageNumber,
+          activeFilters,
         });
         const newData = response.data.result;
         const totalCards = response.data.total;
@@ -84,7 +89,7 @@ const SlugPage = () => {
         setLoading(false);
       }
     })();
-  }, [activeSort, pageNumber]);
+  }, [activeSort, pageNumber, activeFilters]);
 
   useEffect(() => {
     if (slug) {
@@ -108,13 +113,30 @@ const SlugPage = () => {
           placeholder={"Search a card"}
           onChange={(e) => handleCardSearch(e)}
         />
-        <Filter
-          options={[
-            { option: "High To Low", text: "High To Low" },
-            { option: "Low To High", text: "Low To High" },
-          ]}
-          onCallback={(value: string) => setActiveSort(value)}
-        />
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Filter
+            name={"price sort"}
+            options={[
+              { option: "High To Low", text: "High To Low" },
+              { option: "Low To High", text: "Low To High" },
+            ]}
+            onCallback={(value: string) => setActiveSort(value)}
+          />
+          <Filter
+            name={"foiling"}
+            options={[
+              { option: "C", text: "Cold Foil" },
+              { option: "R", text: "Rainbow Foil" },
+              { option: "S", text: "Non Foil" },
+            ]}
+            onCallback={(value: string) =>
+              setActiveFilters({
+                ...activeFilters,
+                foiling: value as "C" | "R" | "S" | null,
+              })
+            }
+          />
+        </Box>
       </Box>
       <Box
         sx={{
