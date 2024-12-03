@@ -155,13 +155,13 @@ const CardPage = () => {
           }}
         >
           {!!cardPriceHistoryData && cardData && (
-            <>
+            <Box width={400}>
               <CardActionArea>
                 <LazyLoadImage
                   alt={cardData.card_name}
                   height={"auto"}
                   src={cardData.image_url ?? ""}
-                  width={400}
+                  width={"100%"}
                 />
                 {isFoiled && <FoilOverlay foiling={foiling ?? undefined} />}
               </CardActionArea>
@@ -218,7 +218,7 @@ const CardPage = () => {
                   )}
                 </Typography>
               </Box>
-            </>
+            </Box>
           )}
         </Box>
       </Box>
