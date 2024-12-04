@@ -67,6 +67,20 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDateCalendar: {
+      styleOverrides: {
+        root: {
+          color: "#000000 !important",
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: "#000000 !important",
+        },
+      },
+    },
     MuiContainer: {
       styleOverrides: {
         root: {
