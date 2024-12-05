@@ -32,7 +32,12 @@ const classOptions = [
   "Wizard",
 ];
 
-export default function FacetSearchFilter() {
+interface FacetSearchFilterProps {
+  onSubmitCb?: () => void;
+}
+const FacetSearchFilter: React.FC<FacetSearchFilterProps> = ({
+  onSubmitCb,
+}) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -57,6 +62,8 @@ export default function FacetSearchFilter() {
     router.push(
       `/search/cards?query=%20&artist=${artistValue}&class=${classValue}`
     );
+    // close modal
+    if (onSubmitCb) onSubmitCb();
   };
 
   return (
@@ -179,4 +186,6 @@ export default function FacetSearchFilter() {
       </Box>
     </Box>
   );
-}
+};
+
+export default FacetSearchFilter;
