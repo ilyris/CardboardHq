@@ -46,6 +46,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
             height: "20px",
             color: theme.palette.background.default,
           },
+          "& .MuiInputAdornment-root": {
+            cursor: "pointer",
+          },
         }}
         variant="outlined"
         size="small"
