@@ -1,30 +1,37 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import theme from "../theme";
+import theme from "../../theme";
 import TuneIcon from "@mui/icons-material/Tune";
 import { Dialog, Box } from "@mui/material";
 import FacetSearchFilter from "./FacetSearchFilter";
 import type { DialogProps } from "@mui/material";
+import { toggleModalOpen } from "../../lib/features/facetSearchSlice";
+import { useAppDispatch } from "../../lib/hooks";
 
 interface SearchBarProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  showSearchFilterButton?: boolean;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChange,
   placeholder,
+  showSearchFilterButton = false,
 }) => {
+  const dispatch = useAppDispatch();
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
-  const handleFilterOpening = () => {
-    setIsFilterOpen(false);
-  };
 
   const handleClose: DialogProps["onClose"] = (event, reason) => {
-    if (reason && reason === "backdropClick") handleFilterOpening();
+    if (reason && reason === "backdropClick") handleFacetSearchModal(false);
+  };
+
+  const handleFacetSearchModal = (isOpen: boolean) => {
+    setIsFilterOpen(isOpen);
+    dispatch(toggleModalOpen(isOpen));
   };
 
   return (
@@ -49,9 +56,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
           endAdornment: (
             <InputAdornment
               position="start"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              onClick={() => handleFacetSearchModal(true)}
             >
-              <TuneIcon />
+              {showSearchFilterButton && <TuneIcon />}
             </InputAdornment>
           ),
         }}

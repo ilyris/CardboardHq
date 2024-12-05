@@ -2,11 +2,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Box, CardActionArea, Link, Skeleton } from "@mui/material";
+import { Box, CardActionArea, Link, Skeleton, styled } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import theme from "../theme";
 import { useEffect, useState } from "react";
 import { checkImageExists } from "@/helpers/checkImageExists";
+import theme from "@/app/theme";
 
 interface SetCardProps {
   assetFilePath: string;
@@ -14,6 +14,12 @@ interface SetCardProps {
   title: string;
   edition: string;
 }
+
+const CustomCardActionArea = styled(CardActionArea)({
+  "&:hover .MuiCardActionArea-focusHighlight": {
+    background: "transparent",
+  },
+});
 
 const SetCard: React.FC<SetCardProps> = ({
   assetFilePath,
@@ -46,7 +52,7 @@ const SetCard: React.FC<SetCardProps> = ({
           boxShadow: "unset",
         }}
       >
-        <CardActionArea sx={{ position: "relative" }}>
+        <CustomCardActionArea sx={{ position: "relative" }}>
           <Box
             sx={{
               backgroundColor: theme.palette.background.default,
@@ -111,7 +117,7 @@ const SetCard: React.FC<SetCardProps> = ({
               {title}
             </Typography>
           </CardContent>
-        </CardActionArea>
+        </CustomCardActionArea>
       </Card>
     </Link>
   );

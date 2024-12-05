@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import AddPortfolioButton from "../AddPortfolioButton";
+import AddPortfolioButton from "./AddPortfolioButton";
 
 interface CollectionPageHeaderProps {
   toggleIsPortfolioModalOpen: () => void;

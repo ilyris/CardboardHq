@@ -1,10 +1,17 @@
+import theme from "@/app/theme";
 import Chip from "@mui/material/Chip";
 import React from "react";
-import theme from "../theme";
 
 interface CardFoilingChipProps {
-  foiling: string;
+  foiling: "Normal" | "Cold Foil" | "Rainbow Foil";
 }
+const shortenFoilingLabel = (
+  foiling: "Normal" | "Cold Foil" | "Rainbow Foil"
+) => {
+  if (foiling === "Normal") return "NF";
+  if (foiling === "Rainbow Foil") return "RF";
+  if (foiling === "Cold Foil") return "CF";
+};
 
 const foilingChipStyles = (foilingLabel: string | undefined) => {
   switch (foilingLabel) {
@@ -27,7 +34,7 @@ const CardFoilingChip: React.FC<CardFoilingChipProps> = ({ foiling }) => {
   console.log({ foiling });
 
   const chipStyles = foilingChipStyles(foiling);
-
-  return <Chip label={foiling} sx={chipStyles} />;
+  const chipLabel = shortenFoilingLabel(foiling);
+  return <Chip label={chipLabel} sx={{ ...chipStyles, height: "20px" }} />;
 };
 export default CardFoilingChip;

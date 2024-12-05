@@ -1,14 +1,15 @@
 import React, { useState, FC } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem } from "@mui/material";
-import theme from "../theme";
+import theme from "../../theme";
 
 interface FilterProps {
   options: { text: string; option: string }[];
+  name: string;
   onCallback: (value: string) => void;
 }
 
-const Filter: FC<FilterProps> = ({ options, onCallback }) => {
+const Filter: FC<FilterProps> = ({ options, name, onCallback }) => {
   const [selectListValue, setSelectListValue] = useState<string>("");
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -28,8 +29,10 @@ const Filter: FC<FilterProps> = ({ options, onCallback }) => {
           paddingBottom: 1,
           fontSize: "1.2rem",
           height: "20px",
+          minWidth: "200px",
         },
       }}
+      name={name}
       onChange={handleChange}
       value={selectListValue || options[0].option}
       defaultValue={options[0].option}

@@ -1,3 +1,4 @@
+import { FilterTypes } from "@/typings/Filter";
 import axios from "axios";
 
 interface FabDataProps {
@@ -8,6 +9,7 @@ interface FabDataProps {
   pageSize?: number;
   sort?: string;
   edition: string;
+  activeFilters?: FilterTypes;
 }
 
 const getFaBCardData = async ({
@@ -18,6 +20,7 @@ const getFaBCardData = async ({
   pageSize,
   sort,
   edition,
+  activeFilters,
 }: FabDataProps) => {
   const cardsData = await axios.get("/api/cardData/get", {
     params: {
@@ -28,6 +31,7 @@ const getFaBCardData = async ({
       pageSize: pageSize || undefined,
       sort: sort || "High To Low",
       edition,
+      ...activeFilters,
     },
   });
   return cardsData;

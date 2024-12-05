@@ -1,8 +1,8 @@
 "use client";
 import { Box } from "@mui/material";
-import NextLink from "../NextLink";
-import MainStyledLink from "../MainStyledLink";
-import SearchBar from "../SearchBar";
+import NextLink from "../links/NextLink";
+import MainStyledLink from "../links/MainStyledLink";
+import SearchBar from "../search/SearchBar";
 import Image from "next/image";
 import logo from "@/public/Logo.svg";
 import { useState } from "react";
@@ -24,7 +24,7 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
     event.preventDefault();
     try {
       setSearchQuery("");
-      router.push(`/search/all/${searchQuery}`);
+      router.push(`/search/cards?query=${searchQuery}`);
     } catch (error) {
       console.error("Error fetching card data:", error);
     }
@@ -62,6 +62,7 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
             value={searchQuery}
             placeholder={"Nuu, Alluring Desire"}
             onChange={(e) => handleSearchChange(e)}
+            showSearchFilterButton
           />
         </Box>
         <Box>

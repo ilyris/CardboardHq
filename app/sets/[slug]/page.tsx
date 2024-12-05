@@ -8,18 +8,18 @@ import {
   Skeleton,
   Pagination,
 } from "@mui/material";
-import TcgCard from "@/app/components/TcgCard";
+import TcgCard from "@/app/components/cardUi/TcgCard";
 import { CardSet } from "@/typings/FaBSet";
 import importLogo from "@/helpers/importLogo";
-import Header from "@/app/components/Header";
-import SearchBar from "@/app/components/SearchBar";
+import Header from "@/app/components/generics/Header";
+import SearchBar from "@/app/components/search/SearchBar";
 import getFaBCardData from "@/helpers/getFaBCardData";
 import getCardSet from "@/helpers/getSetData";
-import Filter from "@/app/components/Filter";
+import Filter from "@/app/components/search/Filter";
 import { CardPrintingPriceView } from "@/app/lib/db";
 import AddToPortfolioModal from "@/app/components/modals/AddToPortfolioModal";
-import { fetchCardPriceData } from "@/helpers/getFaBCardPriceData";
 import useAuthProviders from "@/app/hooks/useAuthProviders";
+import { FilterTypes } from "@/typings/Filter";
 
 const SlugPage = () => {
   const { providers, handleLogin } = useAuthProviders();
@@ -39,6 +39,9 @@ const SlugPage = () => {
   const [cardSetTotal, setCardSetTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeSort, setActiveSort] = useState<string>("");
+  const [activeFilters, setActiveFilters] = useState<FilterTypes>({
+    foiling: "all",
+  });
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const loadLogo = async () => {
@@ -68,11 +71,13 @@ const SlugPage = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const response = await getFaBCardData({
           slug,
           sort: activeSort,
           edition,
           page: pageNumber,
+          activeFilters,
         });
         const newData = response.data.result;
         const totalCards = response.data.total;
@@ -85,7 +90,7 @@ const SlugPage = () => {
         setLoading(false);
       }
     })();
-  }, [activeSort, pageNumber]);
+  }, [activeSort, pageNumber, activeFilters]);
 
   useEffect(() => {
     if (slug) {
@@ -109,13 +114,31 @@ const SlugPage = () => {
           placeholder={"Search a card"}
           onChange={(e) => handleCardSearch(e)}
         />
-        <Filter
-          options={[
-            { option: "High To Low", text: "High To Low" },
-            { option: "Low To High", text: "Low To High" },
-          ]}
-          onCallback={(value: string) => setActiveSort(value)}
-        />
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Filter
+            name={"price sort"}
+            options={[
+              { option: "High To Low", text: "High To Low" },
+              { option: "Low To High", text: "Low To High" },
+            ]}
+            onCallback={(value: string) => setActiveSort(value)}
+          />
+          <Filter
+            name={"foiling"}
+            options={[
+              { option: "all", text: "All" },
+              { option: "C", text: "Cold Foil" },
+              { option: "R", text: "Rainbow Foil" },
+              { option: "S", text: "Non Foil" },
+            ]}
+            onCallback={(value: string) =>
+              setActiveFilters({
+                ...activeFilters,
+                foiling: value as "C" | "R" | "S" | "all",
+              })
+            }
+          />
+        </Box>
       </Box>
       <Box
         sx={{
@@ -127,6 +150,7 @@ const SlugPage = () => {
       >
         {!!cardData.length &&
           cardSet?.id &&
+          !loading &&
           cardData?.map((card) => {
             return (
               <TcgCard
@@ -145,12 +169,20 @@ const SlugPage = () => {
           })}
       </Box>
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Skeleton variant="rectangular" width={210} height={118} />
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            gap: "50px",
+            flexFlow: "row wrap",
+            marginTop: "40px",
+          }}
+        >
+          {SkeletonLoader()}
         </Box>
       )}
 
-      {cardSetTotal && cardData && (
+      {!!cardSetTotal && cardData && cardSetTotal > 0 && (
         <Box display={"flex"} justifyContent={"center"}>
           <Pagination
             sx={{ marginTop: 5, marginBottom: 10 }}
@@ -167,3 +199,23 @@ const SlugPage = () => {
 };
 
 export default SlugPage;
+
+const SkeletonLoader = () => {
+  const skeletons = [];
+  let i = 0; // Initialize the counter
+
+  // While loop to push Skeleton components into an array
+  while (i < 20) {
+    skeletons.push(
+      <Skeleton
+        variant="rectangular"
+        height={330}
+        width={225}
+        sx={{ paddingLeft: 5 }}
+      />
+    );
+    i++; // Increment the counter
+  }
+
+  return skeletons;
+};

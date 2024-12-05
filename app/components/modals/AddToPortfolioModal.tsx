@@ -182,17 +182,17 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
             <Box display="flex" justifyContent="space-between" width="100%">
               <TextField
                 id="quantity"
-                label="Quantity"
+                label="Qty"
                 variant="outlined"
                 value={quantity || ""}
                 defaultValue={1}
                 onChange={handleInputChange(setQuantity)}
-                sx={{ flexBasis: "30%" }}
+                sx={{ flexBasis: "25%", minHeight: "40px" }}
               />
               <TextField
                 sx={{
                   backgroundColor: "#fff",
-                  flexBasis: "55%",
+                  flexBasis: "30%",
                   "& .MuiSelect-select": {
                     color: theme.palette.background.default,
                     paddingRight: 4,
@@ -200,7 +200,7 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                     paddingTop: 1,
                     paddingBottom: 1,
                     fontSize: "1.2rem",
-                    height: "20px",
+                    minHeight: "40px",
                   },
                 }}
                 onChange={handleInputChange(setGradeValue)}
@@ -211,10 +211,11 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                 <MenuItem
                   sx={{ padding: 1, color: theme.palette.background.default }}
                   value="Raw"
+                  key={"Raw"}
                 >
                   Raw
                 </MenuItem>
-                {gradeOptions.map(({ value, text }) => (
+                {/* {gradeOptions.map(({ value, text }) => (
                   <MenuItem
                     sx={{ padding: 1, color: theme.palette.background.default }}
                     key={value}
@@ -222,15 +223,8 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                   >
                     {text}
                   </MenuItem>
-                ))}
+                ))} */}
               </TextField>
-            </Box>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              width="100%"
-              mt={3}
-            >
               <TextField
                 id="unit-price"
                 label="Unit Price (USD)"
@@ -244,11 +238,24 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                 onChange={handleInputChange(setUnitPrice)}
                 sx={{
                   input: { color: theme.palette.background.default },
-                  flexBasis: "45%",
+                  flexBasis: "35%",
+                  minHeight: "40px",
                 }}
               />
+            </Box>
+            <Box
+              display="flex"
+              width="100%"
+              justifyContent={"flex-start"}
+              mt={3}
+            >
               <FormControlLabel
-                sx={{ color: theme.palette.background.default }}
+                sx={{
+                  color: theme.palette.background.default,
+                  flexBasis: "100%",
+                  fontSize: "12px",
+                  minHeight: "40px",
+                }}
                 control={
                   <Checkbox
                     checked={isLowestPriceChecked}
@@ -268,12 +275,16 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
               mt={3}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker defaultValue={dayjs()} label="Date" />
+                <DatePicker
+                  defaultValue={dayjs()}
+                  label="Date"
+                  sx={{ flexBasis: "45%", minHeight: "40px" }}
+                />
               </LocalizationProvider>
               <TextField
                 sx={{
                   backgroundColor: "#fff",
-                  flexBasis: "55%",
+                  flexBasis: "50%",
                   "& .MuiSelect-select": {
                     color: theme.palette.background.default,
                     paddingRight: 4,
@@ -281,7 +292,7 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                     paddingTop: 1,
                     paddingBottom: 1,
                     fontSize: "1.2rem",
-                    height: "20px",
+                    minHeight: "40px",
                   },
                 }}
                 onChange={handleInputChange(setSelectedPortfolio)}
@@ -306,7 +317,7 @@ const AddToPortfolioModal: React.FC<AddToPortfolioModalProps> = ({
                 ))}
               </TextField>
             </Box>
-            <Box width={"100%"} display="flex" justifyContent="flex-end">
+            <Box width={"100%"} display="flex" justifyContent="flex-end" mt={3}>
               <Button type="submit" variant="contained" color="success">
                 Add Card
               </Button>

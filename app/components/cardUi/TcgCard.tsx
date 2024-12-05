@@ -1,3 +1,4 @@
+"use client";
 import {
   Box,
   Card,
@@ -8,24 +9,24 @@ import {
 import Link from "next/link";
 import React, { useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import CardFoilingChip from "./CardFoilingChip";
-import FoilOverlay from "./FoilOverlay";
 import convertFoilingLabel from "@/helpers/convertFoilingLabel";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import theme from "../theme";
+import { deleteCardFromPortfolio } from "@/helpers/deleteCardFromPortfolio";
+import { useAppDispatch } from "@/app/lib/hooks";
 import {
   addToPortfolio,
   CardToAdd,
   toggleModalIsOpen,
-} from "../lib/features/addToPortfolioSlice";
-import { useAppDispatch } from "../lib/hooks";
-import { deleteCardFromPortfolio } from "@/helpers/deleteCardFromPortfolio";
+} from "@/app/lib/features/addToPortfolioSlice";
 import {
-  CardToUpdate,
   cardToUpdate,
+  CardToUpdate,
   togglePortfolioCardToUpdateModal,
-} from "../lib/features/updatePortfolioCard";
+} from "@/app/lib/features/updatePortfolioCard";
+import FoilOverlay from "./foiling/FoilOverlay";
+import theme from "@/app/theme";
+import CardFoilingChip from "./foiling/CardFoilingChip";
 
 interface TcgCardProps {
   image: string | undefined;
@@ -234,11 +235,17 @@ const TcgCard: React.FC<TcgCardProps> = ({
                 </Box>
               )}
 
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                }}
+              >
                 <Typography
-                  gutterBottom
                   variant="body1"
-                  maxWidth={featured ? 100 : "unset"}
+                  maxWidth={featured ? 200 : "unset"}
+                  minHeight={50}
                 >
                   {title}
                 </Typography>

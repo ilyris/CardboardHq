@@ -20,9 +20,14 @@ export async function GET(req: NextRequest) {
   const sort = req.nextUrl.searchParams.get("sort");
   const edition = req.nextUrl.searchParams.get("edition");
   const page = req.nextUrl.searchParams.get("page");
+  const foiling = req.nextUrl.searchParams.get("foiling");
+
   const pageSize = 25;
   const startIndex = (Number(page) - 1) * pageSize;
+
   try {
+    let allCardsBySetId;
+
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
         status: 500,
@@ -34,14 +39,28 @@ export async function GET(req: NextRequest) {
         set.formatted_name.toUpperCase() ===
         setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
     )?.id;
-    console.log(setId);
+
     if (setId) {
-      const totalCount = await db
+      let totalCountQueryBuilder = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .select(db.fn.count("printing_unique_id").as("count"))
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
-        .where("printing_with_card_and_latest_pricing.edition", "=", edition)
-        .execute();
+        .where("printing_with_card_and_latest_pricing.edition", "=", edition);
+
+      if (foiling === "all") {
+        totalCountQueryBuilder = totalCountQueryBuilder.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "in",
+          ["C", "R", "S"]
+        );
+      } else {
+        totalCountQueryBuilder = totalCountQueryBuilder.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "=",
+          foiling
+        );
+      }
+      let totalCount = await totalCountQueryBuilder.execute();
 
       const cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
@@ -50,7 +69,7 @@ export async function GET(req: NextRequest) {
         .offset(startIndex)
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition);
-      console.log({ cardsBySetIdQuery });
+
       if (searchQuery) {
         const searchedCardQuery = cardsBySetIdQuery.where(
           "printing_with_card_and_latest_pricing.card_name",
@@ -137,6 +156,7 @@ export async function GET(req: NextRequest) {
         );
       }
 
+      // sorting
       if (sort) {
         let orderQuery = cardsBySetIdQuery.orderBy(
           sql`low_price DESC NULLS LAST`
@@ -146,19 +166,44 @@ export async function GET(req: NextRequest) {
           orderQuery = cardsBySetIdQuery.orderBy(sql`low_price ASC NULLS LAST`);
         }
 
-        const allCardsBySetId = await orderQuery.execute();
-        console.log({ allCardsBySetId });
+        allCardsBySetId = await orderQuery.execute();
+      }
+
+      // filters
+      if (foiling === "all") {
+        let filteredQuery = cardsBySetIdQuery.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "in",
+          ["C", "R", "S"]
+        );
+        allCardsBySetId = await filteredQuery.execute();
+      } else {
+        let filteredQuery = cardsBySetIdQuery.where(
+          "printing_with_card_and_latest_pricing.foiling",
+          "=",
+          foiling
+        );
+        allCardsBySetId = await filteredQuery.execute();
+      }
+      if (!allCardsBySetId) {
         return new Response(
-          JSON.stringify({
-            result: allCardsBySetId,
-            total: totalCount[0].count,
-          }),
+          JSON.stringify({ error: "Failed to fetch cards" }),
           {
-            status: 200,
+            status: 500,
             headers: { "Content-Type": "application/json" },
           }
         );
       }
+      return new Response(
+        JSON.stringify({
+          result: allCardsBySetId,
+          total: totalCount[0].count,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
