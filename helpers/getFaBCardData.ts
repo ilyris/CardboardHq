@@ -29,7 +29,7 @@ const getFaBCardData = async ({
       cardId: cardId || "",
       page: page || undefined,
       pageSize: pageSize || undefined,
-      sort: sort || "High To Low",
+      sort: sort || "DESC",
       edition,
       ...activeFilters,
     },

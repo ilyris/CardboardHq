@@ -118,8 +118,8 @@ const SlugPage = () => {
           <Filter
             name={"price sort"}
             options={[
-              { option: "High To Low", text: "High To Low" },
-              { option: "Low To High", text: "Low To High" },
+              { option: "DESC", text: "High To Low" },
+              { option: "ASC", text: "Low To High" },
             ]}
             onCallback={(value: string) => setActiveSort(value)}
           />

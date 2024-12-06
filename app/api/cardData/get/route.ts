@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const setName = req.nextUrl.searchParams.get("setName");
   const searchQuery = req.nextUrl.searchParams.get("searchQuery");
   const cardId = req.nextUrl.searchParams.get("cardId");
-  const sort = req.nextUrl.searchParams.get("sort");
+  const sort = req.nextUrl.searchParams.get("sort") as string;
   const edition = req.nextUrl.searchParams.get("edition");
   const page = req.nextUrl.searchParams.get("page");
   const foiling = req.nextUrl.searchParams.get("foiling");
@@ -61,7 +61,6 @@ export async function GET(req: NextRequest) {
         );
       }
       let totalCount = await totalCountQueryBuilder.execute();
-
       let cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .selectAll()
@@ -70,8 +69,7 @@ export async function GET(req: NextRequest) {
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition)
         .orderBy(
-          sort === "High To Low" ? 
-          sql`low_price DESC NULLS LAST` : sql`low_price ASC NULLS LAST`
+          sql`low_price ${sql.raw(sort)} NULLS LAST`
         );
 
       if (searchQuery) {
