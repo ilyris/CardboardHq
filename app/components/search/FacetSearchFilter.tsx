@@ -32,7 +32,12 @@ const classOptions = [
   "Wizard",
 ];
 
-export default function FacetSearchFilter() {
+interface FacetSearchFilterProps {
+  onSubmitCb?: () => void;
+}
+const FacetSearchFilter: React.FC<FacetSearchFilterProps> = ({
+  onSubmitCb,
+}) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -57,6 +62,8 @@ export default function FacetSearchFilter() {
     router.push(
       `/search/cards?query=%20&artist=${artistValue}&class=${classValue}`
     );
+    // close modal
+    if (onSubmitCb) onSubmitCb();
   };
 
   return (
@@ -80,12 +87,14 @@ export default function FacetSearchFilter() {
           </Button>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", gap: 3 }}>
-        <FormGroup sx={{ flex: "1 0 auto" }}>
+      <Box sx={{ display: "flex", gap: 2, justifyContent: "space-between" }}>
+        <FormGroup sx={{ width: "50%" }}>
           <TextField
             sx={{
               mb: 2,
               backgroundColor: "#fff",
+              minWidth: "250px",
+
               "& .MuiSelect-select": {
                 color: theme.palette.background.default,
                 paddingRight: 4,
@@ -93,7 +102,7 @@ export default function FacetSearchFilter() {
                 paddingTop: 1,
                 paddingBottom: 1,
                 fontSize: "1rem",
-                height: "20px",
+                height: "35px",
               },
             }}
             onChange={(e) => handleChange(e)}
@@ -127,10 +136,12 @@ export default function FacetSearchFilter() {
             ))}
           </TextField>
         </FormGroup>
-        <FormGroup sx={{ flex: "1 0 auto" }}>
+        <FormGroup sx={{ width: "50%" }}>
           <TextField
             sx={{
               backgroundColor: "#fff",
+              minWidth: "250px",
+
               "& .MuiSelect-select": {
                 color: theme.palette.background.default,
                 paddingRight: 4,
@@ -138,7 +149,7 @@ export default function FacetSearchFilter() {
                 paddingTop: 1,
                 paddingBottom: 1,
                 fontSize: "1rem",
-                height: "20px",
+                height: "35px",
               },
             }}
             onChange={(e) => handleArtistChange(e)}
@@ -175,4 +186,6 @@ export default function FacetSearchFilter() {
       </Box>
     </Box>
   );
-}
+};
+
+export default FacetSearchFilter;

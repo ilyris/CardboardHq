@@ -26,9 +26,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
 
   const handleClose: DialogProps["onClose"] = (event, reason) => {
-    if (reason && reason === "backdropClick") handleFacetSearchModal(false);
+    if (reason && reason === "backdropClick") {
+      handleFacetSearchModal(false);
+    }
   };
-
+  const handleFacetFilterSubmit = () => {
+    handleFacetSearchModal(false);
+  };
   const handleFacetSearchModal = (isOpen: boolean) => {
     setIsFilterOpen(isOpen);
     dispatch(toggleModalOpen(isOpen));
@@ -45,6 +49,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
             fontSize: "1.2rem",
             height: "20px",
             color: theme.palette.background.default,
+          },
+          "& .MuiInputAdornment-root": {
+            cursor: "pointer",
           },
         }}
         variant="outlined"
@@ -69,7 +76,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           open={isFilterOpen}
           onClose={handleClose}
         >
-          <FacetSearchFilter />
+          <FacetSearchFilter onSubmitCb={handleFacetFilterSubmit} />
         </Dialog>
       )}
     </Box>
