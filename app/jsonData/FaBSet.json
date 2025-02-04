@@ -400,7 +400,7 @@
         "unique_id": "NbL9J9Mqb9QHc9FRJGTwd",
         "id": "ROS",
         "name": "Rosetta",
-        "formatted_name": "Rosetta",
+        "formatted_name": "rosetta",
         "printings": [
             {
                 "unique_id": "fH8hKWnpHw9MWq7jFhkKT",
@@ -415,6 +415,28 @@
                 "card_gallery": null,
                 "release_notes": "https://fabtcg.com/en/resources/rules-and-policy-center/release-notes/rosetta-1st-strike/",
                 "set_logo": "https://dhhim4ltzu1pj.cloudfront.net/media/images/logo_rosetta_full.original.png"
+            }
+        ]
+    },
+    {
+        "unique_id": "53KxL4QONVNxzJXpSymmGQ",
+        "id": "HNT",
+        "name": "The Hunted",
+        "formatted_name": "the-hunted",
+        "printings": [
+            {
+                "unique_id": "ILXWPjniDTqUOoIQD4O7ob",
+                "edition": "N",
+                "start_card_id": "HNT000",
+                "end_card_id": "HNT264",
+                "initial_release_date": "2025-01-31T00:00:00.000Z",
+                "out_of_print": false,
+                "card_database": "https://cards.fabtcg.com/products/the-hunted/",
+                "product_page": "https://fabtcg.com/products/booster-set/the-hunted/",
+                "collectors_center": "https://fabtcg.com/en/collectors-centre/the-hunted/",
+                "card_gallery": null,
+                "release_notes": "https://fabtcg.com/en/resources/rules-and-policy-center/release-notes/rosetta-1st-strike/",
+                "set_logo": "https://dhhim4ltzu1pj.cloudfront.net/media/images/the_hunted_logo.original.png"
             }
         ]
     }

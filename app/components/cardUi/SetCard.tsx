@@ -74,7 +74,7 @@ const SetCard: React.FC<SetCardProps> = ({
           <div style={{ position: "relative" }}>
             <CardMedia
               component="img"
-              image={assetFilePath.toLocaleLowerCase()}
+              image={assetFilePath}
               sx={{ borderRadius: "15px", maxHeight: 225 }}
             />
             <div
