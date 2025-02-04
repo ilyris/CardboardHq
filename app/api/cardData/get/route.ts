@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const setName = req.nextUrl.searchParams.get("setName");
   const searchQuery = req.nextUrl.searchParams.get("searchQuery");
   const cardId = req.nextUrl.searchParams.get("cardId");
-  const sort = req.nextUrl.searchParams.get("sort");
+  const sort = req.nextUrl.searchParams.get("sort") as string;
   const edition = req.nextUrl.searchParams.get("edition");
   const page = req.nextUrl.searchParams.get("page");
   const foiling = req.nextUrl.searchParams.get("foiling");
@@ -61,14 +61,16 @@ export async function GET(req: NextRequest) {
         );
       }
       let totalCount = await totalCountQueryBuilder.execute();
-
-      const cardsBySetIdQuery = db
+      let cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .selectAll()
         .limit(pageSize)
         .offset(startIndex)
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
-        .where("printing_with_card_and_latest_pricing.edition", "=", edition);
+        .where("printing_with_card_and_latest_pricing.edition", "=", edition)
+        .orderBy(
+          sql`low_price ${sql.raw(sort)} NULLS LAST`
+        );
 
       if (searchQuery) {
         const searchedCardQuery = cardsBySetIdQuery.where(
@@ -156,34 +158,19 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      // sorting
-      if (sort) {
-        let orderQuery = cardsBySetIdQuery.orderBy(
-          sql`low_price DESC NULLS LAST`
-        );
-
-        if (sort === "Low To High") {
-          orderQuery = cardsBySetIdQuery.orderBy(sql`low_price ASC NULLS LAST`);
-        }
-
-        allCardsBySetId = await orderQuery.execute();
-      }
-
       // filters
       if (foiling === "all") {
-        let filteredQuery = cardsBySetIdQuery.where(
+        allCardsBySetId =  cardsBySetIdQuery.where(
           "printing_with_card_and_latest_pricing.foiling",
           "in",
           ["C", "R", "S"]
         );
-        allCardsBySetId = await filteredQuery.execute();
       } else {
-        let filteredQuery = cardsBySetIdQuery.where(
+        allCardsBySetId =  cardsBySetIdQuery.where(
           "printing_with_card_and_latest_pricing.foiling",
           "=",
           foiling
         );
-        allCardsBySetId = await filteredQuery.execute();
       }
       if (!allCardsBySetId) {
         return new Response(
@@ -194,9 +181,11 @@ export async function GET(req: NextRequest) {
           }
         );
       }
+
+      const allCardsBySetIdDto = await allCardsBySetId.execute();
       return new Response(
         JSON.stringify({
-          result: allCardsBySetId,
+          result: allCardsBySetIdDto,
           total: totalCount[0].count,
         }),
         {
