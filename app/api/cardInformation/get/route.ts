@@ -1,7 +1,8 @@
 export const dynamicParams = true;
+
 import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
-import redis from "../../../lib/redis"; // adjust path to your redis.ts
+import { withRedisCache } from "../../../lib/withRedisCache";
 
 export async function GET(req: NextRequest) {
   const uniqueId = req.nextUrl.searchParams.get("uniqueId");
@@ -16,28 +17,17 @@ export async function GET(req: NextRequest) {
   const cacheKey = `card:${uniqueId}`;
 
   try {
-    //  Try Redis cache first
-    const cachedData = await redis.get(cacheKey);
-    if (cachedData) {
-      return new Response(cachedData, {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    const result = await withRedisCache(cacheKey, 86400, async () => {
+      const cardInformationQuery = await db
+        .selectFrom("card")
+        .selectAll()
+        .where("card.unique_id", "=", uniqueId)
+        .execute();
 
-    //  If not cached, fetch from DB
-    const cardInformationQuery = await db
-      .selectFrom("card")
-      .selectAll()
-      .where("card.unique_id", "=", uniqueId)
-      .execute();
+      return { results: cardInformationQuery };
+    });
 
-    const responseData = JSON.stringify({ results: cardInformationQuery });
-
-    //  Store in Redis for future
-    await redis.set(cacheKey, responseData, "EX", 86400); // 1 day TTL
-
-    return new Response(responseData, {
+    return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

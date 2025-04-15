@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { AllCardPrintingView, db } from "../../../lib/db";
 import { sql } from "kysely";
 import redis from "../../../lib/redis";
+import { withRedisCache } from "../../../lib/withRedisCache";
 
 export interface CardPrintingPriceViewWithPercentage
   extends AllCardPrintingView {
@@ -40,28 +41,17 @@ export async function GET(req: NextRequest) {
     .join(":");
 
   try {
-    // Try Redis cache
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return new Response(cached, {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    const responsePayload = await withRedisCache(cacheKey, 10800, async () => {
+      if (!setName) throw new Error("Missing set name");
 
-    if (!setName)
-      return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      const setId = FaBSetDataJson.find(
+        (set) =>
+          set.formatted_name.toUpperCase() ===
+          setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
+      )?.id;
 
-    const setId = FaBSetDataJson.find(
-      (set) =>
-        set.formatted_name.toUpperCase() ===
-        setName?.toUpperCase().replace(/-to-|-of-/gi, "-")
-    )?.id;
+      if (!setId) throw new Error("Set ID not found");
 
-    if (setId) {
       let totalCountQueryBuilder = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .select(db.fn.count("printing_unique_id").as("count"))
@@ -102,17 +92,10 @@ export async function GET(req: NextRequest) {
           )
           .execute();
 
-        const searchResponse = JSON.stringify({
+        return {
           result: searchedCards,
           total: searchedCards.length,
-        });
-
-        await redis.set(cacheKey, searchResponse, "EX", 10800); // 3 Hour TTL
-
-        return new Response(searchResponse, {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+        };
       }
 
       if (cardId) {
@@ -169,13 +152,7 @@ export async function GET(req: NextRequest) {
           };
         });
 
-        const cardResponse = JSON.stringify({ result });
-        await redis.set(cacheKey, cardResponse, "EX", 3600);
-
-        return new Response(cardResponse, {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+        return { result };
       }
 
       const filteredQuery =
@@ -193,18 +170,16 @@ export async function GET(req: NextRequest) {
 
       const allCardsBySetIdDto = await filteredQuery.execute();
 
-      const responsePayload = JSON.stringify({
+      return {
         result: allCardsBySetIdDto,
         total: totalCount[0].count,
-      });
+      };
+    });
 
-      await redis.set(cacheKey, responsePayload, "EX", 3600);
-
-      return new Response(responsePayload, {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    return new Response(JSON.stringify(responsePayload), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,

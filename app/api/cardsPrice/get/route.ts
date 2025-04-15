@@ -69,30 +69,26 @@ export async function GET(req: NextRequest) {
   const cacheKey = "highRarityPriceMovements:top5";
 
   try {
-    // Check Redis first with safety fallback
-    let cached: string | null = null;
+    let resultPayload: string | undefined;
+
     try {
-      cached = await redis.get(cacheKey);
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        resultPayload = cached;
+      }
     } catch (err) {
       console.error("[REDIS ERROR - get]", err);
     }
 
-    if (cached) {
-      return new Response(cached, {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    if (!resultPayload) {
+      const data = await fetchProductPrices();
+      resultPayload = JSON.stringify({ results: data });
 
-    // Fallback to DB if cache miss
-    const data = await fetchProductPrices();
-    const resultPayload = JSON.stringify({ results: data });
-
-    // Store in Redis with TTL
-    try {
-      await redis.set(cacheKey, resultPayload, "EX", 10800); // 3 Hour TTL
-    } catch (err) {
-      console.error("[REDIS ERROR - set]", err);
+      try {
+        await redis.set(cacheKey, resultPayload, "EX", 10800); // 3 Hour TTL
+      } catch (err) {
+        console.error("[REDIS ERROR - set]", err);
+      }
     }
 
     return new Response(resultPayload, {
