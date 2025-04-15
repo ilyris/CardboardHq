@@ -69,14 +69,8 @@ export async function GET(req: NextRequest) {
   const cacheKey = "highRarityPriceMovements:top5";
 
   try {
-    // Check Redis first with safety fallback
-    let cached: string | null = null;
-    try {
-      cached = await redis.get(cacheKey);
-    } catch (err) {
-      console.error("[REDIS ERROR - get]", err);
-    }
-
+    // Check Redis first
+    const cached = await redis.get(cacheKey);
     if (cached) {
       return new Response(cached, {
         status: 200,
@@ -88,12 +82,8 @@ export async function GET(req: NextRequest) {
     const data = await fetchProductPrices();
     const resultPayload = JSON.stringify({ results: data });
 
-    // Store in Redis with TTL
-    try {
-      await redis.set(cacheKey, resultPayload, "EX", 10800); // 3 Hour TTL
-    } catch (err) {
-      console.error("[REDIS ERROR - set]", err);
-    }
+    // Store in Redis (short TTL due to dynamic pricing)
+    await redis.set(cacheKey, resultPayload, "EX", 10800); // 3 Hour TTL
 
     return new Response(resultPayload, {
       status: 200,
