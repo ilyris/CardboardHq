@@ -1,6 +1,7 @@
 export const dynamicParams = true;
 import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
+import redis from "../../../lib/redis"; // adjust path to your redis.ts
 
 const convertEditionFoilString = (edition: string, foiling: string) => {
   if (edition === "N") {
@@ -25,7 +26,26 @@ export async function GET(req: NextRequest) {
   const edition = req.nextUrl.searchParams.get("edition");
   const dayInterval = Number(req.nextUrl.searchParams.get("dayInterval")) || 7;
 
+  if (!productId) {
+    return new Response(JSON.stringify({ message: "Missing productId" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const cacheKey = `card:${productId}-${foiling}-${edition}`;
+
   try {
+    //  Try Redis cache first
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      return new Response(cachedData, {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    //  If not cached, fetch from DB
     const tableName =
       dayInterval === 7
         ? "all_printings_with_card_prices_weekly_new"
@@ -72,7 +92,10 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return new Response(JSON.stringify({ results: formattedPriceData }), {
+    const resultPayload = JSON.stringify({ results: formattedPriceData });
+    await redis.set(cacheKey, resultPayload, "EX", 10800); // 3 Hour TTL
+
+    return new Response(resultPayload, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

@@ -2,9 +2,11 @@ export const dynamicParams = true;
 
 import { NextRequest } from "next/server";
 import { AllCardPrintingView, db } from "../../../lib/db";
+import redis from "../../../lib/redis";
 
 interface AllCardPrintingViewWithPricePercentage extends AllCardPrintingView {
   prices: { date: string; price: number }[];
+  percentage_change?: number;
 }
 
 const fetchProductPrices = async () => {
@@ -43,42 +45,50 @@ const fetchProductPrices = async () => {
       );
       const oldPrice = item.prices[0].price;
       const newPrice = item.prices[item.prices.length - 1].price;
-      if (!newPrice || !oldPrice) {
-        return {
-          ...item,
-          percentage_change: 0,
-        };
-      }
-      const percentage_change = ((newPrice - oldPrice) / oldPrice) * 100;
+      const percentage_change = oldPrice
+        ? ((newPrice - oldPrice) / oldPrice) * 100
+        : 0;
+
       return {
         ...item,
         percentage_change,
       };
     });
 
-    result.sort((a, b) => b.percentage_change - a.percentage_change);
+    result.sort((a, b) => b.percentage_change! - a.percentage_change!);
 
     // Return the top 5 results
-    const top5Results = result.slice(3, 8);
-
-    return top5Results;
+    return result.slice(3, 8);
   } catch (error) {
     console.error("Error fetching product prices:", error);
+    return [];
   }
 };
 
 export async function GET(req: NextRequest) {
+  const cacheKey = "highRarityPriceMovements:top5";
+
   try {
-    const data = await fetchProductPrices();
-    return new Response(
-      JSON.stringify({
-        results: data,
-      }),
-      {
+    // Check Redis first
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return new Response(cached, {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
-    );
+      });
+    }
+
+    // Fallback to DB if cache miss
+    const data = await fetchProductPrices();
+    const resultPayload = JSON.stringify({ results: data });
+
+    // Store in Redis (short TTL due to dynamic pricing)
+    await redis.set(cacheKey, resultPayload, "EX", 10800); // 3 Hour TTL
+
+    return new Response(resultPayload, {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     return new Response(
       JSON.stringify({

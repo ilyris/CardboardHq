@@ -5,6 +5,7 @@ import { CardSet } from "@/typings/FaBSet";
 import { NextRequest } from "next/server";
 import { AllCardPrintingView, db } from "../../../lib/db";
 import { sql } from "kysely";
+import redis from "../../../lib/redis";
 
 export interface CardPrintingPriceViewWithPercentage
   extends AllCardPrintingView {
@@ -25,8 +26,28 @@ export async function GET(req: NextRequest) {
   const pageSize = 25;
   const startIndex = (Number(page) - 1) * pageSize;
 
+  const cacheKey = [
+    "setCards",
+    setName,
+    edition,
+    page,
+    sort,
+    foiling,
+    searchQuery,
+    cardId,
+  ]
+    .filter(Boolean)
+    .join(":");
+
   try {
-    let allCardsBySetId;
+    // Try Redis cache
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return new Response(cached, {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     if (!setName)
       return new Response(JSON.stringify({ error: "Failed to get Set Name" }), {
@@ -60,7 +81,9 @@ export async function GET(req: NextRequest) {
           foiling
         );
       }
-      let totalCount = await totalCountQueryBuilder.execute();
+
+      const totalCount = await totalCountQueryBuilder.execute();
+
       let cardsBySetIdQuery = db
         .selectFrom("printing_with_card_and_latest_pricing")
         .selectAll()
@@ -68,32 +91,32 @@ export async function GET(req: NextRequest) {
         .offset(startIndex)
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition)
-        .orderBy(
-          sql`low_price ${sql.raw(sort)} NULLS LAST`
-        );
+        .orderBy(sql`low_price ${sql.raw(sort)} NULLS LAST`);
 
       if (searchQuery) {
-        const searchedCardQuery = cardsBySetIdQuery.where(
-          "printing_with_card_and_latest_pricing.card_name",
-          "ilike",
-          `%${searchQuery}%`
-        );
+        const searchedCards = await cardsBySetIdQuery
+          .where(
+            "printing_with_card_and_latest_pricing.card_name",
+            "ilike",
+            `%${searchQuery}%`
+          )
+          .execute();
 
-        const searchedCards = await searchedCardQuery.execute();
-        return new Response(
-          JSON.stringify({
-            result: searchedCards,
-            total: searchedCards.length,
-          }),
-          {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const searchResponse = JSON.stringify({
+          result: searchedCards,
+          total: searchedCards.length,
+        });
+
+        await redis.set(cacheKey, searchResponse, "EX", 10800); // 3 Hour TTL
+
+        return new Response(searchResponse, {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       if (cardId) {
-        const specificCardIdQuery = db
+        const specificCardByCardId = await db
           .selectFrom("all_printings_with_card_prices_weekly_new")
           .selectAll()
           .where("all_printings_with_card_prices_weekly_new.set_id", "=", setId)
@@ -106,8 +129,8 @@ export async function GET(req: NextRequest) {
             "all_printings_with_card_prices_weekly_new.printing_id",
             "ilike",
             `%${cardId}%`
-          );
-        const specificCardByCardId = await specificCardIdQuery.execute();
+          )
+          .execute();
 
         const movements: {
           [key: string]: CardPrintingPriceViewWithPercentage;
@@ -129,70 +152,58 @@ export async function GET(req: NextRequest) {
             price: item.low_price,
           });
         });
+
         const result = Object.values(movements).map((item) => {
           item.prices.sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
           );
           const oldPrice = item.prices[0].price;
           const newPrice = item.prices[item.prices.length - 1].price;
-          if (!newPrice || !oldPrice) {
-            return {
-              ...item,
-              percentage_change: 0,
-            };
-          }
-          const percentage_change = ((newPrice - oldPrice) / oldPrice) * 100;
+          const percentage_change = oldPrice
+            ? ((newPrice - oldPrice) / oldPrice) * 100
+            : 0;
+
           return {
             ...item,
             percentage_change,
           };
         });
-        return new Response(
-          JSON.stringify({
-            result: result,
-          }),
-          {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
 
-      // filters
-      if (foiling === "all") {
-        allCardsBySetId =  cardsBySetIdQuery.where(
-          "printing_with_card_and_latest_pricing.foiling",
-          "in",
-          ["C", "R", "S"]
-        );
-      } else {
-        allCardsBySetId =  cardsBySetIdQuery.where(
-          "printing_with_card_and_latest_pricing.foiling",
-          "=",
-          foiling
-        );
-      }
-      if (!allCardsBySetId) {
-        return new Response(
-          JSON.stringify({ error: "Failed to fetch cards" }),
-          {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
+        const cardResponse = JSON.stringify({ result });
+        await redis.set(cacheKey, cardResponse, "EX", 3600);
 
-      const allCardsBySetIdDto = await allCardsBySetId.execute();
-      return new Response(
-        JSON.stringify({
-          result: allCardsBySetIdDto,
-          total: totalCount[0].count,
-        }),
-        {
+        return new Response(cardResponse, {
           status: 200,
           headers: { "Content-Type": "application/json" },
-        }
-      );
+        });
+      }
+
+      const filteredQuery =
+        foiling === "all"
+          ? cardsBySetIdQuery.where(
+              "printing_with_card_and_latest_pricing.foiling",
+              "in",
+              ["C", "R", "S"]
+            )
+          : cardsBySetIdQuery.where(
+              "printing_with_card_and_latest_pricing.foiling",
+              "=",
+              foiling
+            );
+
+      const allCardsBySetIdDto = await filteredQuery.execute();
+
+      const responsePayload = JSON.stringify({
+        result: allCardsBySetIdDto,
+        total: totalCount[0].count,
+      });
+
+      await redis.set(cacheKey, responsePayload, "EX", 3600);
+
+      return new Response(responsePayload, {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
