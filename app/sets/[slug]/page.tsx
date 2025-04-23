@@ -41,6 +41,7 @@ const SlugPage = () => {
   const [activeSort, setActiveSort] = useState<string>("");
   const [activeFilters, setActiveFilters] = useState<FilterTypes>({
     foiling: "all",
+    rarity: "all",
   });
   const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -135,6 +136,23 @@ const SlugPage = () => {
               setActiveFilters({
                 ...activeFilters,
                 foiling: value as "C" | "R" | "S" | "all",
+              })
+            }
+          />
+          <Filter
+            name={"rarity"}
+            options={[
+              { option: "all", text: "select a rarity" },
+              { option: "V", text: "Marvel" },
+              { option: "L", text: "Legendary" },
+              { option: "M", text: "Majestic" },
+              { option: "R", text: "Rare" },
+              { option: "C", text: "Common" },
+            ]}
+            onCallback={(value: string) =>
+              setActiveFilters({
+                ...activeFilters,
+                rarity: value as "V" | "L" | "M" | "R" | "C",
               })
             }
           />

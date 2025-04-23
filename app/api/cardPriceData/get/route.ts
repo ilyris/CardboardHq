@@ -1,7 +1,6 @@
 export const dynamicParams = true;
 import { NextRequest } from "next/server";
 import { db } from "../../../lib/db";
-import redis from "../../../lib/redis"; // adjust path to your redis.ts
 import { withRedisCache } from "../../../lib/withRedisCache";
 
 const convertEditionFoilString = (edition: string, foiling: string) => {

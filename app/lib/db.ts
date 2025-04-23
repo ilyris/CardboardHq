@@ -60,6 +60,7 @@ export interface CardPrintingPriceView {
   low_price: number | null;
   market_price: number | null;
   price_date: Date;
+  rarity: string;
 }
 
 export interface CardPriceData {

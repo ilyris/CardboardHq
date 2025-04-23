@@ -77,6 +77,14 @@ const Navigation: React.FC<NavigationProps> = ({ isUserLoggedIn }) => {
                 Collection
               </MainStyledLink>
               <MainStyledLink
+                href="/price-guide"
+                component="button"
+                variant="body2"
+                sx={{ mr: 1 }}
+              >
+                Price Guide
+              </MainStyledLink>
+              <MainStyledLink
                 href="/"
                 component="button"
                 variant="body2"

@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
   const edition = req.nextUrl.searchParams.get("edition");
   const page = req.nextUrl.searchParams.get("page");
   const foiling = req.nextUrl.searchParams.get("foiling");
+  const rarity = req.nextUrl.searchParams.get("rarity");
 
   const pageSize = 25;
   const startIndex = (Number(page) - 1) * pageSize;
@@ -36,6 +37,7 @@ export async function GET(req: NextRequest) {
     foiling,
     searchQuery,
     cardId,
+    rarity,
   ]
     .filter(Boolean)
     .join(":");
@@ -56,6 +58,7 @@ export async function GET(req: NextRequest) {
         .selectFrom("printing_with_card_and_latest_pricing")
         .select(db.fn.count("printing_unique_id").as("count"))
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
+        .where("printing_with_card_and_latest_pricing.set_id", "=", rarity)
         .where("printing_with_card_and_latest_pricing.edition", "=", edition);
 
       if (foiling === "all") {
@@ -80,8 +83,20 @@ export async function GET(req: NextRequest) {
         .limit(pageSize)
         .offset(startIndex)
         .where("printing_with_card_and_latest_pricing.set_id", "=", setId)
-        .where("printing_with_card_and_latest_pricing.edition", "=", edition)
-        .orderBy(sql`low_price ${sql.raw(sort)} NULLS LAST`);
+        .where("printing_with_card_and_latest_pricing.edition", "=", edition);
+
+      // Apply rarity filter if it's not "all"
+      if (typeof rarity === "string" && rarity.toLowerCase() !== "all") {
+        cardsBySetIdQuery = cardsBySetIdQuery.where(
+          "printing_with_card_and_latest_pricing.rarity",
+          "=",
+          rarity
+        );
+      }
+
+      cardsBySetIdQuery = cardsBySetIdQuery.orderBy(
+        sql`low_price ${sql.raw(sort)} NULLS LAST`
+      );
 
       if (searchQuery) {
         const searchedCards = await cardsBySetIdQuery
