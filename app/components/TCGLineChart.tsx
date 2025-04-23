@@ -43,8 +43,8 @@ const TCGLineChart: React.FC<TCGLineChartData & TCGProps> = ({
   if (data && data.length > 0) {
     maxPrice = Math.max(...data.map((d) => d.low_price));
     minPrice = Math.min(...data.map((d) => d.low_price));
-    lowerBound = Math.max(0, minPrice - 5);
-    upperBound = Math.round(maxPrice + 20);
+    lowerBound = Math.floor(Math.max(0, minPrice - 5));
+    upperBound = Math.floor(Math.round(maxPrice + 20));
   }
   return (
     <Box sx={{ color: theme.palette.text.primary }}>
