@@ -20,8 +20,9 @@ export default function Home() {
           <Box sx={{ display: "flex", flexFlow: "row wrap" }}>
             {fabSetData.map((set) => {
               const { formatted_name, printings } = set;
-              return printings.map((printing) => (
+              return printings.map((printing, i) => (
                 <SetCard
+                  data-testid={`set-card-${i}`}
                   key={printing.unique_id}
                   edition={printing.edition}
                   assetFilePath={
